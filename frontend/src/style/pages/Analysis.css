@@ -1,0 +1,66 @@
+.analysis-page {
+  min-height: 100vh; /* Fill the viewport vertically */
+  background: linear-gradient(135deg, #f5f7fa, #c3cfe2);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px;
+}
+
+/* The main container (.App) wrapping all charts */
+.analysis-page .App {
+  background: rgba(255, 255, 255, 0.85);
+  width: 95%;
+  max-width: 1400px;
+  border-radius: 16px;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+  padding: 20px;
+  margin: 20px auto;
+}
+
+h3 {
+  text-align: center;
+  color: #333;
+  margin-bottom: 10px;
+}
+
+/* Top line chart container */
+.dataCard1 {
+  background: rgba(255, 255, 255, 0.9);
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  margin-bottom: 20px;
+}
+
+/* 
+   The container for the bar chart and pie chart. 
+   We'll use a 2-column grid so both get equal width.
+*/
+.dataContainer {
+  display: grid;
+  grid-template-columns: 1fr 1fr; /* two equal columns */
+  gap: 20px;
+  width: 100%;
+}
+
+/* Each bottom section (bar or pie) gets a bigger min-height */
+.chart-container,
+.dataCard3 {
+  background: rgba(255, 255, 255, 0.9);
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  min-height: 450px; /* Increase to make them appear taller */
+}
+
+/* Responsive for smaller screens: stack columns */
+@media (max-width: 768px) {
+  .dataContainer {
+    grid-template-columns: 1fr;
+  }
+  .chart-container,
+  .dataCard3 {
+    min-height: auto; /* Let them shrink on mobile */
+  }
+}

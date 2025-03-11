@@ -1,0 +1,68 @@
+/* Header Flex Container */
+#headerFlex123 {
+  background: linear-gradient(135deg, #051B34 0%, #04347cd8 100%);
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: nowrap; /* Allows wrapping for smaller screens */
+  padding: 10px 5%;
+}
+
+/* Buttons */
+.button123 {
+  background: linear-gradient(135deg, #051B34 0%, #04347cd8 100%);
+  border-radius: 5px;
+  color: white;
+  cursor: pointer;
+  font-size: 1rem; /* Uses relative size */
+  font-weight: 600;
+  border: none;
+  padding: 8px 12px;
+  transition: all 0.3s ease-in-out;
+}
+
+.button123:hover {
+  background: linear-gradient(135deg, #04347cd8 0%, #051B34 100%);
+  outline: white solid 1px;
+}
+
+/* Images */
+img {
+  height: 50px;
+  width: 50px;
+  max-width: 100%; /* Ensures images scale down on small screens */
+}
+
+/* Responsive Design */
+@media (max-width: 768px) { 
+  #headerFlex123 {
+    flex-direction: column; /* Stack items vertically */
+    align-items: center;
+    padding: 15px;
+  }
+
+  .button123 {
+    font-size: 16px;
+    padding: 6px 10px;
+    width: 100%; /* Make buttons full width */
+    text-align: center;
+  }
+
+  img {
+    height: 40px;
+    width: 40px;
+  }
+}
+
+@media (max-width: 480px) { 
+  .button123 {
+    font-size: 10px !important;
+    padding: 4px 7px !important;
+  }
+
+  img {
+    height: 30px !important;
+    width: 30px !important;
+  }
+}

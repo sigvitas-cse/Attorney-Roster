@@ -1,0 +1,46 @@
+26-02-2025
+    1. I have Made the pagination.
+    2. Initial mount should fetch 5000 profiles and later 1000 per second.
+    3. Overall it takes 1:30 - 1:40 minutes to load all data now[51948 with 104 pages].
+    4. Made separate Components -> [users, Roster Data, Analysis, Add users] display in main AdminDashboard Page with hide and display option.
+
+    Tommorrow -- 
+      -> Should make the Home Page[2nd navigation page] and AdminDashboard[...,AddUser] as interactive[particularly in laptops].
+      -> Filter Option A --- Z.
+
+
+27-02-2025
+    1. I have done the pagination input option[when we click on the page number then enter the page number within the limit what we want then press enter then that should navigate to entered page]
+    2. Shift HomeLogin to front Page
+    3. Added A-Z icons and alow them to fetch the data correctly
+    4. I attended the Google-Meet regarding PDF2Word converter
+    5. I attended the Dheeraj Sir Zoom Call after completed the Google-Meet to discuss abou the previous meeting
+
+    Tommorrow --
+      -> I have to check all the pages and make "Responsive".
+
+03-03-2025
+    1. I have downloaded the Attorney Roster Data file from the USPTO - 03.03.2025 - And made the excele file to compare and I did the compridon between 4th week of February[2025] with 1st week of March[2025] And here are the key updates:
+      -> 4th week of February - 2025 total = 52383
+      -> 1st week of March - 2025 total = 52420
+      -> Total Removed files - 4
+      -> Total New profiles - 41
+      -> Total revised Files - 59
+
+          * Here, one profile - 81614 - has updated like - Attorney to Agent [from Feb(4th week) to March(1st Week)], But, From before 4th week of Feb that has Agent and in 4th week of Feb changed to Attorney and now 03.03.2025 it is again Agent.
+    2. I did the compridon between 2024(Sep) 1st week of March[2025] And here are the key updates:
+      -> 2024(Sep) total = 51605
+      -> 1st week of March - 2025 total = 52420
+      -> Total Removed files - 201
+      -> Total New profiles - 1016
+      -> Total revised Files - 1446
+    3. I have changed the Added the changes to Analysis Section
+    4. I made the currect filter option[now working]
+
+04-03-2025
+    1. I checked all the pages to make responsive and made responsive
+    2. Slightly made changes in Home Page
+    3. Run "npm run build" for production
+    4. Hosted successfully - roster1.sigvitas.com
+    5. I looked at Vite + React Project
+    6. Searching for Logo - AurlioFresh

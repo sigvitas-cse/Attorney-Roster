@@ -1,0 +1,520 @@
+.patentDataSection {
+    padding: 20px;
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f4;
+}
+
+/* Enable horizontal scrolling */
+.table-container {
+    width: 100%;
+    max-width: 100%;
+    overflow-x: auto; /* Allows horizontal scrolling */
+    display: block;
+    background: #0073e6;
+    padding: 0;
+    border-radius: 8px;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+    height: 53vh;
+    white-space: nowrap;
+}
+
+/* Auto-width table */
+.user-table2 {
+    width: auto; /* Let table expand based on content */
+    border-collapse: collapse;
+    table-layout: auto; /* Allow columns to resize dynamically */
+}
+
+/* Sticky header */
+.user-table2 thead {
+    background-color: #0073e6;
+    color: white;
+    position: sticky;
+    top: 0;
+    z-index: 2;
+}
+
+/* Table cells */
+.user-table2 th,
+.user-table2 td {
+    padding: 12px;
+    border: 1px solid #ddd;
+    text-align: left;
+    font-size: 14px;
+    white-space: nowrap; /* Prevent text from wrapping */
+}
+
+/* Sticky headers */
+.user-table2 th {
+    background-color: #0073e6;
+    color: #ffffff;
+    width: 180px;
+}
+
+/* Alternating row colors */
+.user-table2 tbody tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
+
+.user-table2 tbody tr:hover {
+    background-color: #e3f2fd;
+}
+
+/* Pagination styles */
+.pagination {
+    display: flex;
+    justify-content: center;
+    margin-top: 10px;
+    flex-wrap: wrap;
+    gap: 5px;
+}
+
+.pagination button {
+    padding: 8px 12px;
+    margin: 0 5px;
+    border: 1px solid #007bff;
+    background: #007bff;
+    color: white;
+    cursor: pointer;
+    border-radius: 4px;
+}
+
+.pagination button:disabled {
+    background: #ccc;
+    cursor: not-allowed;
+}
+
+.paginationInputBox {
+    width: 80px;
+    border: 1px solid #0073e6;
+    background: #ffffff;
+    font-size: 14px;
+    font-weight: bold;
+    text-align: center;
+    color: #333;
+    border-radius: 4px;
+    transition: all 0.2s ease-in-out;
+}
+
+.paginationInputBox:focus {
+    border-color: #004a99;
+    outline: none;
+    box-shadow: 0px 0px 5px rgba(0, 115, 230, 0.5);
+}
+
+/* A-Z Filter Container */
+.alphabet-filter {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 1px;
+    border: 1px solid #0073e6;
+    background: #0073e6;
+    border-radius: 4px 4px 0 0;
+    padding: 10px;
+}
+
+/* Individual Letter Buttons */
+.letter-btn {
+    padding: 8px 26px;
+    font-size: 18px;
+    font-weight: bold;
+    border: 1px solid #0073e6;
+    background-color: #ffffff;
+    color: #0073e6;
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+}
+
+/* Hover & Active Effects */
+.letter-btn:hover {
+    background-color: #0073e6;
+    color: #ffffff;
+}
+
+.letter-btn.active {
+    background-color: #004a99;
+    color: white;
+    border-color: #004a99;
+}
+
+/* 🔥 Responsive Design Fixes */
+@media screen and (max-width: 1440px) {
+    .header-container{
+        justify-content: space-between;
+    }
+    
+    .header-container1{
+    display: flex; /* Enables flexbox */
+    align-items: center; /* Centers vertically */
+    justify-content: center; /* Centers horizontally */
+    /* border: 1px solid red; */
+    height: 80px;
+    padding-top: 18px;
+    }
+    .global-search {
+        /* align-items:flex-start; */
+        height: 44px;
+        /* border: 1px solid green; */
+      }
+      .alphabet-filter {
+        gap: 0px !important;
+    }
+    .header-container1 h2{
+        font-size: 32px;
+        
+    }
+    .global-search input{
+        width: 300px;
+        padding: 5px;
+        height: 42px !important;
+        font-size: 18px;
+
+    }
+    
+    .letter-btn {
+        font-size: 16px;
+        padding: 6px 42px;
+    }
+    .pagination button {
+        padding: 8px 16px !important; /* Reduce button padding */
+        font-size: 24px;
+        /* border: 1px solid red; */
+        height: 45px;   
+     }
+     .paginationInputBox{
+        height: 45px;   
+        width: 70px;
+     }
+     .search-icon {
+        font-size: 21px !important;
+        left: 20px !important;
+      }
+}
+@media screen and (max-width: 1024px) {
+    .user-table2 th, .user-table2 td {
+        font-size: 13px; /* Reduce text size */
+        padding: 9px; /* Adjust spacing */
+    }
+    .header-container{
+        justify-content: space-between;
+    }
+    .table-container {
+        height: auto;
+        overflow-x: scroll;
+    }
+    .header-container1{
+        display: flex; /* Enables flexbox */
+    align-items: center; /* Centers vertically */
+    justify-content: center; /* Centers horizontally */
+    /* border: 1px solid red; */
+    height: 60px;
+    padding-top: 18px;
+    }
+    .global-search {
+        /* align-items:flex-start; */
+        height: 45px;
+        /* border: 1px solid green; */
+      }
+      .alphabet-filter {
+        gap: 0px !important;
+    }
+    .header-container1 h2{
+        font-size: 25px;
+        
+    }
+    .global-search input{
+        width: 300px;
+        padding: 6px;
+        height: 40px !important;
+        font-size: 17px;
+
+    }
+    
+    .letter-btn {
+        font-size: 12px;
+        padding: 5px 29px;
+    }
+    .pagination button {
+        padding: 7px 14px !important; /* Reduce button padding */
+        font-size: 22px;
+        /* border: 1px solid red; */
+        height: 45px;   
+     }
+     .paginationInputBox{
+        height: 45px;   
+        width: 58px;
+     }
+     .search-icon {
+        font-size: 19px !important;
+        left: 18px !important;
+      }
+}
+@media screen and (max-width: 768px) {
+    .user-table2 th, .user-table2 td {
+        font-size: 12px; /* Reduce text size */
+        padding: 8px; /* Adjust spacing */
+    }
+    .header-container{
+        justify-content: space-between;
+    }
+    .table-container {
+        height: auto;
+        overflow-x: scroll;
+    }
+    .header-container1{
+        display: flex; /* Enables flexbox */
+    align-items: center; /* Centers vertically */
+    justify-content: center; /* Centers horizontally */
+    /* border: 1px solid red; */
+    height: 50px;
+    padding-top: 18px;
+    }
+    .global-search {
+        /* align-items:flex-start; */
+        height: 40px;
+        /* border: 1px solid green; */
+      }
+      .alphabet-filter {
+        gap: 0px !important;
+    }
+    .header-container1 h2{
+        font-size: 20px;
+        
+    }
+    .global-search input{
+        width: 250px;
+        padding: 5px;
+        height: 38px !important;
+        font-size: 15px;
+
+    }
+    
+    .letter-btn {
+        font-size: 10px;
+        padding: 4px 20px;
+    }
+    .pagination button {
+        padding: 6px 12px !important; /* Reduce button padding */
+        font-size: 18px;
+        /* border: 1px solid red; */
+        height: 38px;   
+     }
+     .paginationInputBox{
+        height: 38px;   
+        width: 58px;
+     }
+     .search-icon {
+        font-size: 19px !important;
+        left: 18px !important;
+      }
+}
+
+@media screen and (max-width: 500px) {
+    .header-container{
+        justify-content: space-between;
+    }
+    .table-container {
+        height: auto;
+        overflow-x: scroll;
+    }
+    .header-container1{
+        display: flex; /* Enables flexbox */
+    align-items: center; /* Centers vertically */
+    justify-content: center; /* Centers horizontally */
+    /* border: 1px solid red; */
+    height: 45px;
+    padding-top: 18px;
+    }
+    .global-search {
+        /* align-items:flex-start; */
+        height: 33px;
+        /* border: 1px solid green; */
+      }
+      .alphabet-filter {
+        gap: 0px !important;
+    }
+    .header-container1 h2{
+        font-size: 16px;
+        
+    }
+    .global-search input{
+        width: 148px !important;
+        padding: 5px;
+        height: 33px !important;
+        font-size: 12px;
+
+    }
+    
+    .letter-btn {
+        font-size: 10px;
+        padding: 4px 11px;
+    }
+    .pagination button {
+        padding: 5px 10px !important; /* Reduce button padding */
+        font-size: 14px;
+        /* border: 1px solid red; */
+        height: 35px;   
+     }
+     .paginationInputBox{
+        height: 35px;   
+        width: 55px;
+     }
+     .search-icon {
+        font-size: 15px !important;
+        left: 12px !important;
+      }
+}
+@media screen and (max-width: 422px) {
+    .header-container{
+        justify-content: space-between;
+    }
+    .table-container {
+        height: auto;
+        overflow-x: scroll;
+    }
+    .header-container1{
+        display: flex; /* Enables flexbox */
+    align-items: center; /* Centers vertically */
+    justify-content: center; /* Centers horizontally */
+    /* border: 1px solid red; */
+    height: 40px;
+    padding-top: 18px;
+    }
+    .global-search {
+        /* align-items:flex-start; */
+        height: 28px;
+        /* border: 1px solid green; */
+      }
+      .alphabet-filter {
+        gap: 0px !important;
+    }
+    .header-container1 h2{
+        font-size: 14px;
+        
+    }
+    .global-search input{
+        width: 120px !important;
+        padding: 5px;
+        height: 28px !important;
+        font-size: 10px;
+
+    }
+    
+    .letter-btn {
+        font-size: 10px;
+        padding: 3px 8px;
+    }
+    .pagination button {
+        padding: 0 8px !important; /* Reduce button padding */
+        font-size: 12px;
+        /* border: 1px solid red; */
+        height: 30px;   
+     }
+     .paginationInputBox{
+        height: 30px;   
+        width: 50px;
+     }
+     .search-icon {
+        font-size: 12px !important;
+        left: 10px !important;
+      }
+}
+@media screen and (max-width: 418px) {
+    .header-container{
+        justify-content: space-between;
+    }
+    .table-container {
+        height: auto;
+        overflow-x: scroll;
+    }
+    .header-container1{
+        display: flex; /* Enables flexbox */
+    align-items: center; /* Centers vertically */
+    justify-content: center; /* Centers horizontally */
+    /* border: 1px solid red; */
+    height: 40px;
+    padding-top: 18px;
+    }
+    .global-search {
+        /* align-items:flex-start; */
+        height: 28px;
+        /* border: 1px solid green; */
+      }
+      .alphabet-filter {
+        gap: 0px !important;
+    }
+    .header-container1 h2{
+        font-size: 13px;
+        
+    }
+    .global-search input{
+        width: 120px !important;
+        padding: 5px;
+        height: 28px !important;
+        font-size: 10px;
+
+    }
+    
+    .letter-btn {
+        font-size: 9px;
+        padding: 3px 7.7px;
+    }
+    .pagination button {
+        padding: 0 8px !important; /* Reduce button padding */
+        font-size: 12px;
+        /* border: 1px solid red; */
+        height: 30px;   
+     }
+     .paginationInputBox{
+        height: 30px;   
+        width: 50px;
+     }
+     .search-icon {
+        font-size: 12px !important;
+        left: 10px !important;
+      }
+}
+.header-container {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    width: 100%;
+  }
+  
+  .global-search {
+    display: flex;
+    align-items: center;
+    position: relative;
+  }
+  
+  .search-icon {
+    cursor: pointer;
+    position: absolute;
+    left: 15px;
+    color: gray;
+    font-size: 22px !important;
+
+  }
+  
+  .global-search input {
+    width: 600px;
+    padding-left: 30px; /* Space for the search icon */
+    height: 50px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+  }
+  .highlight {
+    background-color: yellow;
+    font-weight: bold;
+  }
+  .filter-icon{
+    color: white !important;
+    cursor: pointer !important;
+    margin-left: 5px !important;
+  }
+  .active-filter {
+    color: red !important; /* Highlight active filters in red */
+    cursor: pointer !important;
+    margin-left: 5px !important;
+  }

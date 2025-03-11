@@ -1,0 +1,345 @@
+.headerdashboard12{
+  text-align: center;
+  width: 100%;
+  /* min-width: none; */
+  /* min-width: 100vb; */
+  /* max-width: auto; */
+  justify-content: space-between;
+  display: flex;
+  flex-direction: row;
+  align-content: center;
+  cursor: pointer;
+  background: linear-gradient(135deg, #051B34 0%, #04347cd8 100%);
+  border-bottom: 0.5px solid white;
+}
+.button1234 {
+  background: linear-gradient(135deg, #051B34 0%, #04347cd8 100%);
+  height: auto;
+  width: auto;
+  border-radius: 5px;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.button1234:hover {
+  background: linear-gradient(135deg, #04347cd8 0%, #051B34 100%);
+  outline: white solid 1px;
+}
+.main3{
+  /* background: linear-gradient(135deg,#6610f2, #007bff); */
+  width: auto;
+  height: auto;
+  
+}
+
+  .title {
+    text-align: center;
+    color: #333;
+  }
+  .Filter-Block{
+    background: linear-gradient(135deg, #051B34 0%, #04347cd8 100%);
+    align-content: center;
+    align-items: right;
+    text-align: right;
+    margin:0;
+    font-family: Arial, sans-serif;
+    width: 100%;
+    display: flex;
+    justify-content:space-between;
+    flex-grow: 1;
+    padding: 10px;
+    border-bottom: 0.5px solid white;
+  }
+  .Filter-Block1{
+    width: 100%;
+    align-content: center;
+    text-align: center;
+    align-items: center;
+    /* border: 1px solid white; */
+    /* flex-grow: 2; */
+  }
+  .Filter-Block1 h2{
+    text-align: center;
+    align-items: center;
+    font-size: 40px;
+    font-weight: 900;
+    color: white;
+  }
+  .Filter-Block2{
+    padding: 10px;
+    position: relative;
+    width: 100%; 
+    /* border: 1px solid white;
+    flex-grow: 1; */
+  }
+  .Filter-Block2 button{
+    border: 1px solid white;  
+    border-radius: 5px;
+    padding: 10px;
+    font-size: 15px;
+    width:100px;
+    color: white;
+    margin-left: 10px;
+    background: linear-gradient(135deg, #051B34 0%, #04347cd8 100%);
+  }
+  .Filter-Block2 button:hover{
+    background: linear-gradient(135deg, #04347cd8 0%, #051B34 100%);
+
+  }
+  .Filter-Block2 select{
+    padding: 9px;
+  }
+  .filter-input {
+    width: auto;
+    padding: 8px;
+    margin: 10px 0;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    color: black;
+  }
+
+  .user-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: white;
+    table-layout: fixed;
+  }
+  .user-table th,
+  .user-table td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    width:180px;
+    white-space: normal; /* Allow text to wrap to the next line if it's too long */
+    word-wrap: break-word; /* Breaks long words to avoid overflow */
+    overflow: hidden;
+  }
+  .user-table th {
+    background-color: #0073e6;
+    text-align: center;
+    position: sticky;
+    top: 0;
+    z-index: 1;
+  }
+  .user-table td {
+    width:auto; /* Set fixed width for each column */
+    text-align: left;
+  }
+  .user-table tbody td{
+    text-align: left;
+  }
+  .table-container2 {
+    max-height: 59.2vh; /* Set height for scrollable table */
+    overflow-y: auto; /* Adds vertical scroll */
+    overflow-x: auto; /* Adds horizontal scroll */
+  }
+  .filter-icon {
+    cursor: pointer;
+    margin-left: 5px;
+    font-size: 14px;
+    color: #007bff;
+    /* color: white; */
+  }
+  
+  .filter-icon:hover {
+    color: #0056b3;
+  }
+
+  .Save-button {
+    display: block;
+    margin: 20px auto;
+    padding: 10px 20px;
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer; 
+    border-radius: 20px;
+  }
+
+  .Save-button:hover {
+    background-color: #0056b3;
+  }
+
+  .delBtn{
+    background: blue !important;
+    color: white;
+    width: auto;
+  }
+
+  .delBtn:hover{
+    background-color: darkred;
+  }
+  .saveAdd{
+    display: flex;
+    flex-direction: row;
+  }
+
+  .add-user-button {
+    display: block;
+    margin: 20px ;
+    padding: 10px 20px;
+    background-color: green;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer; 
+    border-radius: 20px;
+  }
+
+  .add-user-button:hover {
+    background-color: darkgreen;
+  }
+  .saveAddUser-Block{
+    display: flex;
+    flex-direction: column;
+  }
+  .add-user-form{
+    max-height: auto; /* Set height for scrollable table */
+    overflow-y: auto; /* Adds vertical scroll */
+    overflow-x: auto; /* Adds horizontal scroll */
+  }
+  
+.add-user-form-h3{
+  color: black;
+  padding-top: 8px;
+}
+.user-table-head1{
+    width: 70px !important;
+    text-align: center;
+    position: sticky;
+    left: 0;  
+    top:0;
+    z-index:2 !important;
+}
+
+.user-table2 {
+  width: 100%;
+  border-collapse: collapse;
+  background: white;
+  table-layout: fixed;
+}
+
+.user-table2 td {
+  border: 1px solid #ddd;
+  padding: 8px;
+  width: 180px !important;
+  height: auto !important;
+  white-space: normal; /* Allow text to wrap to the next line if it's too long */
+  word-wrap: break-word; /* Breaks long words to avoid overflow */
+  overflow: hidden;
+}
+
+.user-table2 td {
+  width:auto; /* Set fixed width for each column */
+  text-align: left;
+}
+.user-table2 tbody td{
+  text-align: left;
+}
+.user-table-row-data-SlNo{
+    width: 70px;
+    text-align: center;
+    position: sticky;
+    left: 0;  
+    background:white;
+    z-index: 1;  
+}
+
+ .editable-cell:empty::before {
+  content: attr(data-placeholder); /* Use the value from the data-placeholder attribute */
+  color: gray;
+  font-style: italic;
+  opacity: 0.7;
+  pointer-events: none; /* Ensures the placeholder is not interactive */
+}
+.editable-cell:focus::before {
+  content: ''; /* Remove placeholder on focus */
+}
+
+.add-user-button-Add{
+  width: 100px;
+  padding: 8px;
+  font-size: 15px;
+  font-weight: bolder;
+  background: green;
+  border-radius: 5px;
+  margin: 0;
+}
+.add-user-button-Save{
+  width: 100px;
+  padding: 8px;
+  margin-top:5px;
+  margin-left: 0;
+  font-size: 15px;
+  font-weight: bolder;
+  background: green;
+  border-radius: 5px;;
+}
+.AddSave12{
+    width: 120px !important;
+    text-align: center !important;
+    align-content: center;
+    position: sticky;
+    right: 0; 
+    padding:10px;
+    background:white;
+    z-index:1000;  
+    /* border :1px solid block !important; */
+}
+.saveBtnForAllOne{
+  cursor:pointer;
+  background:blue !important;
+  transition: all 0.3s ease;
+}
+.saveBtnForAllOne:hover{
+  background: darkblue !important;
+}
+
+.editsavedeletebtnforempdashboard{
+  width:auto;
+  cursor: pointer;
+  font-size: 14px;
+  padding:7px;
+  margin: 0;
+  background:green;
+  border-radius:5px;
+  color:white;
+  padding:5px;
+  font-weight:600;
+}
+.editsavedeletebtnforempdashboard:hover{
+  background: darkgreen;
+}
+.deletebtnforempdashboard{
+  width:auto;
+  cursor: pointer;
+  font-size: 14px;
+  padding:7px;
+  margin: 0;
+  background:red;
+  border-radius:5px;
+  color:white;
+  padding:5px;
+  font-weight:600;
+}
+.deletebtnforempdashboard:hover{
+  background:darkred;
+}
+
+.search-icon {
+  position: absolute;
+  right: 300px; /* Adjust to align the icon inside the input */
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 16px; /* Icon size */
+  color: #888; /* Icon color */
+}
+.filter-input {
+  width: auto;
+  padding-left: 30px; /* Space for the icon inside the input */
+  height: 40px; /* Adjust height as needed */
+  font-size: 14px; /* Adjust text size */
+}

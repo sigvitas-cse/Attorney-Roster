@@ -1,0 +1,193 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html, body {
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* ✅ Header Section */
+#headerFlex1233 {
+  background: linear-gradient(135deg, #051B34 0%, #04347cd8 100%);
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 5%;
+  flex-wrap: wrap;
+}
+
+/* ✅ Buttons */
+.button1233 {
+  background: linear-gradient(135deg, #051B34 0%, #04347cd8 100%);
+  border-radius: 5px;
+  color: white;
+  font-size: 16px;
+  font-weight: 600;
+  border: none;
+  margin: 5px;
+  padding: 8px 15px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.button1233:hover {
+  background: linear-gradient(135deg, #04347cd8 0%, #051B34 100%);
+  outline: 1px solid white;
+}
+
+.button12333 {
+  width: 150px;
+  border: 1px solid white;
+}
+
+/* ✅ Main Container */
+.App1233 {
+  width: 100%;
+  height: auto;
+  text-align: center;
+  background: linear-gradient(135deg, #051B34 0%, #04347cd8 100%);
+}
+
+/* ✅ Heading */
+#main1233 h3 {
+  padding-top: 20px;
+  font-size: 30px;
+  font-weight: bold;
+  color: white;
+}
+
+h3 {
+  color: white;
+  font-weight: 600;
+}
+
+/* ✅ Form */
+form {
+  height: auto;
+  padding: 20px;
+  margin-top: 10px !important;
+}
+
+/* ✅ Centered Form Container */
+form #div1233 {
+  width: 90%;
+  max-width: 350px;
+  padding: 20px;
+  margin: 0 auto;
+  border: 0.5px solid white;
+  border-radius: 15px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+/* ✅ Input Fields */
+#div1233 input{
+  border: none;
+  width: 100%;
+  max-width: 300px;
+  font-size: 16px;
+  padding: 10px;
+  border-radius: 2px !important;
+  text-align: center;
+  margin: 5px;
+  transition: all 0.3s ease;
+}
+.inputform1234 {
+  min-width: 300px !important;
+}
+
+input:hover {
+  background-color: rgba(247, 244, 244, 0.918);
+}
+
+input::placeholder {
+  color: rgba(200, 200, 200, 0.7);
+}
+
+/* ✅ Footer */
+footer {
+  height: 30px;
+  background-color: #333;
+  color: white;
+  text-align: center;
+  padding: 5px;
+  position: relative;
+  bottom: 0;
+  width: 100%;
+}
+
+/* ✅ Password Toggle Icon */
+#toggle1233 {
+  position: absolute;
+  top: 50%;
+  right: 20px;
+  transform: translateY(-50%);
+  cursor: pointer;
+  color: #333;
+}
+
+/* 📱 Small Screen (Tablets & Phones) */
+@media (max-width: 768px) {
+  #headerFlex1233 {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding: 10px;
+  }
+
+  .button12333 {
+    width: 120px;
+    font-size: 14px;
+    padding: 8px;
+  }
+
+  #div1233 {
+    width: 100%;
+    max-width: 350px;
+    margin: 3% auto;
+    padding: 15px;
+  }
+}
+
+/* 📱 Extra Small Screen (Phones Below 480px) */
+@media (max-width: 480px) {
+  #headerFlex1233 {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .button1233 {
+    width: 100%;
+    font-size: 14px;
+    padding: 10px;
+  }
+
+  #div1233 {
+    width: 70% !important;
+    padding: 10px;
+  }
+  
+
+  #div1233 label {
+    font-size: 14px;
+  }
+
+  input {
+    font-size: 14px;
+    padding: 8px;
+  }
+  .inputform1234{
+    font-size: 14px;
+    padding: 8px;
+    min-width:auto !important;
+
+  }
+}

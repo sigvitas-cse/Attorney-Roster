@@ -1,0 +1,94 @@
+import React, { useEffect, useState, useMemo } from "react";
+import axios from "axios";
+import { FaFilter, FaSearch, FaTimes } from "react-icons/fa";
+import { Tooltip } from "react-tooltip";
+import "../../style/Components/AdminDashboard/AttorneyRoster.css";
+
+const AttorneyRoster = () => {
+  const [allData, setAllData] = useState([]);
+  
+  
+  const initialLimit = 5000;
+  const batchLimit = 1000;
+  const rowsPerPage = 500;
+
+  
+  const fetchAllData = async (pageNumber, limit, letter = "") => {
+    try {
+      // const response = await axios.get(`${API_URL}/api/all-users-data`, { 
+
+      const response = await axios.get("http://localhost:3001/api/all-users-data", {
+        params: { page: pageNumber, limit, letter },
+      });
+
+      if (response.status === 200) {
+        setTotalRecords(response.data.totalUsers);
+
+        setAllData((prevData) => {
+          const newData = [...prevData, ...response.data.data];
+
+          if (newData.length >= response.data.totalUsers) {
+            setHasMoreData(false);
+            return newData.slice(0, response.data.totalUsers);
+          }
+
+          return newData;
+        });
+
+        setApiPage(pageNumber + 1);
+      }
+    } catch (err) {
+      console.error("Error fetching data:", err);
+      setHasMoreData(false);
+    }
+  };
+
+  return (
+    
+      <div className="table-container">
+        <table className="user-table2">
+        <thead>
+          <tr>
+            {Object.keys(headerMap).map((header, index) => (
+              <th key={index}>
+                {header}
+                {index !== 0 && (
+                  activeFilters[headerMap[header]] ? (
+                    <FaTimes // Show "X" icon when filter is active
+                      className="filter-icon active-filter"
+                      onClick={() => handleFilterChange(header)}
+                      data-tooltip-id="filter-tooltip"
+                      data-tooltip-content="Remove Filters"
+                    />
+                  ) : (
+                    <FaFilter // Show normal filter icon when no filter applied
+                      className="filter-icon"
+                      onClick={() => handleFilterChange(header)}
+                      data-tooltip-id="filter-tooltip"
+                      data-tooltip-content="Apply Filters"
+                    />
+                  )
+                )}
+              </th>
+            ))}
+          </tr>
+        </thead>
+        <Tooltip id="filter-tooltip" place="right" effect="solid" style={{zIndex:"1000", }}/>
+          <tbody>
+            {visibleData.map((data, index) => (
+              <tr key={index}>
+                <td>{(currentPage - 1) * rowsPerPage + index + 1}</td>
+                {Object.values(headerMap).slice(1).map((key, colIndex) => (
+                  <td key={colIndex}>{highlightMatch(data[key], globalSearch)}</td>
+                ))}
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+      
+
+  );
+};
+
+export default AttorneyRoster;

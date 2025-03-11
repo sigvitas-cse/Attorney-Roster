@@ -1,0 +1,13 @@
+# Node.js
+node_modules/
+# build/
+
+# Logs
+*.log
+
+# Environment Variables
+.env
+
+# Editor-specific files
+*.bak
+*.swp

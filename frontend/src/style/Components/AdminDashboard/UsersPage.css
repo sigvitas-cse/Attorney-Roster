@@ -1,0 +1,101 @@
+.users-container {
+  width: 90%;
+  max-width: 1200px; /* Prevents excessive stretching on large screens */
+  margin: 40px auto;
+  padding: 20px;
+  background: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+  text-align: center;
+}
+
+h2 {
+  color: #333;
+  margin-bottom: 20px;
+}
+
+.table-container {
+  width: 100%;
+  overflow-x: auto; /* Enables horizontal scrolling on small screens */
+}
+
+/* Responsive Table */
+.user-table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 600px; /* Ensures table does not shrink too much */
+}
+
+.user-table th, .user-table td {
+  border: 1px solid #ddd;
+  padding: 10px;
+  text-align: left;
+  font-size: 16px; /* Standard font size */
+  white-space: nowrap; /* Prevents text from wrapping */
+}
+
+.user-table th {
+  background: #4CAF50;
+  color: white;
+}
+
+.user-table tr:nth-child(even) {
+  background: #f9f9f9;
+}
+
+.user-table tr:hover {
+  background: #f1f1f1;
+}
+
+/* Responsive Button */
+.back-button {
+  margin-top: 20px;
+  padding: 10px 15px;
+  border: none;
+  background: #007BFF;
+  color: white;
+  cursor: pointer;
+  font-size: 16px;
+  border-radius: 5px;
+  transition: background 0.3s ease-in-out;
+}
+
+.back-button:hover {
+  background: #0056b3;
+}
+
+/* 🔥 Responsive Adjustments */
+@media screen and (max-width: 768px) {
+  .users-container {
+      width: 95%; /* Slightly increase width for better spacing */
+      padding: 15px;
+  }
+
+  .user-table th, .user-table td {
+      font-size: 14px; /* Reduce text size */
+      padding: 8px;
+  }
+
+  .back-button {
+      font-size: 14px;
+      padding: 8px 12px;
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .users-container {
+      width: 100%; /* Use full width for smaller screens */
+      margin: 20px auto;
+  }
+
+  .user-table th, .user-table td {
+      font-size: 12px;
+      padding: 6px;
+  }
+
+  .back-button {
+      font-size: 14px;
+      padding: 6px 10px;
+      width: 100%; /* Make button full width for better accessibility */
+  }
+}

@@ -1,0 +1,146 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+html, body {
+  margin: 0;
+  padding: 0;
+  /* height: 100%; */
+  box-sizing: border-box;
+}
+#headerFlex123{
+  background: linear-gradient(135deg, #051B34 0%, #04347cd8 100%);
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  padding: 5px;
+}
+.button123{
+  background: linear-gradient(135deg, #051B34 0%, #04347cd8 100%);
+  height:auto;
+  width: auto;
+  border-radius: 5px;
+  color: white;
+  font-size: 18px;
+  font-weight: 600;
+  border: none;
+  margin: 5px;
+  padding: 5px;
+  cursor: pointer;
+}
+.button123:hover{
+  background: linear-gradient(135deg, #04347cd8 0%, #051B34 100%);
+  outline: white solid 1px;
+}
+.button1233{
+  width:150px !important;
+  border: 1px solid white !important;
+}
+.App123 {
+  width: 100%;
+  height: auto;
+  margin: 0;
+  padding: 0;
+  text-align: center;
+  background: linear-gradient(135deg, #051B34 0%, #04347cd8 100%);
+  display: block;
+}
+#main123{
+  /* border: 1px solid white; */
+}
+#main123 h3{
+  padding-top: 20px;
+  font-size: 30px;
+  font-weight: bold;
+  color: white;
+}
+
+h3{
+  color: white;
+  font-weight: 600;
+}
+form{
+  height:70vh !important;
+  padding: 10px;
+  margin-top: 2%;
+  /* border: 1px solid white; */
+}
+
+form #div123{
+  height: 200px;
+  width: fit-content;
+  padding: 30px 10px 10px 10px;
+  margin-top: 20%;
+  border: 0.5px solid white;
+  border-radius: 15px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  /* align-content: center; */
+  margin: auto;
+}
+
+input{
+  border: none;
+  width: 300px;
+  font-size: 18px;
+  padding: 10px;
+  border-radius: 50px;
+  text-align: center;
+  margin: 5px;
+  transition: all 0.3s ease;
+}
+input:hover{
+  background-color: rgba(247, 244, 244, 0.918);
+
+}
+
+input::placeholder {
+  color: rgba(200, 200, 200, 0.7);
+}
+
+footer {
+    height: 30px;
+    background-color: #333;
+    color: white;
+    text-align: center;
+    padding:0;
+    bottom: 0;
+}
+
+@media (max-width: 768px) {
+  #div123 {
+    width: 90%;
+    margin: auto;
+    padding: 0;
+    height: 300px;
+  }
+  .button1233{
+    width: 100px;
+    font-size: 10px;
+    padding: 5px;
+  }
+  #toggle123{
+    right: 40px;
+  }
+}
+#toggle123{
+  position: absolute;
+  top: 50%;
+  right: 20px;
+  transform: translateY(-50%);
+  cursor: pointer;
+  color: #333;
+  padding: 0;
+  /* border: 1px solid black ; */
+}
+@media (max-width: 480px){
+  #div123 label{
+    font-size: 16px;
+    padding: 0
+  }
+  #toggle123{
+    right: 20px;
+  }
+}

@@ -1,0 +1,334 @@
+/* Global Reset */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  text-decoration: none;
+}
+body {
+  font-family: "Montserrat", sans-serif;
+  line-height: 1.6;
+  color: #333;
+  background-color: #f4f4f4;
+}
+
+.App1234 {
+  height: 100vh;
+  min-width: 100vw;
+  max-width: auto;
+  background: linear-gradient(135deg, #051B34 0%, #04347cd8 100%);
+}
+
+#headerFlex1234 {
+  background: none;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  padding: 15px 50px;
+}
+
+.button1234 {
+  background: linear-gradient(135deg, #051B34 0%, #04347cd8 100%);
+  height: auto;
+  width: auto;
+  border-radius: 5px;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.button1234:hover {
+  background: linear-gradient(135deg, #04347cd8 0%, #051B34 100%);
+  outline: white solid 1px;
+}
+
+#main1234 {
+  min-height: auto;
+}
+
+.heroAdmin1234 {
+  height: 200px;
+  text-align: center;
+  color: white;
+  padding: 50px 20px;
+  display: grid;
+}
+
+.heroAdmin1234 h1 {
+  font-size: 2.5rem;
+  margin-bottom: 10px;
+}
+
+.heroAdmin1234 p {
+  font-size: 1.2rem;
+}
+
+.content1234 {
+  min-height: 30vh;
+  max-height: auto;
+  padding: 50px 20px;
+  text-align: center;
+  border: 1px solid #ddd;
+  background-color: #ffffff;
+  align-content: center;
+}
+
+.content1234 h2 {
+  font-size: 2rem;
+  margin-bottom: 20px;
+  color: #333;
+}
+
+.content1234 .grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 20px;
+}
+
+.content1234 h3 {
+  color: black;
+}
+.content1234 p {
+  color: black;
+}
+
+
+.card {
+  height: 200px;
+  align-content: center;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  padding: 20px;
+  text-align: center;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+.cardOneHeight{
+  height: 500px;
+}
+.card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+}
+
+.card i {
+  font-size: 2rem;
+  color: #0073e6;
+  margin-bottom: 15px;
+}
+
+.cta {
+  background: linear-gradient(135deg, #051B34 0%, #04347cd8 100%);
+  color: white;
+  text-align: center;
+  padding: 50px 20px;
+  border: 1px solid #ddd;
+}
+
+.cta h2 {
+  font-size: 2rem;
+  margin-bottom: 10px;
+}
+
+.cta p {
+  font-size: 1rem;
+  margin-bottom: 20px;
+}
+
+.cta .btn {
+  display: inline-block;
+  background-color: #0073e6;
+  color: white;
+  padding: 10px 20px;
+  border-radius: 5px;
+  text-transform: uppercase;
+  font-weight: bold;
+  transition: background-color 0.3s ease;
+}
+
+.cta .btn:hover {
+  background-color: #004494;
+}
+
+#bottom1234 {
+  background-color: #333;
+  color: white;
+  text-align: center;
+  padding: 20px;
+}
+
+@media (max-width: 768px) {
+  #main1234 {
+    min-height: 140vh;
+  }
+  #bottom1234 {
+    margin-bottom: 0;
+    padding: 0;
+    align-content: center;
+  }
+}
+
+@media (max-width: 1512px) {
+  #main1234 {
+    min-height: 140vh;
+  }
+}
+
+@media (max-width: 983px) {
+  #main1234 {
+    min-height: 140vh;
+  }
+}
+.makeAuto{
+  width: 80px;
+}
+.user-table2 {
+  width: 100%;
+  border-collapse: collapse;
+  background: white;
+  table-layout: fixed;
+}
+.user-table2 th,
+.user-table2 td {
+  border: 1px solid #ddd;
+  padding: 8px;
+  
+  white-space: normal; /* Allow text to wrap to the next line if it's too long */
+  word-wrap: break-word; /* Breaks long words to avoid overflow */
+  overflow: hidden;
+}
+.user-table2 th {
+  background-color: #f2f2f2;
+  text-align: center;
+  position: sticky;
+  top: 0;
+  z-index: 1;
+}
+.user-table2 td {
+  width:auto; /* Set fixed width for each column */
+  text-align: left;
+}
+.user-table2 tbody td{
+  text-align: left;
+}
+.non-serial-no-header{
+  width: 220px; /* Set fixed width for header */
+}
+.serial-no-header {
+  width: 70px;
+  white-space: nowrap; /* Prevent text from wrapping */
+}
+.table-container {
+  max-height: 100vh; /* Set height for scrollable table */
+  overflow-y: auto; /* Adds vertical scroll */
+  overflow-x: auto; /* Adds horizontal scroll */
+}
+.filter-icon {
+  cursor: pointer;  
+  margin-left: 5px;
+  font-size: 14px;
+  color: white;
+  /* color: white; */
+}
+
+.filter-icon:hover {
+  color: black;
+}
+
+/* Form and Button Styles */
+.split-screen {
+  min-height: auto;
+  display: flex;
+  margin-top: 20px;
+  flex-grow: 1;
+  background:rgb(238, 237, 237);
+  /* color: white; */
+  border-radius: 20px;
+  /* border: 1px solid gray; */
+}
+.left-section {
+  flex: 1;
+  padding: 20px;
+  background: none;
+  align-content: center;
+  align-items: center;
+  text-align: center;
+  border-right: 1px solid lightgray;
+ 
+}
+.left-section form label{
+  color: black;
+}
+
+
+.right-section {
+  flex: 2;
+  padding: 20px;
+  text-align: center;
+  align-items: center;
+  /* align-content: center; */
+ }
+
+
+.userForm div {
+  margin-bottom: 10px;
+}
+
+.userForm input {
+  padding: 10px;
+  width: auto;
+  border: 1px solid gray;
+}
+
+.saveButtondashboard1 {
+  padding: 10px 20px;
+  background: linear-gradient(135deg, #051B34 0%, #04347cd8 100%);
+  color: white;
+  border: none;
+  cursor: pointer;
+  border-radius: 5px;
+  font-size: 15px;
+  font-weight: 600;
+}
+.saveButtondashboard1:hover{
+  background: linear-gradient(135deg, #04347cd8 0%, #051B34 100%);
+
+}
+
+button:disabled {
+  background-color: #cccccc;
+}
+.usersSection h2,p{
+  /* height: auto; */
+  color: white;
+  text-align: center;
+}
+.patentDataSection h2,p{
+  color: white;
+  text-align: center;
+}
+.manipulatedDataSection h2,p{
+  color: white;
+  text-align: center;
+}
+.makeSectionBorder{
+  height: 300px;
+  width: 350px;
+  margin: auto auto;
+  border: 1px solid lightgray;
+  border-radius: 10px;
+  background: #fcfcfc;
+}
+.removeButton{
+  background: red;
+  color: white;
+  padding: 5px;
+  /* border: none; */
+  font-weight: bold;
+  border-radius: 5px;
+}
+.removeButton:hover{
+  background: rgb(197, 1, 1);
+}
