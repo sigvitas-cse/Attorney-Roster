@@ -17,16 +17,16 @@ const AddUserForm = () => {
     }
     setLoading(true);
     try {
+      
+      console.log("Sending email:", email);  // ✅ Debug log before sending
 
-      const response = await axios.fetch(`${API_URL}/api/save-employee-details`, { 
+      // const response = await axios.post(`${API_URL}/api/save-employee-details`, { email });
+      
+      const response = await axios.post("http://localhost:3001/api/save-employee-details", { email });
 
-      // const response = await fetch("http://localhost:3001/api/save-employee-details", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email }),
-      });
 
-      const data = await response.json();
+      console.log("Response received:", response.data);  // ✅ Debug log for API response
+
       alert(`${email} added successfully.`);
       setUsers([...users, { email }]);
       setEmail("");

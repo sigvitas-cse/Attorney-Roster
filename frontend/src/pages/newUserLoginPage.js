@@ -48,8 +48,6 @@ function NewUserLoginPage() {
   
     try {
       // const response = await axios.post(`${API_URL}/api/save-new-employee-details`,{ 
-      //   firstName, lastName, email, contact, password, userType: 'employee' 
-      // });
       const response = await axios.post('http://localhost:3001/api/save-new-employee-details', { 
         firstName, lastName, email, contact, password, userType: 'employee' 
       });
