@@ -294,16 +294,43 @@ const handleFilterChange = (columnHeader) => {
           </tr>
         </thead>
         <Tooltip id="filter-tooltip" place="right" effect="solid" style={{zIndex:"1000", }}/>
-          <tbody>
+        <tbody>
             {visibleData.map((data, index) => (
-              <tr key={index}>
+              <tr key={index} >
+
                 <td>{(currentPage - 1) * rowsPerPage + index + 1}</td>
+
                 {Object.values(headerMap).slice(1).map((key, colIndex) => (
-                  <td key={colIndex}>{highlightMatch(data[key], globalSearch)}</td>
+                  <td 
+                    key={colIndex}
+                    data-tooltip-id="data-tooltip"
+                    data-tooltip-content={`Name: ${data.name} \n Reg Code: ${data.regCode} \n Organization: ${data.organization}`}
+                    style={{cursor:'pointer'}}
+                  >
+                      {highlightMatch(data[key], globalSearch)}
+                  </td>
                 ))}
               </tr>
             ))}
           </tbody>
+          <Tooltip 
+            id="data-tooltip" 
+            place="top" 
+            effect="solid" 
+            style={{ 
+              zIndex: "1000", 
+              backgroundColor: "black", /* Solid blue */
+              color: "orange", 
+              border: "1px solid blue",
+              padding: "8px",
+              fontWeight: "bold",
+              fontSize: "18px",
+              textAlign: "left",
+              whiteSpace: "pre-line", /* Ensures line breaks */
+            }} 
+          />
+
+
         </table>
       </div>
       {/* Pagination Controls */}
@@ -320,7 +347,7 @@ const handleFilterChange = (columnHeader) => {
             min="1"
             max={totalPages}
             onChange={(e) => setCurrentPage(Math.max(1, Math.min(totalPages, Number(e.target.value))))}
-            onKeyDown={(e) => {
+            onKeyDown={(e) => { 
               if (e.key === "Enter") {
                 const page = Number(e.target.value);
                 if (page >= 1 && page <= totalPages) {
