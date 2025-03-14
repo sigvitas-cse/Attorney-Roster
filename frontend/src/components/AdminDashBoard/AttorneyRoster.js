@@ -315,12 +315,12 @@ const handleFilterChange = (columnHeader) => {
           </tbody>
           <Tooltip 
             id="data-tooltip" 
-            place="top" 
+            place="left" 
             effect="solid" 
             style={{ 
               zIndex: "1000", 
               backgroundColor: "black", /* Solid blue */
-              color: "orange", 
+              color: "yellow", 
               border: "1px solid blue",
               padding: "8px",
               fontWeight: "bold",
