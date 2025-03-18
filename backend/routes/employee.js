@@ -2,6 +2,7 @@ const router = require('express').Router();
 const UserModel = require("../models/User"); 
 const UserLoginsModel = require("../models/Login");
 const NewUsersLoginModel = require("../models/NewUsers");
+const Analysis = require("../models/Analysis");
 
 const xlsx = require("xlsx");
 const path = require("path");
@@ -539,6 +540,17 @@ router.delete("/delete-user/:userId", async (req, res) => {
   }
 });
 
-
+// Fetch analysis data
+router.get("/analysis", async (req, res) => {
+  try {
+    console.log('inside the analysis section');
+    
+    const analysisData = await Analysis.find().sort({ timestamp: 1 });
+    res.json(analysisData);
+    console.log("analysis data:", analysisData)
+  } catch (error) {
+    res.status(500).json({ message: "Error fetching analysis data", error });
+  }
+});
 
 module.exports = router;

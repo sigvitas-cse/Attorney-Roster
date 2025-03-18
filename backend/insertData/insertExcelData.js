@@ -36,7 +36,8 @@ const insertDataFromExcel = async () => {
 
     // Define file paths
     const filePaths = [
-                        "C:/Users/dverm/Desktop/Task/backend/insertData/Darshan - Active Attorney - 11-03-2025.xlsx",
+                        // "C:/Users/dverm/Desktop/Task/backend/insertData/Darshan - Active Attorney - 11-03-2025.xlsx",
+                        "C:/Users/dverm/Desktop/Task/backend/insertData/Active Attorney - Darshan - 17-03-2025.xlsx",
                       ];
 
     let allUsers = [];

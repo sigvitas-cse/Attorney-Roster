@@ -20,9 +20,9 @@ const AddUserForm = () => {
       
       console.log("Sending email:", email);  // ✅ Debug log before sending
 
-      // const response = await axios.post(`${API_URL}/api/save-employee-details`, { email });
+      const response = await axios.post(`${API_URL}/api/save-employee-details`, { email });
       
-      const response = await axios.post("http://localhost:3001/api/save-employee-details", { email });
+      // const response = await axios.post("http://localhost:3001/api/save-employee-details", { email });
 
 
       console.log("Response received:", response.data);  // ✅ Debug log for API response
