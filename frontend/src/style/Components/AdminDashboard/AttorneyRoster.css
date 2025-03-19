@@ -518,3 +518,9 @@
     cursor: pointer !important;
     margin-left: 5px !important;
   }
+  .highlight-updated {
+    background-color: #ffeb99 !important; /* Light Yellow */
+    font-weight: bold;
+    color: #d9534f; /* Red text */
+  }
+  

@@ -1,8 +1,9 @@
 const router = require('express').Router();
-const UserModel = require("../models/User"); 
+const UserModel = require("../models/NewProfile"); 
 const UserLoginsModel = require("../models/Login");
 const NewUsersLoginModel = require("../models/NewUsers");
 const Analysis = require("../models/Analysis");
+const UpdatedProfilesComparison = require("../models/UpdatedProfilesComparison");
 
 const xlsx = require("xlsx");
 const path = require("path");
@@ -550,6 +551,20 @@ router.get("/analysis", async (req, res) => {
     console.log("analysis data:", analysisData)
   } catch (error) {
     res.status(500).json({ message: "Error fetching analysis data", error });
+  }
+});
+
+
+// API to Add New or Update Profiles in Project 2's Collection
+router.get("/updatedprofilescomparisons", async (req, res) => {
+  console.log("✅ Inside updatedprofilescomparisons route");
+
+  try {
+    const updatedProfiles = await UpdatedProfilesComparison.find({ isUpdated: true }); // Use correct model
+    res.status(200).json(updatedProfiles);
+  } catch (error) {
+    console.error("❌ Server error:", error);
+    res.status(500).json({ message: "Server error", error });
   }
 });
 

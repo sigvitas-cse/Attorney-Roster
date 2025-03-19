@@ -1,10 +1,7 @@
 const xlsx = require("xlsx");
+const User = require("../models/User");
 const mongoose = require("mongoose");
 require("dotenv").config();
-
-// Importing models
-const OldProfile = require("../models/OldProfile");
-const NewProfile = require("../models/NewProfile");
 
 // Function to convert Excel date (if in serial format) to MM-DD-YYYY or retain MM-DD-YYYY
 const convertDate = (date) => {
@@ -25,6 +22,7 @@ const convertDate = (date) => {
   return "NA"; // Handle invalid or missing dates
 };
 
+
 const insertDataFromExcel = async () => {
   try {
     // Connect to MongoDB
@@ -36,30 +34,21 @@ const insertDataFromExcel = async () => {
 
     console.log("Connected to MongoDB");
 
-    // Step 1: Move all `newprofiles` data to `oldprofiles`
-    await OldProfile.deleteMany({}); // Delete old data
-    const newProfilesData = await NewProfile.find(); // Get all new profiles
-    if (newProfilesData.length > 0) {
-      await OldProfile.insertMany(newProfilesData); // Move to old profiles
-      console.log("Moved all data from newprofiles to oldprofiles");
-    }
-
-    // Step 2: Delete all data from `newprofiles`
-    await NewProfile.deleteMany({});
-    console.log("Cleared all data in newprofiles");
-
-    // Step 3: Read and insert new Excel data into `newprofiles`
+    // Define file paths
     const filePaths = [
                         // "C:/Users/dverm/Desktop/Task/backend/insertData/Darshan - Active Attorney - 11-03-2025.xlsx",
-                      "C:/Users/dverm/Desktop/Task/backend/insertData/Active Attorney - Darshan - 17-03-2025.xlsx",
-    ];
+                        "C:/Users/dverm/Desktop/Task/backend/insertData/Active Attorney - Darshan - 17-03-2025.xlsx",
+                      ];
 
     let allUsers = [];
+
     for (const filePath of filePaths) {
+      // Read Excel file
       const workbook = xlsx.readFile(filePath);
-      const sheetName = workbook.SheetNames[0];
+      const sheetName = workbook.SheetNames[0]; // Assuming data is in the first sheet
       const sheetData = xlsx.utils.sheet_to_json(workbook.Sheets[sheetName]);
 
+      // Map sheet data to your schema
       const users = sheetData.map((row) => ({
         slNo: row["S. No."],
         name: row["Name"],
@@ -96,13 +85,13 @@ const insertDataFromExcel = async () => {
       allUsers = allUsers.concat(users);
     }
 
-    await NewProfile.insertMany(allUsers);
-    console.log("Inserted new data into newprofiles");
-
+    // Insert data into MongoDB
+    await User.insertMany(allUsers);
+    console.log("Data inserted successfully!");
   } catch (error) {
-    console.error("Error:", error);
+    console.error("Error inserting data:", error);
   } finally {
-    mongoose.connection.close();
+    mongoose.connection.close(); // Close connection
   }
 };
 
