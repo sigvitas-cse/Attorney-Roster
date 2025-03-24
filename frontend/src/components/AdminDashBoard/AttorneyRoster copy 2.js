@@ -144,49 +144,67 @@ const handleFilterChange = (columnHeader) => {
 
   const fetchAllData = async (pageNumber, limit, letter = "") => {
     try {
-      const response = await axios.get("http://localhost:3001/api/all-users-data", {
-        params: { page: pageNumber, limit, letter },
-      });
-  
-      const updatedResponse = await axios.get("http://localhost:3001/api/updatedprofilescomparisons");
-  
-      console.log("🔍 Updated Profiles API Response:", updatedResponse.data); // Log the response
-  
-      if (response.status === 200 && updatedResponse.status === 200) {
-        const updatedProfiles = new Set(
-          updatedResponse.data.map((item) => item.regCode?.trim()?.toLowerCase())
-        );
-  
-        console.log("✅ Updated Profiles Set:", updatedProfiles);
-  
-        setTotalRecords(response.data.totalUsers);
-  
-        setAllData((prevData) => {
-          const existingIds = new Set(prevData.map((item) => item._id || item.regCode));
-          const newData = response.data.data.filter((item) => !existingIds.has(item._id || item.regCode));
-  
-          const updatedAllData = [...prevData, ...newData].map((item) => {
-            const isUpdated = updatedProfiles.has(item.regCode?.trim()?.toLowerCase());
-            console.log(`Row RegCode: ${item.regCode}, isUpdated: ${isUpdated}`);
-            return { ...item, isUpdated };
-          });
-  
-          return updatedAllData;
+        // Fetch all users
+        const response = await axios.get("http://localhost:3001/api/all-users-data", {
+            params: { page: pageNumber, limit, letter },
         });
-  
-        if (response.data.data.length < limit) {
-          setHasMoreData(false);
-        } else {
-          setApiPage(pageNumber + 1);
+
+        if (response.status === 200) {
+            setTotalRecords(response.data.totalUsers);
+
+            setAllData((prevData) => {
+                // ✅ Use a Set for uniqueness (_id or regCode)
+                const existingIds = new Set(prevData.map((item) => item._id || item.regCode));
+                const newData = response.data.data.filter((item) => !existingIds.has(item._id || item.regCode));
+
+                return [...prevData, ...newData];
+            });
+
+            // ✅ Stop fetching when there's no more data
+            if (response.data.data.length < limit) {
+                setHasMoreData(false);
+            } else {
+                setApiPage((prev) => prev + 1);
+            }
         }
-      }
+
+        // 🔹 Fetch Updated Profiles Separately
+        await fetchUpdatedProfiles();
     } catch (err) {
-      console.error("❌ Error fetching data:", err);
-      setHasMoreData(false);
+        console.error("Error fetching data:", err);
+        setHasMoreData(false);
     }
-  };
-  
-  
+};
+
+/** ✅ Separate function for fetching updated profiles */
+const fetchUpdatedProfiles = async () => {
+  try {
+      const updatedResponse = await axios.get("http://localhost:3001/api/updatedprofilescomparisons");
+      console.log("✅ API Response:", updatedResponse.data); // Debugging
+
+      if (updatedResponse.status === 200) {
+          const updatedProfiles = new Set(
+              updatedResponse.data.map(item => item.regCode?.trim()?.toLowerCase()) // ✅ Normalize `regCode`
+          );
+
+          // console.log("Fetched updatedProfiles:", updatedProfiles); // 🔹 Log data for debugging
+
+          setAllData((prevData) => 
+              prevData.map((item) => {
+                  const isUpdated = updatedProfiles.has(item.regCode?.trim()?.toLowerCase());
+                  // console.log(`Row: ${item.regCode} → isUpdated:`, isUpdated); // 🔹 Log row-wise check
+                  return { ...item, isUpdated };
+              })
+          );
+      }
+  } catch (err) {
+     console.error("❌ Error fetching updated profiles:", err.response?.status, err.response?.data);
+  }
+};
+
+
+
+
   
   /** 🔹 Fetch initial records on mount */
   useEffect(() => {
@@ -311,12 +329,10 @@ const handleFilterChange = (columnHeader) => {
         <Tooltip id="filter-tooltip" place="right" effect="solid" style={{zIndex:"1000", }}/>
         <tbody>
             {visibleData.map((data, index) => (
-              
-              <tr key={index} 
-              className={data.isUpdated ? "highlight-updated" : ""}
-              onClick={() => console.log("Row Clicked - regCode:", data.regCode, "isUpdated:", data.isUpdated)}
+              <tr 
+                key={index} 
+                className={data.isUpdated ? "highlight-updated" : ""}
               >
-
                 <td>{(currentPage - 1) * rowsPerPage + index + 1}</td>
 
                 {Object.values(headerMap).slice(1).map((key, colIndex) => (

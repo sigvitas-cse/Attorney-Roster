@@ -467,9 +467,21 @@ router.get("/all-users-data", async (req, res) => {
       .limit(limit)
       .lean();
 
+
+      // ✅ Fetch updated profile regCodes
+    const updatedProfiles = await UpdatedProfilesComparison.find({}, { regCode: 1, _id: 0 });
+    const updatedRegCodes = new Set(updatedProfiles.map((item) => item.regCode?.trim()?.toLowerCase()));
+
+    // ✅ Mark users as updated if their regCode matches
+    const usersWithHighlight = data.map((user) => ({
+      ...user,
+      isUpdated: updatedRegCodes.has(user.regCode?.trim()?.toLowerCase()),
+    }));
+
+
     res.status(200).json({
       success: true,
-      data,
+      data: usersWithHighlight,
       totalUsers,
       currentPage: page,
       totalPages: Math.ceil(totalUsers / limit), // ✅ Keep pagination working
@@ -560,12 +572,26 @@ router.get("/updatedprofilescomparisons", async (req, res) => {
   console.log("✅ Inside updatedprofilescomparisons route");
 
   try {
-    const updatedProfiles = await UpdatedProfilesComparison.find({ isUpdated: true }); // Use correct model
+    const updatedProfiles = await UpdatedProfilesComparison.find({}); 
     res.status(200).json(updatedProfiles);
   } catch (error) {
     console.error("❌ Server error:", error);
     res.status(500).json({ message: "Server error", error });
   }
 });
+router.get("/updatedprofilescomparisons2", async (req, res) => {
+  console.log("✅ Inside fortestinnews route");
+
+  try {
+    const testData = await UpdatedProfilesComparison.find({}); // Fetch all documents
+    console.log("✅ Retrieved Data:", testData); // Debugging
+
+    res.status(200).json(testData);
+  } catch (error) {
+    console.error("❌ Server error:", error);
+    res.status(500).json({ message: "Server error", error });
+  }
+});
+
 
 module.exports = router;
