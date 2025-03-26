@@ -523,4 +523,22 @@
     font-weight: bold;
     color: #d9534f; /* Red text */
   }
+  .datasections p{
+    text-align: left;
+  }
+  .newprofiles{
+    color: green;
+    cursor: pointer;
+  }
+  .updatedrofiles{
+    color: #2f455c;
+    cursor: pointer;
+  }
+  .removedprofiles{
+    color: red;
+    cursor: pointer;
+  }
+  .datasections p:hover{
+    color: black;
+  }
   

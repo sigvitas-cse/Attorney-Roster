@@ -167,7 +167,7 @@ const handleFilterChange = (columnHeader) => {
   
           const updatedAllData = [...prevData, ...newData].map((item) => {
             const isUpdated = updatedProfiles.has(item.regCode?.trim()?.toLowerCase());
-            console.log(`Row RegCode: ${item.regCode}, isUpdated: ${isUpdated}`);
+            // console.log(`Row RegCode: ${item.regCode}, isUpdated: ${isUpdated}`);
             return { ...item, isUpdated };
           });
   
@@ -263,6 +263,12 @@ const handleFilterChange = (columnHeader) => {
                   value={globalSearch}
                   onChange={(e) => setGlobalSearch(e.target.value)}
                 />
+            </div>
+            <div className="datasections">
+              <p className="newprofiles">New Profiles</p>
+              <p className="updatedrofiles">Updated Profiles</p>
+              <p className="removedprofiles">Removed Profiles</p>
+
             </div>
         </div>
 
