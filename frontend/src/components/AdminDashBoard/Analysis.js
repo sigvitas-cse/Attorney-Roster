@@ -10,10 +10,13 @@ function Analysis() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
+  const API_URL = process.env.REACT_APP_API_URL || "https://roster1.sigvitas.com";
+
   // Fetch data from the backend
   useEffect(() => {
     const fetchAnalysisData = async () => {
       try {
+        // const response = await axios.get(`${API_URL}/api/analysis`);
         const response = await axios.get("http://localhost:3001/api/analysis"); // Change URL in production
         const formattedData = response.data.map((item) => ({
           week: new Date(item.timestamp).toLocaleDateString(), // Convert timestamp to readable date

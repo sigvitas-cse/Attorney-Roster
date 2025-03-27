@@ -18,7 +18,7 @@ app.use(express.json()); // Parse JSON requests
 const corsOptions = {
   origin: ['http://localhost:3000', 'http://roster1.sigvitas.com'], // Update for production
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization'],
+  allowedHeaders: ['Content-Type', 'Authorization', "x-api-key"],
 };
 app.use(cors(corsOptions));
 app.options('*', cors(corsOptions));

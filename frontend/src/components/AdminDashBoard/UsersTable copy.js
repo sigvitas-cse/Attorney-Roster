@@ -11,13 +11,36 @@ const Users = () => {
     fetchUsers();
   }, []);
 
+
+  const fetchApiKey = async () => {
+    try {
+      // const response = await axios.get('https://roster1.sigvitas.com/api/get-api-key');
+        const response = await axios.get("http://localhost:3001/api/get-api-key");
+        return response.data.apiKey;
+    } catch (error) {
+        console.error("❌ Error fetching API key:", error);
+        return null;
+    }
+};
+
   // Function to fetch users
   const fetchUsers = async () => {
+    const apiKey = await fetchApiKey(); // Get the latest API key
+    if (!apiKey) {
+        alert("Failed to fetch API key");
+        return;
+    }
+
     try {
 
-      const response = await axios.get(`${API_URL}/api/all-users`);
+      // const response = await axios.get('https://roster1.sigvitas.com/api/all-users',{
+      //     headers: { "x-api-key": apiKey },
+      // });
 
-      // const response = await axios.get(`http://localhost:3001/api/all-users`);
+      const response = await axios.get(`http://localhost:3001/api/all-users`, {
+        headers: { "x-api-key": apiKey },
+      });
+      console.log("apiKey is:",apiKey);
 
       if (response.status === 200) {
         setUsers(response.data.data);

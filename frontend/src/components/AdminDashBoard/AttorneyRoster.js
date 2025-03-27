@@ -144,10 +144,11 @@ const handleFilterChange = (columnHeader) => {
 
   const fetchAllData = async (pageNumber, limit, letter = "") => {
     try {
+      // const response = await axios.get(`${API_URL}/api/all-users-data`, {
       const response = await axios.get("http://localhost:3001/api/all-users-data", {
         params: { page: pageNumber, limit, letter },
       });
-  
+      // const updatedResponse = await axios.get(`${API_URL}/api/updatedprofilescomparisons`);
       const updatedResponse = await axios.get("http://localhost:3001/api/updatedprofilescomparisons");
   
       console.log("🔍 Updated Profiles API Response:", updatedResponse.data); // Log the response

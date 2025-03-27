@@ -4,56 +4,6 @@ const UserLoginsModel = require("../models/Login");
 const NewUsersLoginModel = require("../models/NewUsers");
 const Analysis = require("../models/Analysis");
 const UpdatedProfilesComparison = require("../models/UpdatedProfilesComparison");
-const crypto = require("crypto"); 
-const ApiKeyModel = require("../models/ApiKeySchema");
-
-
-// Function to generate and store API key
-const generateAndStoreApiKey = async () => {
-  const newApiKey = crypto.randomBytes(32).toString("hex");
-
-  // Delete the older API key
-  await ApiKeyModel.deleteMany({});
-
-  // Save new API key
-  await new ApiKeyModel({ key: newApiKey }).save();
-  
-  console.log("🔑 New API Key:", newApiKey);
-  return newApiKey;
-};
-
-// Initialize API Key
-let tempApiKey;
-(async () => {
-  tempApiKey = await generateAndStoreApiKey();
-})();
-
-// Refresh API key every 1 hour
-setInterval(async () => {
-  tempApiKey = await generateAndStoreApiKey();
-}, 3600000); // 1 hour
-
-// Middleware to verify API key
-const verifyTempApiKey = async (req, res, next) => {
-  const clientApiKey = req.get("x-api-key");
-
-  // Fetch the latest API key from the database
-  const latestKey = await ApiKeyModel.findOne().sort({ createdAt: -1 });
-
-  if (!clientApiKey || !latestKey || clientApiKey !== latestKey.key) {
-      return res.status(403).json({ message: "❌ Invalid API Key" });
-  }
-
-  next();
-};
-
-
-// Route to get the current API key (for internal use)
-router.get("/get-api-key", async (req, res) => {
-  const latestKey = await ApiKeyModel.findOne().sort({ createdAt: -1 });
-  res.status(200).json({ apiKey: latestKey ? latestKey.key : "No API Key Found" });
-});
-
 
 const xlsx = require("xlsx");
 const path = require("path");
@@ -629,27 +579,12 @@ router.get("/updatedprofilescomparisons", async (req, res) => {
     res.status(500).json({ message: "Server error", error });
   }
 });
-
 router.get("/updatedprofilescomparisons2", async (req, res) => {
   console.log("✅ Inside fortestinnews route");
 
   try {
     const testData = await UpdatedProfilesComparison.find({}); // Fetch all documents
     console.log("✅ Retrieved Data:", testData); // Debugging
-
-    res.status(200).json(testData);
-  } catch (error) {
-    console.error("❌ Server error:", error);
-    res.status(500).json({ message: "Server error", error });
-  }
-});
-
-router.get("/FetchAllData", verifyTempApiKey, async (req, res) => {
-  console.log("✅ Inside FetchAllData route");
-
-  try {
-    const testData = await Analysis.find({}); // Fetch all documents
-    // console.log("✅ Retrieved Data:", testData); // Debugging
 
     res.status(200).json(testData);
   } catch (error) {
