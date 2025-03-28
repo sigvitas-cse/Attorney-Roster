@@ -529,16 +529,22 @@
   .newprofiles{
     color: green;
     cursor: pointer;
+    background: none;
+    border: none;
   }
   .updatedrofiles{
     color: #2f455c;
     cursor: pointer;
+    background: none;
+    border: none;
   }
   .removedprofiles{
     color: red;
     cursor: pointer;
+    background: none;
+    border: none;
   }
-  .datasections p:hover{
+  .datasections button:hover{
     color: black;
   }
   

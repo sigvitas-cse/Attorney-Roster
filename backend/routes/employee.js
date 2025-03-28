@@ -18,7 +18,7 @@ const generateAndStoreApiKey = async () => {
   // Save new API key
   await new ApiKeyModel({ key: newApiKey }).save();
   
-  console.log("🔑 New API Key:", newApiKey);
+  // console.log("🔑 New API Key:", newApiKey);
   return newApiKey;
 };
 
@@ -58,6 +58,8 @@ router.get("/get-api-key", async (req, res) => {
 const xlsx = require("xlsx");
 const path = require("path");
 const fs = require("fs");
+const NewProfiles = require('../models/newlyAddedProfiles');
+const RemovedProfiles = require('../models/RemovedProfiles');
 
 router.post("/add-user", async (req, res) => {
   console.log('Inside add-user Section');
@@ -658,5 +660,61 @@ router.get("/FetchAllData", verifyTempApiKey, async (req, res) => {
   }
 });
 
+router.get("/fetchAllDataToCompare", async (req, res) => {
+  console.log("✅ Inside fetchAllDataToCompare route");
+
+  try {
+    const testData = await UserModel.find({}); 
+
+    res.status(200).json(testData);
+  } catch (error) {
+    console.error("❌ Server error:", error);
+    res.status(500).json({ message: "Server error", error });
+  }
+});
+
+router.get("/newlyAddedProfiles", async (req, res) => {
+  console.log("✅ Inside newlyAddedProfiles route");
+
+  try {
+    const testData1 = await NewProfiles.countDocuments(); 
+    console.log('Total:',testData1);
+    
+    const testData = await NewProfiles.find({}); 
+
+    res.status(200).json(testData);
+  } catch (error) {
+    console.error("❌ Server error:", error);
+    res.status(500).json({ message: "Server error", error });
+  }
+});
+
+router.get("/removedProfiles", async (req, res) => {
+  console.log("✅ Inside removedProfiles route");
+
+  try {
+    
+    const testData = await RemovedProfiles.find({}); 
+ // Transform data before sending response
+ const formattedData = testData.map(profile => ({
+  slNo: profile._id,  // Using MongoDB Object ID as Serial No
+  regCode: profile.regCode,
+  name: profile.name,
+  organization: profile.details?.["Organization/Law Firm Name"] || "",
+  addressLine1: profile.details?.["Address Line 1"] || "",
+  city: profile.details?.["City"] || "",
+  state: profile.details?.["State"] || "",
+  country: profile.details?.["Country"] || "",
+  zipcode: profile.details?.["Zipcode"] || "",
+  phoneNumber: profile.details?.["Phone Number"] || "",
+  agentAttorney: profile.details?.["Agent/Attorney"] || "",
+}));
+
+res.status(200).json(formattedData);
+  } catch (error) {
+    console.error("❌ Server error:", error);
+    res.status(500).json({ message: "Server error", error });
+  }
+});
 
 module.exports = router;

@@ -3,6 +3,8 @@ import axios from "axios";
 import { FaFilter, FaSearch, FaTimes } from "react-icons/fa";
 import { Tooltip } from "react-tooltip";
 import "../../style/Components/AdminDashboard/AttorneyRoster.css";
+import NewProfilesUpdated from "./IndivisualComponents/newProfiles";
+import RemovedProfiles from "./IndivisualComponents/removedProfiles";
 
 const AttorneyRoster = () => {
   const [allData, setAllData] = useState([]);
@@ -14,6 +16,9 @@ const AttorneyRoster = () => {
   const [filters, setFilters] = useState({});
   const [globalSearch, setGlobalSearch] = useState("");
   const [activeFilters, setActiveFilters] = useState({});
+  const [newProfilesUpdate, setNewProfilesUpdate] = useState(false);
+  const [removedProfilesUpdate, setremovedProfilesUpdate] = useState(false);
+
 
   /** 🔹 Header-to-Key Mapping for Filters */
   const headerMap = {
@@ -266,10 +271,19 @@ const handleFilterChange = (columnHeader) => {
                 />
             </div>
             <div className="datasections">
-              <p className="newprofiles">New Profiles</p>
-              <p className="updatedrofiles">Updated Profiles</p>
-              <p className="removedprofiles">Removed Profiles</p>
-
+              <p> <button className="newprofiles" onClick={()=>setNewProfilesUpdate(true)}>New Profiles</button></p>
+              {
+                newProfilesUpdate && (
+                  <NewProfilesUpdated onClick={()=>setNewProfilesUpdate(false)}/>
+                )
+              }
+              <p><button className="removedprofiles" onClick={()=>setremovedProfilesUpdate(true)}>Removed Profiles</button></p>
+              {
+                removedProfilesUpdate && (
+                  <RemovedProfiles onClick={()=>setremovedProfilesUpdate(false)}/>
+                )
+              }
+              <p> <button className="updatedrofiles">Updated Profiles</button></p>
             </div>
         </div>
 
