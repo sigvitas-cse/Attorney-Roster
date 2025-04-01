@@ -717,4 +717,16 @@ res.status(200).json(formattedData);
   }
 });
 
+router.get('/updated-profiles', async (req, res) => {
+  console.log("✅ Inside updated-profiles route");
+
+  try {
+      const profiles = await UpdatedProfilesComparison.find(); // Fetch all data
+      res.json(profiles);
+  } catch (error) {
+      res.status(500).json({ message: 'Server Error', error });
+  }
+});
+
+
 module.exports = router;

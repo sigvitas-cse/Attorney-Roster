@@ -5,6 +5,7 @@ import { Tooltip } from "react-tooltip";
 import "../../style/Components/AdminDashboard/AttorneyRoster.css";
 import NewProfilesUpdated from "./IndivisualComponents/newProfiles";
 import RemovedProfiles from "./IndivisualComponents/removedProfiles";
+import NewProfilesUpdated2 from "./IndivisualComponents/updatedProfiles";
 
 const AttorneyRoster = () => {
   const [allData, setAllData] = useState([]);
@@ -18,6 +19,7 @@ const AttorneyRoster = () => {
   const [activeFilters, setActiveFilters] = useState({});
   const [newProfilesUpdate, setNewProfilesUpdate] = useState(false);
   const [removedProfilesUpdate, setremovedProfilesUpdate] = useState(false);
+  const [updatedProfiles, setUpdatedProfiles] = useState(false)
 
 
   /** 🔹 Header-to-Key Mapping for Filters */
@@ -283,7 +285,12 @@ const handleFilterChange = (columnHeader) => {
                   <RemovedProfiles onClick={()=>setremovedProfilesUpdate(false)}/>
                 )
               }
-              <p> <button className="updatedrofiles">Updated Profiles</button></p>
+              <p> <button className="updatedrofiles" onClick={()=>setUpdatedProfiles(true)}>Updated Profiles</button></p>
+              {
+                updatedProfiles && (
+                  <NewProfilesUpdated2 onClick={()=>setUpdatedProfiles(false)}/>
+                )
+              }
             </div>
         </div>
 
