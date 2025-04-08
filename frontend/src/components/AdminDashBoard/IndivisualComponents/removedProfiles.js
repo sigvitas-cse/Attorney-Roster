@@ -6,10 +6,16 @@ function NewProfilesUpdated({ onClick }) {
   const [data1, setData1] = useState([]);
   const [result, setResult] = useState([]);
 
+  const API_URL = process.env.REACT_APP_API_URL || "https://roster1.sigvitas.com";
+
+
   useEffect(() => {
     const fetchNewProfiles = async () => {
       try {
+        
+        // const removedDataResponse = await axios.get(`${API_URL}/api/removedProfiles`);
         const removedDataResponse = await axios.get("http://localhost:3001/api/removedProfiles");
+
         setResult(removedDataResponse.data)
 
         if (removedDataResponse.status === 200) {

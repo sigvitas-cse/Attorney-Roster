@@ -650,7 +650,8 @@ router.get("/FetchAllData", verifyTempApiKey, async (req, res) => {
   console.log("✅ Inside FetchAllData route");
 
   try {
-    const testData = await Analysis.find({}); // Fetch all documents
+    const testData = await UserModel.find({});
+    // const testData = await Analysis.find({}); // Fetch all documents
     // console.log("✅ Retrieved Data:", testData); // Debugging
 
     res.status(200).json(testData);
@@ -688,6 +689,35 @@ router.get("/newlyAddedProfiles", async (req, res) => {
     res.status(500).json({ message: "Server error", error });
   }
 });
+
+router.get("/newlyAddedProfiles2", async (req, res) => {
+  console.log("✅ Inside newlyAddedProfiles route");
+
+  try {
+    const testData = await NewProfiles.find({}); 
+
+    const formattedData = testData.map(profile => ({
+      slNo: profile._id,  // Optional: use Mongo ID as serial
+      regCode: profile.regCode,
+      name: profile.name,
+      organization: profile.details?.["Organization/Law Firm Name"] || "",
+      addressLine1: profile.details?.["Address Line 1"] || "",
+      addressLine2: profile.details?.["Address Line 2"] || "", // just in case
+      city: profile.details?.["City"] || "",
+      state: profile.details?.["State"] || "",
+      country: profile.details?.["Country"] || "",
+      zipcode: profile.details?.["Zipcode"] || "",
+      phoneNumber: profile.details?.["Phone Number"] || "",
+      agentAttorney: profile.details?.["Agent/Attorney"] || "",
+    }));
+
+    res.status(200).json(formattedData);
+  } catch (error) {
+    console.error("❌ Server error:", error);
+    res.status(500).json({ message: "Server error", error });
+  }
+});
+
 
 router.get("/removedProfiles", async (req, res) => {
   console.log("✅ Inside removedProfiles route");
@@ -727,6 +757,33 @@ router.get('/updated-profiles', async (req, res) => {
       res.status(500).json({ message: 'Server Error', error });
   }
 });
+
+router.get("/IndivisualDataFetching", async (req, res) => {
+  const { regCode } = req.query;
+
+  console.log("✅ Fetching profile for regCode:", regCode);
+
+  if (!regCode) {
+    return res.status(400).json({ message: "regCode is required" });
+  }
+
+  try {
+    const profile = await UserModel.findOne({ regCode: { $regex: new RegExp(`^${regCode}$`, "i") } });
+    console.log('fetched Profile:', profile);
+    
+
+    if (!profile) {
+      return res.status(404).json({ message: "Profile not found" });
+    }
+
+    res.status(200).json(profile);
+  } catch (error) {
+    console.error("❌ Server error:", error.message);
+    res.status(500).json({ message: "Server error", error: error.message });
+  }
+});
+
+
 
 
 module.exports = router;

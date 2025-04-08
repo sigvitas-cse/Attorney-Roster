@@ -18,54 +18,69 @@ function Analysis() {
   useEffect(() => {
     const fetchAnalysisData = async () => {
       try {
-        // const response = await axios.get(`${API_URL}/api/analysis`);
-        const response = await axios.get("http://localhost:3001/api/analysis"); // Change URL in production
-  
-        const formattedData = response.data.map((item) => {
-          const dateObj = new Date(item.timestamp);
-          return {
-            week: dateObj.toLocaleDateString(),
-            totalProfiles: item.total,
-            revisedProfiles: item.updated,
-            removedProfiles: item.removed,
-            newProfiles: item.new,
-            month: dateObj.toLocaleString("default", { month: "short", year: "numeric" }),
-            rawDate: dateObj, // store Date object for reliable comparison
-          };
-        });
-  
-        setWeeklyData(formattedData.slice(-4)); // last 4 entries
-  
-        // Use a Map to ensure only the latest entry per month is saved
-        const monthMap = new Map();
-  
-        formattedData.forEach((entry) => {
-          const existing = monthMap.get(entry.month);
-  
-          if (!existing || entry.rawDate > existing.rawDate) {
-            monthMap.set(entry.month, { ...entry });
+        const response = await axios.get(`${API_URL}/api/analysis`);
+        // const response = await axios.get("http://localhost:3001/api/analysis"); // Change URL in production
+        const formattedData = response.data.map((item) => ({
+          week: new Date(item.timestamp).toLocaleDateString(), // Convert timestamp to readable date
+          totalProfiles: item.total,
+          revisedProfiles: item.updated,
+          removedProfiles: item.removed,
+          newProfiles: item.new,
+          month: new Date(item.timestamp).toLocaleString("default", { month: "short", year: "numeric" }),
+        }));
+        // setWeeklyData(formattedData); //this gives all records
+        setWeeklyData(formattedData.slice(-4));
+
+        // Group data by month for monthly analysis
+        // const groupedMonthlyData = formattedData.reduce((acc, item) => {
+        //   const existingMonth = acc.find((data) => data.month === item.month);
+        //   if (existingMonth) {
+        //     existingMonth.totalProfiles = item.total;
+        //     existingMonth.revisedProfiles += item.revisedProfiles;
+        //     existingMonth.removedProfiles += item.removedProfiles;
+        //     existingMonth.newProfiles += item.newProfiles;
+        //   } else {
+        //     acc.push({ ...item });
+        //   }
+        //   return acc;
+        // }, []);
+
+        const groupedMonthlyData = formattedData.reduce((acc, item) => {
+          const existingMonth = acc.find((data) => data.month === item.month);
+        
+          if (existingMonth) {
+            // Sum up the updates, removed, and new profiles
+            existingMonth.revisedProfiles += item.revisedProfiles;
+            existingMonth.removedProfiles += item.removedProfiles;
+            existingMonth.newProfiles += item.newProfiles;
+        
+            // Ensure totalProfiles is from the last recorded week of the month
+            if (new Date(item.timestamp) > new Date(existingMonth.latestTimestamp)) {
+              existingMonth.totalProfiles = item.total; // Update only if this is the latest week
+              existingMonth.latestTimestamp = item.timestamp;
+            }
+          } else {
+            // Store the first occurrence with its timestamp
+            acc.push({ 
+              ...item, 
+              latestTimestamp: item.timestamp 
+            });
           }
-        });
-  
-        const monthlyList = Array.from(monthMap.values())
-          .sort((a, b) => a.rawDate - b.rawDate) // sort by date if needed
-          .map(({ rawDate, ...rest }) => rest); // remove rawDate before storing
-  
-        setMonthlyData(monthlyList);
+          return acc;
+        }, []).map(({ latestTimestamp, ...rest }) => rest); // Remove latestTimestamp before storing
+        
+
+        setMonthlyData(groupedMonthlyData);
+
         setLoading(false);
       } catch (error) {
-        console.error(error);
         setError("Failed to fetch analysis data");
         setLoading(false);
       }
     };
-  
+
     fetchAnalysisData();
   }, []);
-  
-  
-  
-  
 
   // Prepare data for Pie Chart
   const getPieData = (data) => [

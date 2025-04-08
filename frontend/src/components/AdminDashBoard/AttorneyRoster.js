@@ -175,8 +175,8 @@ const handleFilterChange = (columnHeader) => {
   
           const updatedAllData = [...prevData, ...newData].map((item) => {
             const isUpdated = updatedProfiles.has(item.regCode?.trim()?.toLowerCase());
-            // console.log(`Row RegCode: ${item.regCode}, isUpdated: ${isUpdated}`);
-            return { ...item, isUpdated };
+            const changes = updatedResponse.data.find((changeItem) => changeItem.regCode === item.regCode)?.changes || {};
+            return { ...item, isUpdated, changes };
           });
   
           return updatedAllData;
@@ -272,20 +272,20 @@ const handleFilterChange = (columnHeader) => {
                   onChange={(e) => setGlobalSearch(e.target.value)}
                 />
             </div>
-            <div className="datasections">
-              <p> <button className="newprofiles" onClick={()=>setNewProfilesUpdate(true)}>New Profiles</button></p>
+            <div className="datasections1">
+              <p> <button className="newprofiles1" onClick={()=>setNewProfilesUpdate(true)}>New Profiles</button></p>
               {
                 newProfilesUpdate && (
                   <NewProfilesUpdated onClick={()=>setNewProfilesUpdate(false)}/>
                 )
               }
-              <p><button className="removedprofiles" onClick={()=>setremovedProfilesUpdate(true)}>Removed Profiles</button></p>
+              <p><button className="removedprofiles1" onClick={()=>setremovedProfilesUpdate(true)}>Removed Profiles</button></p>
               {
                 removedProfilesUpdate && (
                   <RemovedProfiles onClick={()=>setremovedProfilesUpdate(false)}/>
                 )
               }
-              <p> <button className="updatedrofiles" onClick={()=>setUpdatedProfiles(true)}>Updated Profiles</button></p>
+              <p> <button className="updatedrofiles1" onClick={()=>setUpdatedProfiles(true)}>Updated Profiles</button></p>
               {
                 updatedProfiles && (
                   <NewProfilesUpdated2 onClick={()=>setUpdatedProfiles(false)}/>
@@ -338,45 +338,53 @@ const handleFilterChange = (columnHeader) => {
         </thead>
         <Tooltip id="filter-tooltip" place="right" effect="solid" style={{zIndex:"1000", }}/>
         <tbody>
-            {visibleData.map((data, index) => (
-              
-              <tr key={index} 
+          {visibleData.map((data, index) => (
+            <tr 
+              key={index} 
               className={data.isUpdated ? "highlight-updated" : ""}
               onClick={() => console.log("Row Clicked - regCode:", data.regCode, "isUpdated:", data.isUpdated)}
-              >
+            >
+              <td>{(currentPage - 1) * rowsPerPage + index + 1}</td>
 
-                <td>{(currentPage - 1) * rowsPerPage + index + 1}</td>
-
-                {Object.values(headerMap).slice(1).map((key, colIndex) => (
-                  <td 
-                    key={colIndex}
-                    data-tooltip-id="data-tooltip"
-                    data-tooltip-content={`Name: ${data.name} \n Reg Code: ${data.regCode} \n Organization: ${data.organization}`}
-                    style={{cursor:'pointer'}}
-                  >
-                      {highlightMatch(data[key], globalSearch)}
-                  </td>
-                ))}
-              </tr>
-            ))}
+              {Object.values(headerMap).slice(1).map((key, colIndex) => (
+                <td 
+                  key={colIndex}
+                  data-tooltip-id="data-tooltip"
+                  data-tooltip-content={
+                    data.isUpdated ? 
+                    `Name: ${data.name} \n Reg Code: ${data.regCode} \n` +
+                    Object.keys(data.changes).map((field) => {
+                      const change = data.changes[field];
+                      return `${field}:\n Old: ${change.oldValue}, New: ${change.newValue}`;
+                    }).join("\n") : 
+                    
+                    `Name: ${data.name} \n Reg Code: ${data.regCode} \n ${headerMap[key] || key}: ${data[key]}`
+                  }
+                  style={{cursor: 'pointer'}}
+                >
+                  {highlightMatch(data[key], globalSearch)}
+                </td>
+              ))}
+            </tr>
+          ))}
           </tbody>
-          <Tooltip 
-            id="data-tooltip" 
-            place="left" 
-            effect="solid" 
-            style={{ 
-              zIndex: "1000", 
-              backgroundColor: "black", /* Solid blue */
-              color: "yellow", 
-              border: "1px solid blue",
-              padding: "8px",
-              fontWeight: "bold",
-              fontSize: "18px",
-              textAlign: "left",
-              whiteSpace: "pre-line", /* Ensures line breaks */
-            }} 
-          />
 
+<Tooltip 
+  id="data-tooltip" 
+  place="left" 
+  effect="solid" 
+  style={{ 
+    zIndex: "1000", 
+    backgroundColor: "black", 
+    color: "yellow", 
+    border: "1px solid blue",
+    padding: "8px",
+    fontWeight: "bold",
+    fontSize: "18px",
+    textAlign: "left",
+    whiteSpace: "pre-line", // Ensures line breaks
+  }} 
+/>
 
         </table>
       </div>

@@ -31,10 +31,12 @@
 }
 
 .close-btn {
+    width: 35px !important;
+    height: 35px !important;
     position: absolute;
     top: 15px;
     right: 20px;
-    background: red;
+    background: red !important;
     color: white;
     border: none;
     padding: 8px 12px;
@@ -45,7 +47,7 @@
 }
 
 .close-btn:hover {
-    background: darkred;
+    background: darkred !important;
 }
 
 .profile-table-container {

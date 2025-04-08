@@ -64,3 +64,44 @@ h3 {
     min-height: auto; /* Let them shrink on mobile */
   }
 }
+.weeklyData {
+  position: relative;
+  margin: 5px;
+  padding: 10px;
+  border: none;
+  cursor: pointer;
+  font-size: 16px;
+  background-color: lightgray;
+}
+
+/* Active button styling */
+.weeklyData.active {
+  background-color: #007bff;
+  color: white;
+  font-weight: bold;
+}
+
+/* Tooltip Styles */
+.weeklyData::after {
+  content: attr(data-tooltip);
+  position: absolute;
+  left: 50%;
+  bottom: 120%; /* Adjust this to move the tooltip above the button */
+  transform: translateX(-50%);
+  background-color: rgba(0, 0, 0, 0.75);
+  color: white;
+  padding: 5px 8px;
+  border-radius: 5px;
+  font-size: 12px;
+  white-space: nowrap;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.2s ease-in-out, visibility 0.2s ease-in-out;
+  pointer-events: none; /* Prevents tooltip from interfering with hover */
+}
+
+/* Show tooltip on hover */
+.weeklyData:hover::after {
+  opacity: 1;
+  visibility: visible;
+}

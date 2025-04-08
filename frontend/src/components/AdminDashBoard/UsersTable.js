@@ -15,9 +15,8 @@ const Users = () => {
   const fetchUsers = async () => {
     try {
 
-      const response = await axios.get(`${API_URL}/api/all-users`);
-
-      // const response = await axios.get(`http://localhost:3001/api/all-users`);
+      // const response = await axios.get(`${API_URL}/api/all-users`);
+      const response = await axios.get(`http://localhost:3001/api/all-users`);
 
       if (response.status === 200) {
         setUsers(response.data.data);
@@ -35,9 +34,9 @@ const Users = () => {
     if (!window.confirm("Are you sure you want to delete this user?")) return;
 
     try {
-      const response = await axios.delete(`${API_URL}/api/delete-user/${userId}`);
+      // const response = await axios.delete(`${API_URL}/api/delete-user/${userId}`);
 
-      // const response = await axios.delete(`http://localhost:3001/api/delete-user/${userId}`);
+      const response = await axios.delete(`http://localhost:3001/api/delete-user/${userId}`);
       if (response.status === 200) {
         alert("User deleted successfully.");
         setUsers(users.filter((user) => user.userId !== userId)); // Remove from UI

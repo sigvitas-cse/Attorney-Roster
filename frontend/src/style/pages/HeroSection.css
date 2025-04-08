@@ -308,3 +308,17 @@ input:focus {
     font-size: 0.9rem;
   }
 }
+.updatedrofiles11{
+  color: black;
+  cursor: pointer;
+  background: white;
+  border: none;
+  font-size: 1.2rem;
+  padding: 0 10px;
+  margin: 0;
+  transition: all 0.3s ease-in-out
+}
+.updatedrofiles11:hover{
+  background: none; 
+  color: white;
+}

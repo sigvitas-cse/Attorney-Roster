@@ -6,6 +6,9 @@ import axios from "axios";
 import "../style/pages/EmployeeDashboard.css"; 
 import { useNavigate } from "react-router-dom";
 import { useLocation } from "react-router-dom";
+import NewProfilesUpdated from "../components/AdminDashBoard/IndivisualComponents/newProfiles";
+import RemovedProfiles from "../components/AdminDashBoard/IndivisualComponents/removedProfiles";
+import NewProfilesUpdated2 from "../components/AdminDashBoard/IndivisualComponents/updatedProfiles";
 
 const UserTable = () => {
   const [users, setUsers] = useState([]);
@@ -19,6 +22,9 @@ const UserTable = () => {
   const [loading, setLoading] = useState(false);
   const [downloadFormat, setDownloadFormat] = useState("");
   const [isHovered, setIsHovered] = useState(false);
+  const [newProfilesUpdate, setNewProfilesUpdate] = useState(false);
+  const [removedProfilesUpdate, setremovedProfilesUpdate] = useState(false);
+  const [updatedProfiles, setUpdatedProfiles] = useState(false)
 
   useEffect(() => {
       document.title = "Paytent Analyst Dashboard"; 
@@ -50,8 +56,8 @@ const UserTable = () => {
     console.log("UserId being sent to backend:", userId);
 
     axios
-      // .get(`http://localhost:3001/api/fetch-users?userId=${userId}`)
-      .get(`${API_URL}/api/fetch-users?userId=${userId}`)
+      .get(`http://localhost:3001/api/fetch-users?userId=${userId}`)
+      // .get(`${API_URL}/api/fetch-users?userId=${userId}`)
       .then((response) => {
         console.log("Response from backend:", response.data);
         // console.log("Total data:", response.data.data.length);
@@ -374,6 +380,26 @@ const fetchAllAllData = async () => {
     <button onClick={handleUpdateAll} className="saveBtnForAllOne" >
     Save
   </button>
+  <div className="datasections">
+              <p> <button className="newprofiles indivisualbuttons" onClick={()=>setNewProfilesUpdate(true)}>New Profiles</button></p>
+              {
+                newProfilesUpdate && (
+                  <NewProfilesUpdated onClick={()=>setNewProfilesUpdate(false)}/>
+                )
+              }
+              <p><button className="removedprofiles indivisualbuttons" onClick={()=>setremovedProfilesUpdate(true)}>Removed Profiles</button></p>
+              {
+                removedProfilesUpdate && (
+                  <RemovedProfiles onClick={()=>setremovedProfilesUpdate(false)}/>
+                )
+              }
+              <p> <button className="updatedrofiles indivisualbuttons" onClick={()=>setUpdatedProfiles(true)}>Updated Profiles</button></p>
+              {
+                updatedProfiles && (
+                  <NewProfilesUpdated2 onClick={()=>setUpdatedProfiles(false)}/>
+                )
+              }
+            </div>
         </div> 
          {/* <button onClick={fetchAllAllData}>Download</button> This is for all data */}
       </div>

@@ -2,9 +2,12 @@ import React, { useState } from "react";
 import { motion } from "framer-motion";
 import "../style/pages/HeroSection.css";
 import { useNavigate } from 'react-router-dom';
+import IndivisualProfilesUpdated from "../components/IndivisualDataAccessing";
 
 const HeroSection = () => {
   const[label, setlabel] = useState('');
+  const [updatedProfiles, setUpdatedProfiles] = useState(false);
+  
     const navigate = useNavigate();
     function gohome(){
         navigate('/AdminLoginPage');
@@ -74,6 +77,12 @@ const HeroSection = () => {
     >
       <h1>Welcome to Triangle IP</h1>
       <h3>US Patent Attorney Roster</h3>
+      <p className="updatedrofiles111"> <button className="updatedrofiles11" onClick={()=>setUpdatedProfiles(true)}>Know Your Data</button></p>
+              {
+                updatedProfiles && (
+                  <IndivisualProfilesUpdated onClick={()=>setUpdatedProfiles(false)}/>
+                )
+              }
       {/* <p onClick=  {gohome} className="pbtn">Explore More >></p>  */}
       <div className="user-typeiselectio-block">
         <h5 className="user-typeiselectio-block-h5">User Type</h5>

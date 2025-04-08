@@ -523,28 +523,28 @@
     font-weight: bold;
     color: #d9534f; /* Red text */
   }
-  .datasections p{
+  .datasections1 p{
     text-align: left;
   }
-  .newprofiles{
+  .newprofiles1{
     color: green;
     cursor: pointer;
     background: none;
     border: none;
   }
-  .updatedrofiles{
+  .updatedrofiles1{
     color: #2f455c;
     cursor: pointer;
     background: none;
     border: none;
   }
-  .removedprofiles{
+  .removedprofiles1{
     color: red;
     cursor: pointer;
     background: none;
     border: none;
   }
-  .datasections button:hover{
+  .datasections1 button:hover{
     color: black;
   }
   

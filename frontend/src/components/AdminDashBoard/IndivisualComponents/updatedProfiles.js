@@ -6,9 +6,13 @@ function NewProfilesUpdated2({ onClick }) {
   const [data1, setData1] = useState([]);
   const [result, setResult] = useState([]);
 
+  const API_URL = process.env.REACT_APP_API_URL || "https://roster1.sigvitas.com";
+
+
   useEffect(() => {
     const fetchNewProfiles = async () => {
       try {
+        // const updatedProfilesResponse = await axios.get(`${API_URL}/api/updated-profiles`);
         const updatedProfilesResponse = await axios.get("http://localhost:3001/api/updated-profiles");
         setResult(updatedProfilesResponse.data);
 
