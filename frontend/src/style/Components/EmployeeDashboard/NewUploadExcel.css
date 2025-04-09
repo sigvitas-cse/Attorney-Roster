@@ -1,0 +1,80 @@
+/* Modal Overlay (Blurs Background) */
+.uploadExcelModalOverlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    backdrop-filter: blur(5px);
+    background-color: rgba(0, 0, 0, 0.4);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+  }
+  
+  /* Modal Box */
+  .uploadExcelModal {
+    background: white;
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.25);
+    width: 90%;
+    max-width: 500px;
+    position: relative;
+    z-index: 10000;
+  }
+  
+  /* Close Button */
+  .uploadExcelCloseBtn {
+    position: absolute;
+    top: 10px;
+    right: 15px;
+    background-color: #e53e3e;
+    color: white;
+    border: none;
+    border-radius: 50%;
+    padding: 4px 10px;
+    cursor: pointer;
+    font-size: 16px;
+  }
+  
+  /* Form */
+  .uploadExcelForm {
+    margin-top: 20px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+  
+  /* Input */
+  .uploadExcelInput {
+    flex: 1;
+    padding: 6px 12px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+  }
+  
+  /* Button */
+  .uploadExcelBtn {
+    padding: 6px 16px;
+    background-color: #1e90ff;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: 0.2s ease;
+  }
+  
+  .uploadExcelBtn:hover {
+    background-color: #0066cc;
+  }
+  
+  /* Message */
+  .uploadExcelMessage {
+    margin-top: 18px;
+    font-weight: bold;
+    color: #2c7a7b;
+  }
+  

@@ -62,7 +62,7 @@ function App() {
           }}
         />
       </main>
-      {["/AdminLoginPage", "/EmployeeLoginPage", "/NewUserLoginPage"].includes(location.pathname) && <Footer />}
+      {["/AdminLoginPage", "/EmployeeLoginPage", "/NewUserLoginPage", "/ForgotPassword"].includes(location.pathname) && <Footer />}
 
     </>
   );

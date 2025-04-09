@@ -6,6 +6,29 @@ const Analysis = require("../models/Analysis");
 const UpdatedProfilesComparison = require("../models/UpdatedProfilesComparison");
 const crypto = require("crypto"); 
 const ApiKeyModel = require("../models/ApiKeySchema");
+const bcrypt = require('bcrypt');
+
+const multer = require("multer");
+const xlsx = require("xlsx");
+const OldProfile = require("../models/OldProfile");
+const NewProfile = require("../models/NewProfile");
+
+const path = require("path");
+const fs = require("fs");
+const NewProfiles = require('../models/newlyAddedProfiles');
+const RemovedProfiles = require('../models/RemovedProfiles');
+
+const OtpModel = require('../models/Otp');
+const LoginModel = require("../models/Login");
+const nodemailer = require('nodemailer');
+
+const transporter = nodemailer.createTransport({
+  service: 'gmail',
+  auth: {
+    user: 'darshan@sigvitas.com',
+    pass: 'nkpt ixhc gsgo yzyh', // App password generated for Gmail
+  },
+});
 
 
 // Function to generate and store API key
@@ -55,11 +78,6 @@ router.get("/get-api-key", async (req, res) => {
 });
 
 
-const xlsx = require("xlsx");
-const path = require("path");
-const fs = require("fs");
-const NewProfiles = require('../models/newlyAddedProfiles');
-const RemovedProfiles = require('../models/RemovedProfiles');
 
 router.post("/add-user", async (req, res) => {
   console.log('Inside add-user Section');
@@ -784,6 +802,180 @@ router.get("/IndivisualDataFetching", async (req, res) => {
 });
 
 
+const storage = multer.memoryStorage(); // Store file in memory
+const upload = multer({ storage });
+
+const convertDate = (date) => {
+  if (typeof date === "number") {
+    const excelStartDate = new Date(1899, 11, 30);
+    const convertedDate = new Date(excelStartDate.getTime() + date * 86400000);
+    const month = (convertedDate.getMonth() + 1).toString().padStart(2, "0");
+    const day = convertedDate.getDate().toString().padStart(2, "0");
+    const year = convertedDate.getFullYear();
+    return `${day}-${month}-${year}`;
+  } else if (typeof date === "string" && /^\d{2}-\d{2}-\d{4}$/.test(date)) {
+    return date;
+  }
+  return "NA";
+};
+
+// Upload route
+router.post("/upload-excel-dynamic", upload.single("excelFile"), async (req, res) => {
+  try {
+  console.log("✅ Inside upload-excel-dynamic route");
+
+    // Step 1: Move existing data
+    await OldProfile.deleteMany({});
+    console.log("deleted OldProfiles successfully");
+
+    const newProfiles = await NewProfile.find();
+    if (newProfiles.length > 0) {
+      await OldProfile.insertMany(newProfiles);
+    }
+    console.log("inserted newprofiles data to oldprofiles db successfully");
+
+    await NewProfile.deleteMany({});
+
+    console.log("deleted NewProfiles successfully");
+
+    // Step 2: Parse Excel from memory
+    const workbook = xlsx.read(req.file.buffer, { type: "buffer" });
+    const sheetName = workbook.SheetNames[0];
+    const sheetData = xlsx.utils.sheet_to_json(workbook.Sheets[sheetName]);
+
+    const users = sheetData.map((row) => ({
+      slNo: row["S. No."],
+      name: row["Name"],
+      organization: row["Organization/Law Firm Name"],
+      addressLine1: row["Address Line 1"],
+      addressLine2: row["Address Line 2"],
+      city: row["City"],
+      state: row["State"],
+      country: row["Country"],
+      zipcode: row["Zipcode"],
+      phoneNumber: row["Phone Number"],
+      regCode: row["Reg Code"],
+      agentAttorney: row["Agent/Attorney"],
+      dateOfPatent: convertDate(row["Date of Patent Agent Licensed"]),
+      agentLicensed: convertDate(row["Date of Patent Attorney Licensed"]),
+      firmOrOrganization: row["Firm or Organization"],
+      updatedPhoneNumber: row["Updated Phone Number"],
+      emailAddress: row["Email Address"],
+      updatedOrganization: row["Updated Organization/Law Firm Name"],
+      firmUrl: row["Firm/Organization URL"],
+      updatedAddress: row["Updated Address"],
+      updatedCity: row["Updated City"],
+      updatedState: row["Updated State"],
+      updatedCountry: row["Updated Country"],
+      updatedZipcode: row["Updated Zipcode"],
+      linkedInProfile: row["LinkedIn Profile URL"],
+      notes: row["Notes"],
+      initials: row["Initials"],
+      dataUpdatedAsOn: convertDate(row["Data Updated as on"]),
+      userId: row["User Id"],
+      admin: row["Admin"],
+    }));
+
+    await NewProfile.insertMany(users);
+    res.status(200).json({ message: "Excel data uploaded successfully" });
+    
+    console.log("uploaded NewProfiles to newprofile db successfully");
+    
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Failed to process Excel file" });
+  }
+});
+
+
+router.post('/request-otp', async (req, res) => {
+
+
+  console.log("✅ Inside request-otp route");
+
+  const { email } = req.body;
+try{
+  // Check if email exists in either Login or NewUsers collection
+  const user1 = await LoginModel.findOne({ email });
+  const user2 = await NewUsersLoginModel.findOne({ email });
+
+  if (!user1 && !user2) {
+    return res.status(404).json({ message: '❌ Email not registered.' });
+  }
+
+  // Generate 6-digit OTP
+  const otp = Math.floor(100000 + Math.random() * 900000).toString();
+  const expiresAt = new Date(Date.now() + 60 * 1000); // 1 minute expiry
+
+  // Save to DB
+  await OtpModel.findOneAndUpdate(
+    { email },
+    { otp, expiresAt },
+    { upsert: true }
+  );
+
+  // Send OTP Email
+  const mailOptions = {
+    from: 'darshan@sigvitas.com',
+    to: email,
+    subject: 'Password Reset OTP',
+    text: `Your OTP is ${otp}. It is valid for 1 minute.`,
+  };
+
+  transporter.sendMail(mailOptions, (error, info) => {
+    if (error) {
+      return res.status(500).json({ message: '❌ Failed to send OTP email.' });
+    }
+    res.status(200).json({ message: '✅ OTP sent to your email.' });
+  });
+}catch(err){
+  console.log('Error:',err);
+  
+}
+});
+
+router.post('/verify-otp', async (req, res) => {
+
+  console.log("✅ Inside verify-otp route");
+
+  const { email, otp } = req.body;
+
+  const otpRecord = await OtpModel.findOne({ email });
+
+  if (!otpRecord) {
+    return res.status(404).json({ message: '❌ OTP not found.' });
+  }
+
+  if (otpRecord.otp !== otp) {
+    return res.status(400).json({ message: '❌ Invalid OTP.' });
+  }
+
+  if (otpRecord.expiresAt < new Date()) {
+    await OtpModel.deleteOne({ email }); // Clean up expired OTP
+    return res.status(400).json({ message: '❌ OTP expired.' });
+  }
+
+  res.status(200).json({ message: '✅ OTP verified.' });
+});
+
+router.post('/reset-password', async (req, res) => {
+
+  console.log("✅ Inside reset-password route");
+
+  const { email, newPassword } = req.body;
+
+  const salt = await bcrypt.genSalt(10);
+  const hashedPassword = await bcrypt.hash(newPassword, salt);
+
+  // Update in both collections if email matches
+  await LoginModel.updateOne({ email }, { password: hashedPassword });
+  await NewUsersLoginModel.updateOne({ email }, { password: hashedPassword });
+
+  await OtpModel.deleteOne({ email }); // Remove OTP after success
+  console.log('✅ Password reset successful.');
+
+  res.status(200).json({ message: '✅ Password reset successful.' });
+});
 
 
 module.exports = router;

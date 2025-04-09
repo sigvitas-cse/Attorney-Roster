@@ -10,8 +10,6 @@ import NewProfilesUpdated from "../components/AdminDashBoard/IndivisualComponent
 import RemovedProfiles from "../components/AdminDashBoard/IndivisualComponents/removedProfiles";
 import NewProfilesUpdated2 from "../components/AdminDashBoard/IndivisualComponents/updatedProfiles";
 
-import NewUploadExcel from "../components/EmployeeDashboard/NewUploadExcel";
-
 const UserTable = () => {
   const [users, setUsers] = useState([]);
   const location = useLocation();
@@ -28,9 +26,6 @@ const UserTable = () => {
   const [removedProfilesUpdate, setremovedProfilesUpdate] = useState(false);
   const [updatedProfiles, setUpdatedProfiles] = useState(false)
 
-  const [newUploadExcel, setNewUploadExcel] = useState(false)
-
-
   useEffect(() => {
       document.title = "Paytent Analyst Dashboard"; 
     }, []);
@@ -42,7 +37,12 @@ const UserTable = () => {
     }
   };
 
+  const updatingSaveButton = () => {
 
+      alert('Data saved succesfully')
+
+  };
+  
   useEffect(() => {
     fetchUsers();
   }, []);
@@ -169,6 +169,21 @@ const UserTable = () => {
             alert("Failed to add user. Please try again.");
         });
 };
+// Function to fetch all users
+const fetchAllUsers = () => {
+    axios
+   
+        .get(`${API_URL}/api/fetch-users`)
+        // .get('http://localhost:3001/api/fetch-users') // Assuming the endpoint fetches the latest users
+        .then((response) => {
+            console.log("Fetched users:", response.data);
+            setUsers(response.data.data); // Assuming 'data' is the array of users
+        })
+        .catch((error) => {
+            console.error("Error fetching users:", error);
+            alert("Failed to fetch users. Please try again.");
+        });
+};
 
   // console.log('updatedPhoneNumber:',users.updatedPhoneNumber);
   const handleSelectAll = (e) => {
@@ -282,6 +297,49 @@ const showNMessage = () => {
   // return showNMessage;
 }
 
+const navigate = useNavigate();
+function gohome() {
+  const userConfirmed = window.confirm('Do you want to exit?');
+  if (userConfirmed) {
+        navigate('/');
+  } else {
+    console.log('User chose to stay on the page.');
+  }
+}
+function goBack() {
+  const userConfirmed = window.confirm('Do you want to Login Page?');
+  if (userConfirmed) {
+        navigate('/EmployeeLoginPage');
+  } else {
+    console.log('User chose to stay on the page.');
+  }
+}
+
+
+const fetchAllAllData = async () => {
+  try {
+    const response = await axios.get("http://localhost:3001/api/AllData");
+    const usersData = response.data.data;
+
+    if (!usersData || usersData.length === 0) {
+      console.warn("No data found");
+      alert("No data available to download.");
+      return;
+    }
+
+    // Convert JSON data to a worksheet
+    const worksheet = XLSX.utils.json_to_sheet(usersData);
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Users");
+
+    // Create and trigger the Excel file download
+    XLSX.writeFile(workbook, "Attorney-Roster-Data.xlsx");
+  } catch (error) {
+    console.error("Error fetching users:", error);
+    alert("Failed to fetch users. Please try again.");
+  }
+};
+
 
   return (
     <div>
@@ -322,13 +380,7 @@ const showNMessage = () => {
     <button onClick={handleUpdateAll} className="saveBtnForAllOne" >
     Save
   </button>
-  <button className="saveBtnForAllOne" onClick={()=>setNewUploadExcel(true)}>Upload</button>
-              {
-                newUploadExcel && (
-                  <NewUploadExcel onClose={()=>setNewUploadExcel(false)}/>
-                )
-              }
-
+  <button className="saveBtnForAllOne">Upload</button>
   <div className="datasections">
               <p> <button className="newprofiles indivisualbuttons" onClick={()=>setNewProfilesUpdate(true)}>New Profiles</button></p>
               {
