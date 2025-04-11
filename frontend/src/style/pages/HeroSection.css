@@ -261,8 +261,9 @@ html, body {
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 20px;
+  padding:20px;
   background: white;
+  margin: 0 !important;
 }
 
 .user-typeiselectio-block-h5 {
@@ -309,16 +310,17 @@ input:focus {
   }
 }
 .updatedrofiles11{
-  color: black;
-  cursor: pointer;
-  background: white;
-  border: none;
-  font-size: 1.2rem;
-  padding: 0 10px;
-  margin: 0;
-  transition: all 0.3s ease-in-out
+  color: black !important;
+  cursor: pointer !important;
+  background: white !important;
+  border: none !important;
+  border-radius: 0 !important;
+  font-size: 1.2rem !important;
+  padding: 0 10px !important;
+  margin: 0 !important;
+  transition: all 0.3s ease-in-out !important;
 }
 .updatedrofiles11:hover{
-  background: none; 
-  color: white;
+  background: none !important; 
+  color: white !important;
 }

@@ -13,6 +13,8 @@ const ForgotPassword = () => {
   const [loading, setLoading] = useState(false);
   const [showResend, setShowResend] = useState(false);
   const [isEmailError, setIsEmailError] = useState(false);
+  
+  const API_URL = process.env.REACT_APP_API_URL;
 
   const navigate = useNavigate();
 
@@ -21,8 +23,10 @@ const ForgotPassword = () => {
     setMessage('⏳ Sending OTP...');
     setIsEmailError(false);
 
+
     try {
-      const res = await axios.post('http://localhost:3001/api/request-otp', { email });
+      const res = await axios.post(`${API_URL}/api/request-otp`, { email });
+      // const res = await axios.post('http://localhost:3001/api/request-otp', { email });
       setMessage(res.data.message || '✅ OTP sent successfully!');
       setStep(2);
     } catch (err) {
@@ -41,7 +45,8 @@ const ForgotPassword = () => {
     setLoading(true);
     setMessage('⏳ Verifying OTP...');
     try {
-      const res = await axios.post('http://localhost:3001/api/verify-otp', { email, otp });
+      const res = await axios.post(`${API_URL}/api/verify-otp`, { email, otp });
+      // const res = await axios.post('http://localhost:3001/api/verify-otp', { email, otp });
       setMessage(res.data.message || '✅ OTP Verified!');
       setStep(3);
     } catch (err) {
@@ -63,7 +68,8 @@ const ForgotPassword = () => {
     setLoading(true);
     setMessage('⏳ Resetting password...');
     try {
-      const res = await axios.post('http://localhost:3001/api/reset-password', { email, newPassword });
+      const res = await axios.post(`${API_URL}/api/reset-password`, { email, newPassword });
+      // const res = await axios.post('http://localhost:3001/api/reset-password', { email, newPassword });
       setMessage(res.data.message || '✅ Password reset successfully!');
       setStep(4);
       setEmail('');

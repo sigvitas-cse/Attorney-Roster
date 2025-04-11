@@ -13,8 +13,8 @@ function NewProfilesUpdated({ onClick }) {
     const fetchNewProfiles = async () => {
       try {
         
-        // const removedDataResponse = await axios.get(`${API_URL}/api/removedProfiles`);
-        const removedDataResponse = await axios.get("http://localhost:3001/api/removedProfiles");
+        const removedDataResponse = await axios.get(`${API_URL}/api/removedProfiles`);
+        // const removedDataResponse = await axios.get("http://localhost:3001/api/removedProfiles");
 
         setResult(removedDataResponse.data)
 

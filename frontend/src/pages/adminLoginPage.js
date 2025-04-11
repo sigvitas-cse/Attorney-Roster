@@ -36,9 +36,8 @@ function AdminLoginPage() {
 
     
     try {
-      // const response = await axios.post(`${API_URL}/api/check-login`, { userId, password, userType });
-      
-      const response = await axios.post('http://localhost:3001/api/check-login', { userId, password, userType });
+      const response = await axios.post(`${API_URL}/api/check-login`, { userId, password, userType });
+      // const response = await axios.post('http://localhost:3001/api/check-login', { userId, password, userType });
 
       // console.log("Login Response:", response);
 

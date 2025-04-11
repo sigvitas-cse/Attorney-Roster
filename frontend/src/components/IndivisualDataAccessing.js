@@ -4,32 +4,40 @@ import "./../style/Components/AdminDashboard/IndivisualComponents/IndivisualProf
 
 function IndivisualProfilesUpdated({ onClick }) {
   const [regCodeInput, setRegCodeInput] = useState("");
-  const [matchingProfile, setMatchingProfile] = useState(null);
+  const [matchingProfile, setMatchingProfile] = useState([]);
   const [error, setError] = useState("");
+  const [searchField, setSearchField] = useState("regCode");
+
 
   const API_URL = process.env.REACT_APP_API_URL || "https://roster1.sigvitas.com";
 
   const handleSearch = async () => {
     if (!regCodeInput.trim()) {
       setError("Please enter a register number.");
-      setMatchingProfile(null);
+      setMatchingProfile([]); // ✅ keep as empty array
       return;
     }
+    
 
     try {
-      // const response = await axios.get(`${API_URL}/api/IndivisualDataFetching`, {
-      const response = await axios.get("http://localhost:3001/api/IndivisualDataFetching",{
-        params: { regCode: regCodeInput }
+      const response = await axios.get(`${API_URL}/api/IndivisualDataFetching`, {
+      // const response = await axios.get("http://localhost:3001/api/IndivisualDataFetching", {
+        params: {
+          field: searchField,
+          query: regCodeInput,
+        },
       });
 
-      const profile = response.data;
+      const profiles = response.data;
+      console.log("Receive Data:", profiles);
+      
 
-      if (profile && profile.regCode) {
-        setMatchingProfile(profile);
+      if (Array.isArray(profiles) && profiles.length > 0) {
+        setMatchingProfile(profiles);
         setError("");
       } else {
-        setMatchingProfile(null);
-        setError("No data found for this register number.");
+        setMatchingProfile([]);
+        setError("No matching profiles found.");
       }
     } catch (err) {
       console.error("❌ Error fetching data:", err);
@@ -39,60 +47,116 @@ function IndivisualProfilesUpdated({ onClick }) {
   };
 
   return (
-    <div className="profile-modal">
-      <div className="profile-container">
-        <button className="close-btn" onClick={onClick}>×</button>
+    <div className="indiv-profile-modal">
+      <div className="indiv-profile-container">
+        <button className="indiv-close-btn" onClick={onClick}>×</button>
         <h2>Search Profile</h2>
 
-        <div className="search-box">
+        <div className="indiv-search-box">
+          <select
+            value={searchField}
+            onChange={(e) => setSearchField(e.target.value)}
+          >
+            <option value="regCode">Reg Code</option>
+            <option value="name">Name</option>
+            <option value="organization">Organization</option>
+            <option value="city">City</option>
+            {/* Add other options as needed */}
+          </select>
+
           <input
             type="text"
-            placeholder="Enter Register Number"
+            placeholder={`Enter ${searchField}`}
             value={regCodeInput}
             onChange={(e) => setRegCodeInput(e.target.value)}
           />
           <button onClick={handleSearch}>Search</button>
         </div>
 
-        {error && <p className="error-message">{error}</p>}
 
-        {matchingProfile && (
-          <div className="profile-card">
-            <div className="profile-section">
-              <h3>Basic Info</h3>
-              <p><strong>Name:</strong> {matchingProfile.name}</p>
-              <p><strong>Organization:</strong> {matchingProfile.organization}</p>
-              <p><strong>Reg Code:</strong> {matchingProfile.regCode}</p>
-              <p><strong>Initials:</strong> {matchingProfile.initials}</p>
-            </div>
+        {error && <p className="indiv-error-message">{error}</p>}
 
-            <div className="profile-section">
-              <h3>Contact Info</h3>
-              <p><strong>Phone:</strong> {matchingProfile.phoneNumber}</p>
-              <p><strong>Email:</strong> {matchingProfile.emailAddress}</p>
-              <p><strong>Address:</strong> {matchingProfile.addressLine1}, {matchingProfile.addressLine2}, {matchingProfile.city}, {matchingProfile.state}, {matchingProfile.country} - {matchingProfile.zipcode}</p>
-            </div>
+        {matchingProfile.length > 0 && (
+          <div className="indiv-profile-table-wrapper">
+            <table className="indiv-profile-table">
+            <thead>
+              <tr>
+                <th>Sl.No</th>
+                <th>Name</th>
+                <th>Organization</th>
+                <th>Address Line 1</th>
+                <th>Address Line 2</th>
+                <th>City</th>
+                <th>State</th>
+                <th>Country</th>
+                <th>Zipcode</th>
+                <th>Phone</th>
+                <th>Reg Code</th>
+                <th>Attorney</th>
+                <th>Date of Patent</th>
+                <th>Agent Licensed</th>
+                <th>Firm</th>
+                <th>Updated Phone</th>
+                <th>Email</th>
+                <th>Updated Org</th>
+                <th>Website</th>
+                <th>Updated Address</th>
+                <th>Updated City</th>
+                <th>Updated State</th>
+                <th>Updated Country</th>
+                <th>Updated Zipcode</th>
+                <th>LinkedIn</th>
+                <th>Notes</th>
+                <th>Data Updated As On</th>
+              </tr>
+            </thead>
 
-            <div className="profile-section">
-              <h3>Patent Details</h3>
-              <p><strong>Attorney:</strong> {matchingProfile.agentAttorney}</p>
-              <p><strong>Date of Patent:</strong> {matchingProfile.dateOfPatent}</p>
-              <p><strong>Agent Licensed:</strong> {matchingProfile.agentLicensed}</p>
-              <p><strong>Firm:</strong> {matchingProfile.firmOrOrganization}</p>
-            </div>
+              <tbody>
+                {matchingProfile.map((profile, index) => (
+                  <tr key={index}>
+                    <td>{index + 1}</td> {/* slNo generated in frontend */}
+                    <td>{profile.name}</td>
+                    <td>{profile.organization}</td>
+                    <td>{profile.addressLine1}</td>
+                    <td>{profile.addressLine2}</td>
+                    <td>{profile.city}</td>
+                    <td>{profile.state}</td>
+                    <td>{profile.country}</td>
+                    <td>{profile.zipcode}</td>
+                    <td>{profile.phoneNumber}</td>
+                    <td>{profile.regCode}</td>
+                    <td>{profile.agentAttorney}</td>
+                    <td>{profile.dateOfPatent}</td>
+                    <td>{profile.agentLicensed}</td>
+                    <td>{profile.firmOrOrganization}</td>
+                    <td>{profile.updatedPhoneNumber}</td>
+                    <td>{profile.emailAddress}</td>
+                    <td>{profile.updatedOrganization}</td>
+                    <td>
+                      <a href={profile.firmUrl} target="_blank" rel="noopener noreferrer">
+                        {profile.firmUrl}
+                      </a>
+                    </td>
+                    <td>{profile.updatedAddress}</td>
+                    <td>{profile.updatedCity}</td>
+                    <td>{profile.updatedState}</td>
+                    <td>{profile.updatedCountry}</td>
+                    <td>{profile.updatedZipcode}</td>
+                    <td>
+                      <a href={profile.linkedInProfile} target="_blank" rel="noopener noreferrer">
+                        {profile.linkedInProfile}
+                      </a>
+                    </td>
+                    <td>{profile.notes}</td>
+                    <td>{profile.dataUpdatedAsOn}</td>
+                  </tr>
+                ))}
+              </tbody>
 
-            <div className="profile-section">
-              <h3>Updated Info</h3>
-              <p><strong>New Phone:</strong> {matchingProfile.updatedPhoneNumber}</p>
-              <p><strong>Updated Org:</strong> {matchingProfile.updatedOrganization}</p>
-              <p><strong>Updated Address:</strong> {matchingProfile.updatedAddress}, {matchingProfile.updatedCity}, {matchingProfile.updatedState}, {matchingProfile.updatedCountry} - {matchingProfile.updatedZipcode}</p>
-              <p><strong>LinkedIn:</strong> <a href={matchingProfile.linkedInProfile} target="_blank" rel="noopener noreferrer">{matchingProfile.linkedInProfile}</a></p>
-              <p><strong>Website:</strong> <a href={matchingProfile.firmUrl} target="_blank" rel="noopener noreferrer">{matchingProfile.firmUrl}</a></p>
-              <p><strong>Notes:</strong> {matchingProfile.notes}</p>
-              <p><strong>Data Updated As On:</strong> {matchingProfile.dataUpdatedAsOn}</p>
-            </div>
+            </table>
           </div>
         )}
+
       </div>
     </div>
   );

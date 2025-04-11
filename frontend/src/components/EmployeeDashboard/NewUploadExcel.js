@@ -1,14 +1,17 @@
 import React, { useState } from "react";
 import axios from "axios";
 import "../../style/Components/EmployeeDashboard/NewUploadExcel.css";
+import { useLocation } from "react-router-dom";
 
-function NewUploadExcel({ onClose }) {
+function NewUploadExcel({ onClose, userId }) {
   const [file, setFile] = useState(null);
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
 
   const API_URL = process.env.REACT_APP_API_URL || "https://roster1.sigvitas.com";
-
+  const location = useLocation();
+  const userId2 = location.state?.userId;
+  
   const handleFileChange = (e) => {
     setFile(e.target.files[0]);
   };
@@ -22,10 +25,15 @@ function NewUploadExcel({ onClose }) {
     const formData = new FormData();
     formData.append("excelFile", file);
 
+    formData.append("userId", userId2); // ✅ from props only
+    
+
+    console.log("Sending userName:", userId2);
+
     try {
       setLoading(true);
-    //   const res = await axios.post(`${API_URL}/api/upload-excel-dynamic`, formData, {
-      const res = await axios.post(`http://localhost:3001/api/upload-excel-dynamic`, formData, {
+      const res = await axios.post(`${API_URL}/api/upload-excel-dynamic`, formData, {
+      // const res = await axios.post(`http://localhost:3001/api/upload-excel-dynamic`, formData, {
         
         headers: { "Content-Type": "multipart/form-data" },
       });

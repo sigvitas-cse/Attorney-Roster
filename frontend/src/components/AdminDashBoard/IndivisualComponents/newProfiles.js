@@ -14,8 +14,8 @@ function NewProfilesUpdated({ onClick }) {
     const fetchNewProfiles = async () => {
       try {
         
-        // const newlyAddedProfiles = await axios.get(`${API_URL}/api/newlyAddedProfiles2`);
-        const newlyAddedProfiles = await axios.get("http://localhost:3001/api/newlyAddedProfiles2");
+        const newlyAddedProfiles = await axios.get(`${API_URL}/api/newlyAddedProfiles2`);
+        // const newlyAddedProfiles = await axios.get("http://localhost:3001/api/newlyAddedProfiles2");
 
         setResult(newlyAddedProfiles.data)
 

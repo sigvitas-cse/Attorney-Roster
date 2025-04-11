@@ -18,8 +18,8 @@ function Analysis() {
   useEffect(() => {
     const fetchAnalysisData = async () => {
       try {
-        // const response = await axios.get(`${API_URL}/api/analysis`);
-        const response = await axios.get("http://localhost:3001/api/analysis"); // Change URL in production
+        const response = await axios.get(`${API_URL}/api/analysis`);
+        // const response = await axios.get("http://localhost:3001/api/analysis"); // Change URL in production
   
         const formattedData = response.data.map((item) => {
           const dateObj = new Date(item.timestamp);

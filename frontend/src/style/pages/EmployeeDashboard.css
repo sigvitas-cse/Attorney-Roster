@@ -117,11 +117,14 @@
     overflow: hidden;
   }
   .user-table th {
+    height: auto !important;
     background-color: #0073e6;
     text-align: center;
     position: sticky;
     top: 0;
     z-index: 1;
+    white-space: nowrap !important;
+    
   }
   .user-table td {
     width:auto; /* Set fixed width for each column */
@@ -332,7 +335,7 @@
 .search-icon {
   position: absolute;
   right: 410px; /* Adjust to align the icon inside the input */
-  top: 40px;
+  top: 40px !important;
   transform: translateY(-50%);
   font-size: 16px; /* Icon size */
   color: #888; /* Icon color */

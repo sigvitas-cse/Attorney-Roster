@@ -151,12 +151,12 @@ const handleFilterChange = (columnHeader) => {
 
   const fetchAllData = async (pageNumber, limit, letter = "") => {
     try {
-      // const response = await axios.get(`${API_URL}/api/all-users-data`, {
-      const response = await axios.get("http://localhost:3001/api/all-users-data", {
+      const response = await axios.get(`${API_URL}/api/all-users-data`, {
+      // const response = await axios.get("http://localhost:3001/api/all-users-data", {
         params: { page: pageNumber, limit, letter },
       });
-      // const updatedResponse = await axios.get(`${API_URL}/api/updatedprofilescomparisons`);
-      const updatedResponse = await axios.get("http://localhost:3001/api/updatedprofilescomparisons");
+      const updatedResponse = await axios.get(`${API_URL}/api/updatedprofilescomparisons`);
+      // const updatedResponse = await axios.get("http://localhost:3001/api/updatedprofilescomparisons");
   
       console.log("🔍 Updated Profiles API Response:", updatedResponse.data); // Log the response
   
@@ -261,7 +261,7 @@ const handleFilterChange = (columnHeader) => {
            
             <FaSearch 
               data-tooltip-id="search-tooltip" 
-              className="search-icon" 
+              className="search-iconn" 
             />
             <Tooltip id="search-tooltip" place="top" content="Search the Data" />
             
@@ -272,20 +272,20 @@ const handleFilterChange = (columnHeader) => {
                   onChange={(e) => setGlobalSearch(e.target.value)}
                 />
             </div>
-            <div className="datasections1">
-              <p> <button className="newprofiles1" onClick={()=>setNewProfilesUpdate(true)}>New Profiles</button></p>
+            <div className="datasections13">
+              <p> <button className="newprofiles13" onClick={()=>setNewProfilesUpdate(true)}>New Profiles</button></p>
               {
                 newProfilesUpdate && (
                   <NewProfilesUpdated onClick={()=>setNewProfilesUpdate(false)}/>
                 )
               }
-              <p><button className="removedprofiles1" onClick={()=>setremovedProfilesUpdate(true)}>Removed Profiles</button></p>
+              <p><button className="removedprofiles13" onClick={()=>setremovedProfilesUpdate(true)}>Removed Profiles</button></p>
               {
                 removedProfilesUpdate && (
                   <RemovedProfiles onClick={()=>setremovedProfilesUpdate(false)}/>
                 )
               }
-              <p> <button className="updatedrofiles1" onClick={()=>setUpdatedProfiles(true)}>Updated Profiles</button></p>
+              <p> <button className="updatedrofiles13" onClick={()=>setUpdatedProfiles(true)}>Updated Profiles</button></p>
               {
                 updatedProfiles && (
                   <NewProfilesUpdated2 onClick={()=>setUpdatedProfiles(false)}/>

@@ -29,8 +29,7 @@ const UserTable = () => {
   const [updatedProfiles, setUpdatedProfiles] = useState(false)
 
   const [newUploadExcel, setNewUploadExcel] = useState(false)
-
-
+  
   useEffect(() => {
       document.title = "Paytent Analyst Dashboard"; 
     }, []);
@@ -56,8 +55,8 @@ const UserTable = () => {
     console.log("UserId being sent to backend:", userId);
 
     axios
-      .get(`http://localhost:3001/api/fetch-users?userId=${userId}`)
-      // .get(`${API_URL}/api/fetch-users?userId=${userId}`)
+    .get(`${API_URL}/api/fetch-users?userId=${userId}`)
+      // .get(`http://localhost:3001/api/fetch-users?userId=${userId}`)
       .then((response) => {
         console.log("Response from backend:", response.data);
         // console.log("Total data:", response.data.data.length);
@@ -325,7 +324,7 @@ const showNMessage = () => {
   <button className="saveBtnForAllOne" onClick={()=>setNewUploadExcel(true)}>Upload</button>
               {
                 newUploadExcel && (
-                  <NewUploadExcel onClose={()=>setNewUploadExcel(false)}/>
+                  <NewUploadExcel userId={userId._id} onClose={()=>setNewUploadExcel(false)}/>
                 )
               }
 

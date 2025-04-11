@@ -339,178 +339,6 @@ router.get("/AllData", async (req, res) => {
   }
 });
 
-// router.get("/all-users-data", async (req, res) => {
-//   console.log('now inside the all users section');
-
-//   try {
-//     const users = await UserModel.find();
-//     console.log("Number of Data:",users.length);
-    
-    
-//     if (!users.length) {
-//       console.error(`No data found for userId: ${userId}`);
-//       return res.status(404).json({ message: "No data found for this userId" });
-//     }
-//     res.status(200).json({
-//       message: "Data fetched successfully",
-//       data: users,
-//     });
-//   } catch (err) {
-//     console.error("Error fetching users:", err);
-//     res.status(500).json({ error: "An error occurred while fetching data." });
-//   }
-// });
-
-// router.get("/all-users-data", async (req, res) => {
-  
-//   console.log("Fetching users with pagination...");
-
-//   let { page = 1, limit = 1000 } = req.query;
-
-//   page = Math.max(1, parseInt(page, 10) || 1);
-//   limit = Math.max(1, parseInt(limit, 10) || 1000);
-
-//   try {
-//     const totalUsers = await UserModel.estimatedDocumentCount(); // Get total count
-//     const totalPages = totalUsers > 0 ? Math.ceil(totalUsers / limit) : 1;
-
-//     const users = await UserModel.find()
-//       .sort({ createdAt: -1 }) // Optional: Sort by latest entries
-//       .skip((page - 1) * limit)
-//       .limit(limit);
-
-//     res.status(200).json({
-//       message: "Data fetched successfully",
-//       data: users,
-//       totalUsers, // Ensure this is always correct
-//       totalPages,
-//       currentPage: page,
-//       hasMore: page < totalPages,
-//     });
-
-//   } catch (err) {
-//     console.error("Error fetching users:", err);
-//     res.status(500).json({ error: "An error occurred while fetching data." });
-//   }
-// });
-
-
-// fetch all at a tim
-// router.get("/all-users-data", async (req, res) => {
-//   console.log("Fetching all users at once");
-
-//   try {
-//     const users = await UserModel.find(); // Fetch all users without pagination
-//     const totalUsers = users.length; // Get total count
-
-//     if (!users.length) {
-//       return res.status(404).json({ message: "No data found" });
-//     }
-
-//     res.status(200).json({
-//       message: "All data fetched successfully",
-//       data: users,
-//       totalUsers,
-//     });
-//   } catch (err) {
-//     console.error("Error fetching users:", err);
-//     res.status(500).json({ error: "An error occurred while fetching data." });
-//   }
-// });
-
-// router.get("/all-users-data", async (req, res) => {
-//   console.log("Fetching users with pagination");
-
-//   const { page = 1, limit = 5000 } = req.query; // Default: First fetch 5000
-  
-
-//   try {
-//     const users = await UserModel.find()
-//       .skip((page - 1) * limit) // Skip previous pages
-//       .limit(Number(limit)); // Limit results per page
-// console.log("Total Data:", users.length);
-//     const totalUsers = await UserModel.countDocuments(); // Get total count
-
-//     if (!users.length) {
-//       return res.status(404).json({ message: "No data found" });
-//     }
-
-//     res.status(200).json({
-//       message: "Data fetched successfully",
-//       data: users,
-//       totalUsers,
-//       totalPages: Math.ceil(totalUsers / limit),
-//       currentPage: Number(page),
-//     });
-//   } catch (err) {
-//     console.error("Error fetching users:", err);
-//     res.status(500).json({ error: "An error occurred while fetching data." });
-//   }
-// });
-
-// Route to fetch users with pagination
-
-
-// router.get("/all-users-data", async (req, res) => {
-//   try {
-//     // Get `page` and `limit` from request query
-//     let page = parseInt(req.query.page) || 1; // Default: page 1
-//     let limit = parseInt(req.query.limit) || 1000; // Default: 1000 records per page
-
-//     // Calculate how many records to skip
-//     let skip = (page - 1) * limit;
-
-//     // Fetch data from MongoDB with pagination
-//     const data = await UserModel.find().skip(skip).limit(limit);
-//     const totalUsers = await UserModel.countDocuments(); // Total records in DB
-
-//     res.status(200).json({
-//       data,
-//       totalUsers, // 52,000 (example)
-//       currentPage: page,
-//       totalPages: Math.ceil(totalUsers / limit), // Total pages based on limit
-//     });
-//   } catch (err) {
-//     console.error("Error fetching users:", err);
-//     res.status(500).json({ error: "Internal Server Error" });
-//   }
-// });
-
-// router.get("/all-users-data", async (req, res) => {
-//   try {
-//     // Get `page`, `limit`, and `letter` from request query
-//     let page = parseInt(req.query.page) || 1; // Default: page 1
-//     let limit = parseInt(req.query.limit) || 1000; // Default: 1000 records per page
-//     let letter = req.query.letter; // A-Z filter
-
-//     let filter = {};
-
-//     // Apply A-Z filtering if `letter` is provided
-//     if (letter && /^[A-Z]$/i.test(letter)) { 
-//       filter.name = new RegExp(`^${letter}`, "i"); // Case-insensitive search
-//     }
-
-//     // Calculate how many records to skip
-//     let skip = (page - 1) * limit;
-
-//     // Fetch filtered data from MongoDB with pagination
-//     const data = await UserModel.find(filter).skip(skip).limit(limit);
-//     const totalUsers = await UserModel.countDocuments(filter); // Total filtered records
-
-//     res.status(200).json({
-//       data,
-//       totalUsers, 
-//       currentPage: page,
-//       totalPages: Math.ceil(totalUsers / limit), 
-//     });
-//   } catch (err) {
-//     console.error("Error fetching users:", err);
-//     res.status(500).json({ error: "Internal Server Error" });
-//   }
-// });
-
-
-
 router.get("/all-users-data", async (req, res) => {
   try {
     let page = parseInt(req.query.page) || 1;
@@ -777,24 +605,48 @@ router.get('/updated-profiles', async (req, res) => {
 });
 
 router.get("/IndivisualDataFetching", async (req, res) => {
-  const { regCode } = req.query;
+  const { field, query } = req.query;
 
-  console.log("✅ Fetching profile for regCode:", regCode);
+  if (!field || !query) {
+    return res.status(400).json({ message: "Both 'field' and 'query' are required" });
+  }
 
-  if (!regCode) {
-    return res.status(400).json({ message: "regCode is required" });
+  const searchableFields = [
+    "regCode", "name", "organization", "addressLine1", "addressLine2",
+    "city", "state", "country", "zipcode", "phoneNumber", "agentAttorney",
+    "dateOfPatent", "agentLicensed", "firmOrOrganization", "updatedPhoneNumber",
+    "emailAddress", "updatedOrganization", "firmUrl", "updatedAddress",
+    "updatedCity", "updatedState", "updatedCountry", "updatedZipcode",
+    "linkedInProfile", "notes", "dataUpdatedAsOn"
+  ];
+
+  if (!searchableFields.includes(field)) {
+    return res.status(400).json({ message: `Invalid search field: ${field}` });
   }
 
   try {
-    const profile = await UserModel.findOne({ regCode: { $regex: new RegExp(`^${regCode}$`, "i") } });
-    console.log('fetched Profile:', profile);
-    
+    const terms = query
+      .split(",")
+      .map(term => term.trim())
+      .filter(term => term.length > 0);
 
-    if (!profile) {
-      return res.status(404).json({ message: "Profile not found" });
+    // If multiple values, use $in with regex support
+    const conditions = terms.map(term => ({
+      [field]: { $regex: new RegExp(term, "i") }
+    }));
+
+    const mongoQuery = {
+      $or: conditions
+    };
+
+    const profiles = await UserModel.find(mongoQuery);
+    console.log(`✅ Found ${profiles.length} profile(s) for field ${field}`);
+
+    if (!profiles.length) {
+      return res.status(404).json({ message: "No matching profiles found" });
     }
 
-    res.status(200).json(profile);
+    res.status(200).json(profiles);
   } catch (error) {
     console.error("❌ Server error:", error.message);
     res.status(500).json({ message: "Server error", error: error.message });
@@ -880,6 +732,47 @@ router.post("/upload-excel-dynamic", upload.single("excelFile"), async (req, res
     res.status(200).json({ message: "Excel data uploaded successfully" });
     
     console.log("uploaded NewProfiles to newprofile db successfully");
+
+    const total = await UserModel.countDocuments()
+    const userId2 = req.body.userId || "One of the Patent Analyst";
+
+
+    console.log("UserName = ",userId2);
+
+    const now = new Date();
+
+    const formattedDate = now.toLocaleDateString("en-IN", {
+      weekday: "long",        // e.g., Thursday
+      day: "numeric",         // e.g., 10
+      month: "long",          // e.g., April
+      year: "numeric",        // e.g., 2025
+      timeZone: "Asia/Kolkata"
+    });
+
+    const formattedTime = now.toLocaleTimeString("en-IN", {
+      hour: "2-digit",
+      minute: "2-digit",
+      hour12: true,
+      timeZone: "Asia/Kolkata"
+    });
+
+
+
+    const mailOptions = {
+      from: 'darshan@sigvitas.com',
+      to: `darshan@sigvitas.com`,
+      subject: 'Daily Data Uploading',
+      text: `${userId2} uploaded the data successfully on ${formattedDate} at ${formattedTime}. Total number of users: ${total}`,
+    };
+  
+    transporter.sendMail(mailOptions, (error, info) => {
+      if (error) {
+        return res.status(500).json({ message: '❌ Failed to send OTP email.' });
+      }
+      res.status(200).json({ message: '✅ OTP sent to your email.' });
+    });
+
+    console.log("Mail sent to the Admin");
     
   } catch (err) {
     console.error(err);

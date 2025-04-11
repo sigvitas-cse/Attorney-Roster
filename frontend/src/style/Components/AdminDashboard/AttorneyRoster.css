@@ -6,58 +6,58 @@
 
 /* Enable horizontal scrolling */
 .table-container {
-    width: 100%;
-    max-width: 100%;
+    width: 100% !important;
+    max-width: 100% !important;
     overflow-x: auto; /* Allows horizontal scrolling */
-    display: block;
-    background: #0073e6;
-    padding: 0;
-    border-radius: 8px;
-    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
-    height: 53vh;
-    white-space: nowrap;
+    display: block !important;
+    background: #0073e6 !important;
+    padding: 0 !important;
+    border-radius: 8px !important;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1) !important;
+    height: 53vh !important;
+    white-space: nowrap !important;
 }
 
 /* Auto-width table */
 .user-table2 {
-    width: auto; /* Let table expand based on content */
-    border-collapse: collapse;
-    table-layout: auto; /* Allow columns to resize dynamically */
+    width: auto !important; /* Let table expand based on content */
+    border-collapse: collapse !important;
+    table-layout: auto !important; /* Allow columns to resize dynamically */
 }
 
 /* Sticky header */
 .user-table2 thead {
-    background-color: #0073e6;
-    color: white;
-    position: sticky;
-    top: 0;
-    z-index: 2;
+    background-color: #0073e6 !important;
+    color: white !important;
+    position: sticky !important;
+    top: 0 !important;
+    z-index: 2 !important;
 }
 
 /* Table cells */
 .user-table2 th,
 .user-table2 td {
-    padding: 12px;
-    border: 1px solid #ddd;
-    text-align: left;
-    font-size: 14px;
+    padding: 12px !important;
+    border: 1px solid #ddd !important;
+    text-align: left !important;
+    font-size: 14px !important;
     white-space: nowrap; /* Prevent text from wrapping */
 }
 
 /* Sticky headers */
 .user-table2 th {
-    background-color: #0073e6;
-    color: #ffffff;
-    width: 180px;
+    background-color: #0073e6 !important;
+    color: #ffffff !important;
+    width: 180px !important;
 }
 
 /* Alternating row colors */
 .user-table2 tbody tr:nth-child(even) {
-    background-color: #f9f9f9;
+    background-color: #f9f9f9 !important;
 }
 
 .user-table2 tbody tr:hover {
-    background-color: #e3f2fd;
+    background-color: #e3f2fd !important;
 }
 
 /* Pagination styles */
@@ -104,38 +104,40 @@
 
 /* A-Z Filter Container */
 .alphabet-filter {
-    display: flex;
-    justify-content: center;
-    flex-wrap: wrap;
-    gap: 1px;
-    border: 1px solid #0073e6;
-    background: #0073e6;
-    border-radius: 4px 4px 0 0;
-    padding: 10px;
+    display: flex !important;
+    justify-content: center !important;
+    flex-wrap: wrap !important;
+    gap: 1px !important;
+    border: 1px solid #0073e6 !important;
+    background: #0073e6 !important;
+    border-radius: 4px 4px 0 0 !important;
+    padding: 10px !important;
+    
 }
 
 /* Individual Letter Buttons */
 .letter-btn {
-    padding: 8px 26px;
-    font-size: 18px;
-    font-weight: bold;
-    border: 1px solid #0073e6;
-    background-color: #ffffff;
-    color: #0073e6;
-    cursor: pointer;
-    transition: all 0.2s ease-in-out;
+    padding: 8px 26px !important;
+    font-size: 18px !important;
+    font-weight: bold !important;
+    border: 1px solid #0073e6 !important;
+    background-color: #ffffff !important;
+    border-radius: 0 !important;
+    color: #0073e6 !important;
+    cursor: pointer !;
+    transition: all 0.2s ease-in-out !important;
 }
 
 /* Hover & Active Effects */
 .letter-btn:hover {
-    background-color: #0073e6;
-    color: #ffffff;
+    background-color: #0073e6 !important;
+    color: #ffffff !important;
 }
 
 .letter-btn.active {
-    background-color: #004a99;
-    color: white;
-    border-color: #004a99;
+    background-color: #004a99 !important;
+    color: white !important;
+    border-color: #004a99 !important;
 }
 
 /* 🔥 Responsive Design Fixes */
@@ -186,7 +188,7 @@
         height: 45px;   
         width: 70px;
      }
-     .search-icon {
+     .search-iconn {
         font-size: 21px !important;
         left: 20px !important;
       }
@@ -245,7 +247,7 @@
         height: 45px;   
         width: 58px;
      }
-     .search-icon {
+     .search-iconn {
         font-size: 19px !important;
         left: 18px !important;
       }
@@ -304,7 +306,7 @@
         height: 38px;   
         width: 58px;
      }
-     .search-icon {
+     .search-iconn {
         font-size: 19px !important;
         left: 18px !important;
       }
@@ -360,7 +362,7 @@
         height: 35px;   
         width: 55px;
      }
-     .search-icon {
+     .search-iconn {
         font-size: 15px !important;
         left: 12px !important;
       }
@@ -415,7 +417,7 @@
         height: 30px;   
         width: 50px;
      }
-     .search-icon {
+     .search-iconn {
         font-size: 12px !important;
         left: 10px !important;
       }
@@ -470,7 +472,7 @@
         height: 30px;   
         width: 50px;
      }
-     .search-icon {
+     .search-iconn {
         font-size: 12px !important;
         left: 10px !important;
       }
@@ -484,11 +486,13 @@
   
   .global-search {
     display: flex;
-    align-items: center;
+    align-items: absolute;
     position: relative;
+    background: #0073e6;
   }
   
-  .search-icon {
+  .search-iconn {
+    top: 20px !important;
     cursor: pointer;
     position: absolute;
     left: 15px;
@@ -523,28 +527,53 @@
     font-weight: bold;
     color: #d9534f; /* Red text */
   }
-  .datasections1 p{
+  .datasections13 p{
     text-align: left;
   }
-  .newprofiles1{
+  .newprofiles13{
     color: green;
     cursor: pointer;
     background: none;
     border: none;
+    transition: all 0.5s ease-in-out;
+    border-radius: 10px !important;
   }
-  .updatedrofiles1{
-    color: #2f455c;
-    cursor: pointer;
-    background: none;
-    border: none;
+  .newprofiles13:hover{
+    color: green !important;
+    background: none !important;
+    font-weight: bold !important;
+    border: 1px solid green !important;
+    border-radius: 0 !important;
   }
-  .removedprofiles1{
-    color: red;
-    cursor: pointer;
-    background: none;
-    border: none;
-  }
-  .datasections1 button:hover{
-    color: black;
-  }
-  
+  .removedprofiles13{
+      color: red;
+      cursor: pointer;
+      background: none;
+      border: none;
+      transition: all 0.5s ease-in-out;
+      border-radius: 10px !important;
+    }
+    .removedprofiles13:hover{
+        color: red !important;
+        background: none !important;
+        font-weight: bold !important;
+        border: 1px solid red !important;
+        border-radius: 0 !important;
+    }
+    .updatedrofiles13{
+      color: #2f455c;
+      cursor: pointer;
+      background: none;
+      border: none;
+      transition: all 0.5s ease-in-out;
+      border-radius: 10px !important;
+    }
+    .updatedrofiles13:hover{
+      color: #2f455c !important;
+      background: none !important;
+      font-weight: bold !important;
+      border: 1px solid #2f455c !important;
+      border-radius: 0px !important;
+    }
+    
+    

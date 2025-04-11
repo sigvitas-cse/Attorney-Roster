@@ -12,8 +12,8 @@ function NewProfilesUpdated2({ onClick }) {
   useEffect(() => {
     const fetchNewProfiles = async () => {
       try {
-        // const updatedProfilesResponse = await axios.get(`${API_URL}/api/updated-profiles`);
-        const updatedProfilesResponse = await axios.get("http://localhost:3001/api/updated-profiles");
+        const updatedProfilesResponse = await axios.get(`${API_URL}/api/updated-profiles`);
+        // const updatedProfilesResponse = await axios.get("http://localhost:3001/api/updated-profiles");
         setResult(updatedProfilesResponse.data);
 
         if (updatedProfilesResponse.status === 200) {
