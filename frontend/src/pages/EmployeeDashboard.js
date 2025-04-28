@@ -31,7 +31,7 @@ const UserTable = () => {
   const [newUploadExcel, setNewUploadExcel] = useState(false)
   
   useEffect(() => {
-      document.title = "Paytent Analyst Dashboard"; 
+      document.title = "Patent Analyst Dashboard"; 
     }, []);
 
   const updating = () => {
