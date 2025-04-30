@@ -10,6 +10,7 @@ const UserTable = ({
   handleCheckboxChange,
   updating,
   loading,
+  handleUpdateAll,
   showNMessage
 }) => {
   const location = useLocation();
@@ -41,6 +42,7 @@ const UserTable = ({
       fetchUsers();
     }
   }, [userId]);
+  
 
   const headers = [
     "S. No.", "Name", "Organization", "Address Line 1", "Address Line 2", "City", "State", "Country", "Zipcode",
@@ -88,14 +90,8 @@ const UserTable = ({
 
     const handleBlur = (e) => {
       const newValue = e.target.textContent;
-      if (user && fieldName) {
-        setUsers(prevUsers =>
-          prevUsers.map(u =>
-            u.regCode === user.regCode
-              ? { ...u, [fieldName]: newValue, isEdited: true }
-              : u
-          )
-        );
+      if (slNo !== undefined && fieldName) {
+        handleEdit(slNo, fieldName, newValue);
       }
     };
 
@@ -133,31 +129,6 @@ const UserTable = ({
       delete newFilters[field];
       return newFilters;
     });
-  };
-
-  // Handle the update for all modified users
-  const handleUpdateAll = async () => {
-    const modifiedUsers = users.filter(user => user.isEdited);
-
-    if (modifiedUsers.length === 0) {
-      alert("No changes to save.");
-      return;
-    }
-
-    try {
-      const response = await axios.put("http://localhost:3001/api/update-users", modifiedUsers);
-      alert(response.data.message);
-
-      // Reset isEdited flags after successful update
-      setUsers(prevUsers =>
-        prevUsers.map(user =>
-          user.isEdited ? { ...user, isEdited: false } : user
-        )
-      );
-    } catch (error) {
-      console.error("Update error:", error);
-      alert("Failed to update users.");
-    }
   };
 
   return (
@@ -209,17 +180,14 @@ const UserTable = ({
                           style={{ textAlign: "center", width:"50px" }}
                           type="checkbox"
                           checked={user.isChecked || false}
-                          onChange={(e) =>
-                            setUsers(prev =>
-                              prev.map(u =>
-                                u.regCode === user.regCode ? { ...u, isChecked: e.target.checked } : u
-                              )
-                            )
-                          }
+                          onChange={(e) => handleCheckboxChange(user.slNo, e.target.checked)}
                         />
                       </td>
 
                       <td>
+                        {/* <button className="editsavedeletebtnforempdashboard" onClick={updating}>
+                          {loading ? 'Editing...' : 'Edit'}
+                        </button> */}
                         <button className="editsavedeletebtnforempdashboard" onClick={handleUpdateAll}>
                           Save
                         </button>
@@ -247,18 +215,20 @@ const UserTable = ({
 
         <div className="pagination-control">
           <div>
-            <h4 style={{ color: 'white' }}>Total records for {userId}: {users.length}</h4>
+              <h4 style={{ color: 'white' }}>Total records for {userId}: {users.length}</h4>
           </div>
           <div className="pagination-controls">
-            <button onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))} disabled={currentPage === 1}>
-              Previous
-            </button>
-            <span style={{ color: 'white', margin: '0 10px' }}>Page {currentPage} of {totalPages}</span>
-            <button onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))} disabled={currentPage === totalPages}>
-              Next
-            </button>
+              <button onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))} disabled={currentPage === 1}>
+                Previous
+              </button>
+              <span style={{ color: 'white', margin: '0 10px' }}>Page {currentPage} of {totalPages}</span>
+              <button onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))} disabled={currentPage === totalPages}>
+                Next
+              </button>
           </div>
         </div>
+
+        
       </main>
     </div>
   );

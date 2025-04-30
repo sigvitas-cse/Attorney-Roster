@@ -251,7 +251,7 @@ router.put("/update-user/:slNo", async (req, res) => {
 });
 
 
-router.put("/update-users", async (req, res) => {
+router.put("/update-userss", async (req, res) => {
   console.log("now inside the update-users section");
   const users = req.body;
 
@@ -279,6 +279,81 @@ router.put("/update-users", async (req, res) => {
     res.status(500).json({ error: err.message || "An error occurred." });
   }
 });
+
+router.put("/update-users", async (req, res) => {
+  console.log("Inside update-users route");
+  const users = req.body;
+
+  try {
+    const updatePromises = users.map(async (user) => {
+      const { regCode } = user;
+      if (!regCode) {
+        console.error("Missing regCode for user:", user);
+        throw new Error("regCode is required");
+      }
+      console.log(`Updating user with regCode: ${regCode}`);
+      const updatedUser = await UserModel.findOneAndUpdate(
+        { regCode },
+        { ...user },
+        { new: true }
+      );
+      if (!updatedUser) {
+        console.warn(`No user found with regCode: ${regCode}`);
+      }
+      return updatedUser;
+    });
+
+    const updatedUsers = await Promise.all(updatePromises);
+    res.status(200).json({
+      message: "All users updated successfully.",
+      data: updatedUsers,
+    });
+  } catch (err) {
+    console.error("Error in update-users:", err.stack);
+    res.status(500).json({ error: err.message || "An error occurred." });
+  }
+});
+
+router.put('/update-users2', async (req, res) => {
+  try {
+    console.log("Now inside the update-users2 section");
+    const updatedUsers = req.body; // Expecting an array of user objects
+
+    if (!updatedUsers || !Array.isArray(updatedUsers) || updatedUsers.length === 0) {
+      return res.status(400).send({ message: "No changes to save." });
+    }
+
+    const updatePromises = [];
+
+    for (const updatedUser of updatedUsers) {
+      const { regCode, ...fieldsToUpdate } = updatedUser;
+
+      if (!regCode) continue;
+
+      const updateFields = {};
+
+      for (const [key, value] of Object.entries(fieldsToUpdate)) {
+        if (value !== undefined && value !== null && value !== '') {
+          updateFields[key] = value;
+        }
+      }
+
+      if (Object.keys(updateFields).length > 0) {
+        updatePromises.push(
+          UserModel.updateOne({ regCode }, { $set: updateFields })
+        );
+      }
+    }
+
+    await Promise.all(updatePromises);
+    res.status(200).json({ message: 'Users updated successfully' });
+  } catch (error) {
+    console.error('Error updating users:', error);
+    res.status(500).json({ error: 'Failed to update users' });
+  }
+});
+
+
 
 router.get("/fetch-users", async (req, res) => {
   console.log('now inside the fetch users section');
@@ -761,8 +836,9 @@ router.post("/upload-excel-dynamic", upload.single("excelFile"), async (req, res
     const mailOptions = {
       from: 'darshan@sigvitas.com',
       to: `darshan@sigvitas.com`,
-      subject: 'Daily Data Uploading',
-      text: `${userId2} uploaded the data successfully on ${formattedDate} at ${formattedTime}. Total number of users: ${total}`,
+      subject: 'Re: Daily Data Uploading',
+      // text: `Hello Sir, /n/n${userId2} uploaded the data successfully on ${formattedDate} at ${formattedTime}. Total number of users: ${total}/n/nBest Regards,/nDarshan`,
+      text: `Hello Sir,\n\n${userId2} uploaded the data successfully on ${formattedDate} at ${formattedTime}. \nTotal number of users: ${total}\n\nBest Regards,\nDarshan`,
     };
   
     transporter.sendMail(mailOptions, (error, info) => {

@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Outlet, useLocation } from "react-router-dom";
 import "./App.css";
+import "react-toastify/dist/ReactToastify.css";
 
 import Header from "./components/Header.js";
 import Footer from "./components/Footer.js";

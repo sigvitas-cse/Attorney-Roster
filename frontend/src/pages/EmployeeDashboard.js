@@ -1,78 +1,68 @@
 import React, { useState, useEffect } from "react";
-import * as XLSX from "xlsx";
-import jsPDF from "jspdf";
 import "jspdf-autotable";
 import axios from "axios";
-import "../style/pages/EmployeeDashboard.css"; 
-import { useNavigate } from "react-router-dom";
+import "../style/pages/EmployeeDashboard.css";
 import { useLocation } from "react-router-dom";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import NewProfilesUpdated from "../components/AdminDashBoard/IndivisualComponents/newProfiles";
 import RemovedProfiles from "../components/AdminDashBoard/IndivisualComponents/removedProfiles";
 import NewProfilesUpdated2 from "../components/AdminDashBoard/IndivisualComponents/updatedProfiles";
-
 import NewUploadExcel from "../components/EmployeeDashboard/NewUploadExcel";
 
 const UserTable = () => {
   const [users, setUsers] = useState([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageInput, setPageInput] = useState("");
+  const rowsPerPage = 500;
   const location = useLocation();
   const userId = location.state?.userId;
   const admin = users.length > 0 ? users[0].admin : false;
   const [filter, setFilter] = useState("");
   const [editedUsers, setEditedUsers] = useState({});
-  const [newUser, setNewUser] = useState({});
   const [selectAll, setSelectAll] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [downloadFormat, setDownloadFormat] = useState("");
-  const [isHovered, setIsHovered] = useState(false);
-  const [newProfilesUpdate, setNewProfilesUpdate] = useState(false);
-  const [removedProfilesUpdate, setremovedProfilesUpdate] = useState(false);
-  const [updatedProfiles, setUpdatedProfiles] = useState(false)
+  const [activeComponent, setActiveComponent] = useState(null);
+  const [showDropdown, setShowDropdown] = useState(false);
+  const [newUploadExcel, setNewUploadExcel] = useState(false);
 
-  const [newUploadExcel, setNewUploadExcel] = useState(false)
-  
   useEffect(() => {
-      document.title = "Patent Analyst Dashboard"; 
-    }, []);
+    document.title = "Patent Analyst Dashboard";
+  }, []);
 
   const updating = () => {
     setLoading(!loading);
-    if(loading){
-      alert('Data edited succesfully')
+    if (loading) {
+      toast.success("Data edited successfully");
     }
   };
-
 
   useEffect(() => {
     fetchUsers();
   }, []);
 
-  // const API_URL = process.env.REACT_APP_API_URL;
-  const API_URL = process.env.REACT_APP_API_URL || 'https://roster1.sigvitas.com';
-
+  const API_URL = process.env.REACT_APP_API_URL || "https://roster1.sigvitas.com";
 
   const fetchUsers = () => {
-    const userId = location.state.userId; // Assuming you're using React Router's location.state
+    const userId = location.state.userId;
     console.log("UserId being sent to backend:", userId);
 
     axios
-    .get(`${API_URL}/api/fetch-users?userId=${userId}`)
-      // .get(`http://localhost:3001/api/fetch-users?userId=${userId}`)
+      .get(`http://localhost:3001/api/fetch-users?userId=${userId}`)
       .then((response) => {
         console.log("Response from backend:", response.data);
-        // console.log("Total data:", response.data.data.length);
-
-        setUsers(response.data.data); // Assuming 'data' contains the fetched data
-        // console.log('admin:',response.data.admin);
-        // setAdmin(response.data.admin)
-        
+        setUsers(response.data.data);
       })
       .catch((error) => {
         console.error("Error fetching users:", error);
+        toast.error("Failed to fetch users");
       });
   };
 
   const handleFilterChange = (e) => {
     setFilter(e.target.value);
+    setCurrentPage(1);
+    setPageInput("");
   };
 
   const handleEdit = (id, field, value) => {
@@ -85,863 +75,621 @@ const UserTable = () => {
     });
   };
 
-  const handleUpdateAll = () => {
-    const updates = users.map((user, index) => ({
-      slNo: user.slNo, // Assuming slNo is unique for each user
-      ...editedUsers[user.slNo] || {}, // Spread the edited fields
-    }));
+  const handleUpdateAll = async () => {
+    const updates = Object.keys(editedUsers)
+      .filter((regCode) => Object.keys(editedUsers[regCode]).length > 0)
+      .map((regCode) => ({
+        regCode,
+        ...editedUsers[regCode],
+      }));
 
-    console.log("Sending updates to backend:", updates); // Add this line to verify the updates
-
-    axios
-      .put(`${API_URL}/api/update-users`, updates)
-      // .put('http://localhost:3001/api/update-users', updates)
-      .then((response) => {
-        console.log(response.data.message);
-        fetchUsers(); // Refresh users after update
-        setEditedUsers({});
-        alert('Data saved succesfully')
-      })
-      .catch((error) => console.error("Error updating users:", error));
-      
-  };
-
-  const handleNewUserChange = (field, value) => {
-  setNewUser({
-  ...newUser,
-  [field]: value,
-  });
-  };
-
-  const handleAddUser = () => {
-    if (!newUser.name || !newUser.organization || !newUser.initials) {
-        alert("Please fill all required fields.");
-        return;
+    if (updates.length === 0) {
+      toast.info("No changes to save.");
+      return;
     }
 
-    const dataToSend = { ...newUser, userId, admin};
-      console.log('userId:',userId);
-      console.log('admin:',admin);
+    console.log("Sending updates to backend:", updates);
 
-    // console.log("Adding user:", dataToSend);
+    const batchSize = 500;
+    const batches = [];
+    for (let i = 0; i < updates.length; i += batchSize) {
+      batches.push(updates.slice(i, i + batchSize));
+    }
 
-    axios
-        .post(`${API_URL}/api/add-user`, dataToSend)
-        // .post('http://localhost:3001/api/add-user', dataToSend)
-        .then((response) => {
-            console.log(response.data.message);
-            // fetchAllUsers();
-            setNewUser({
-                slNo: "",
-                name: "",
-                organization:"",
-                addressLine1: "",
-                addressLine2: "",
-                city: "",
-                state: "",
-                country: "",
-                zipcode: "",
-                phoneNumber: "",
-                regCode: "",
-                agentAttorney: "",
-                dateOfPatent: "",
-                agentLicensed: "",
-                firmOrOrganization: "",
-                updatedPhoneNumber: "",
-                emailAddress: "",
-                updatedOrganization: "",
-                firmUrl: "",
-                updatedAddress: "",
-                updatedCity: "",
-                updatedState: "",
-                updatedCountry: "",
-                updatedZipcode: "",
-                linkedInProfile: "",
-                notes: "",
-                initials: "",
-                dataUpdatedAsOn: ""
-            });
-            alert('Data adedd succesfully')
-        })
-        .catch((error) => {
-            console.error("Error adding user:", error);
-            alert("Failed to add user. Please try again.");
-        });
-};
+    try {
+      for (const batch of batches) {
+        await axios.put("http://localhost:3001/api/update-users", batch);
+        console.log(`Batch of ${batch.length} users updated successfully`);
+      }
+      fetchUsers();
+      setEditedUsers({});
+      toast.success("Data saved successfully");
+    } catch (error) {
+      console.error("Error updating users:", error);
+      toast.error(`Failed to save data: ${error.message || "Unknown error"}`);
+    }
+  };
 
-  // console.log('updatedPhoneNumber:',users.updatedPhoneNumber);
   const handleSelectAll = (e) => {
     const isChecked = e.target.checked;
-    setSelectAll(isChecked); 
-    setUsers(users.map((user) => ({ ...user, isChecked }))); 
+    setSelectAll(isChecked);
+    setUsers(users.map((user) => ({ ...user, isChecked })));
   };
 
   const handleCheckboxChange = (id, isChecked) => {
-    setUsers(users.map((user) => (user.slNo === id ? { ...user, isChecked } : user)));
-
-    const allSelected = users.every((user) => user.slNo === id ? isChecked : user.isChecked);
+    setUsers(users.map((user) => (user.regCode === id ? { ...user, isChecked } : user)));
+    const allSelected = users.every((user) => (user.regCode === id ? isChecked : user.isChecked));
     setSelectAll(allSelected);
   };
 
-   const handleDownload = () => {
-    if (downloadFormat === "xlsx") {
-      downloadAsExcel();
-    } else if (downloadFormat === "pdf") {
-      downloadAsPDF();
-    } else {
-      alert("Please select a format to download!");
+  const showNMessage = () => {
+    toast.warn("Not Permitted");
+  };
+
+  const handleKeyDown = (e, rowIndex, colIndex) => {
+    if (["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight"].includes(e.key)) {
+      e.preventDefault();
+      const table = e.target.closest("table");
+      const rows = table.querySelectorAll("tbody tr");
+      const cols = rows[rowIndex].querySelectorAll("td");
+      let newRowIndex = rowIndex;
+      let newColIndex = colIndex;
+
+      if (e.key === "ArrowUp" && rowIndex > 0) {
+        newRowIndex = rowIndex - 1;
+      } else if (e.key === "ArrowDown" && rowIndex < rows.length - 1) {
+        newRowIndex = rowIndex + 1;
+      } else if (e.key === "ArrowLeft" && colIndex > 1) {
+        newColIndex = colIndex - 1;
+      } else if (e.key === "ArrowRight" && colIndex < cols.length - 2) {
+        newColIndex = colIndex + 1;
+      }
+
+      const newCell = rows[newRowIndex].querySelectorAll("td")[newColIndex];
+      if (newCell && newCell.hasAttribute("contentEditable")) {
+        newCell.focus();
+      }
     }
   };
 
-  const downloadAsExcel = () => {
-    const worksheet = XLSX.utils.json_to_sheet(users);
-    const workbook = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(workbook, worksheet, "Users");
-    XLSX.writeFile(workbook, "users.xlsx");
-  };
-//in A3 it's looks good
-  const downloadAsPDF = () => {
-    const doc = new jsPDF('landscape', 'mm', 'a3');
-
-    // Extract table columns and rows
-    const tableColumn = Object.keys(users[0]);
-    const tableRows = users.map(user => Object.values(user));
-
-    // AutoTable configuration
-    doc.autoTable({
-      margin: { top: 3, right: 3, bottom: 3, left: 3 }, // Reduce the outer margin
-      head: [tableColumn],
-      body: tableRows,
-      theme: 'grid', // Ensures a grid layout with borders
-      styles: {
-        fontSize: 4,
-        cellPadding: 0.5,
-        overflow: 'linebreak',
-      },
-      headStyles: {
-        fillColor: [22, 160, 133], // Header background color
-        textColor: 255, // Header text color
-        fontSize: 5,
-        lineWidth: 0.1, // Enforces border line width
-        lineColor: [200, 200, 200], // Light gray borders
-      },
-      drawCell: (data) => {
-        // Custom logic for rendering header borders
-        if (data.section === 'head') {
-          doc.setDrawColor(200, 200, 200); // Light gray border color
-          doc.setLineWidth(0.1); // Border thickness
-          doc.rect(data.cell.x, data.cell.y, data.cell.width, data.cell.height);
-        }
-      },
-      columnStyles: {
-        0: { cellWidth: 10 }, // Reduce width for _id
-        1: { cellWidth: 6 },
-        2: { cellWidth: 12 },
-        3: { cellWidth: 12 }, // Reduce width for slNo
-        4: { cellWidth: 13 },
-        5: { cellWidth: 13 },
-        6: { cellWidth: 10 }, //city
-        7: { cellWidth: 8 },
-        8: { cellWidth: 10 }, //country
-        10: { cellWidth: 15 },
-        11: { cellWidth: 10 }, //reg Cod
-        12: { cellWidth: 15 },
-        13: { cellWidth: 15 },
-        14: { cellWidth: 15 },//agentLicensed       
-        15: { cellWidth: 10 },
-        16: { cellWidth: 11 },//updated phone number
-        17: { cellWidth: 12 }, //email
-        18: { cellWidth: 10 }, //updated organization
-        18: { cellWidth: 10 },//firmUrl
-        19: { cellWidth: 12 },//updatedAddress        
-        20: { cellWidth: 11 },
-        21: { cellWidth: 12 },
-        22: { cellWidth: 12 },
-        23: { cellWidth: 10 },
-        24: { cellWidth: 10 },
-        25: { cellWidth: 15 },//linkdin
-        26: { cellWidth: 10 },//notes
-        27: { cellWidth: 10 },//initials
-        28: { cellWidth: 15 },//dateUpdatedAsOn
-        29: { cellWidth: 15 },
-        // Adjust or add more columns if needed
-      },
-      didDrawPage: (data) => {
-        const pageCount = doc.internal.getNumberOfPages();
-        doc.setFontSize(10);
-        doc.text(`Page ${data.pageNumber} of ${pageCount}`, data.settings.margin.left, doc.internal.pageSize.height - 10);
-      },
-    });
-
-    doc.save("users.pdf");
+  const toggleDropdown = () => {
+    setShowDropdown(!showDropdown);
   };
 
-const showNMessage = () => {
-  alert('Not Permited');
-  // return showNMessage;
-}
+  const handleDropdownSelect = (component) => {
+    setActiveComponent(component);
+    setShowDropdown(false);
+  };
 
+  const filteredUsers = users.filter((user) => {
+    if (!user) return false;
+    const searchableFields = [
+      user.name,
+      user.organization,
+      user.addressLine1,
+      user.addressLine2,
+      user.city,
+      user.state,
+      user.country,
+      user.zipcode,
+      user.phoneNumber,
+      user.regCode,
+      user.agentAttorney,
+      user.dateOfPatent,
+      user.agentLicensed,
+      user.firmOrOrganization,
+      user.updatedPhoneNumber,
+      user.emailAddress,
+      user.updatedOrganization,
+      user.firmUrl,
+      user.updatedAddress,
+      user.updatedCity,
+      user.updatedState,
+      user.updatedCountry,
+      user.updatedZipcode,
+      user.linkedInProfile,
+      user.notes,
+      user.initials,
+      user.dataUpdatedAsOn,
+    ];
+    return searchableFields.some((field) =>
+      field?.toString().toLowerCase().includes(filter.toLowerCase())
+    );
+  });
+
+  const totalPages = Math.ceil(filteredUsers.length / rowsPerPage);
+  const startIndex = (currentPage - 1) * rowsPerPage;
+  const endIndex = startIndex + rowsPerPage;
+  const paginatedUsers = filteredUsers.slice(startIndex, endIndex);
+
+  const handlePreviousPage = () => {
+    if (currentPage > 1) {
+      setCurrentPage(currentPage - 1);
+      setPageInput(currentPage - 1);
+    }
+  };
+
+  const handleNextPage = () => {
+    if (currentPage < totalPages) {
+      setCurrentPage(currentPage + 1);
+      setPageInput(currentPage + 1);
+    }
+  };
+
+  const handlePageInputChange = (e) => {
+    setPageInput(e.target.value);
+  };
+
+  const handlePageJump = () => {
+    const pageNumber = parseInt(pageInput, 10);
+    if (!isNaN(pageNumber) && pageNumber >= 1 && pageNumber <= totalPages) {
+      setCurrentPage(pageNumber);
+      setPageInput(pageNumber);
+    } else {
+      toast.error("Invalid page number");
+      setPageInput(currentPage);
+    }
+  };
+
+  const handlePageInputKeyPress = (e) => {
+    if (e.key === "Enter") {
+      handlePageJump();
+    }
+  };
 
   return (
     <div>
-     <main className="main3">
-     <div className="user-table-container">
+      <ToastContainer position="top-right" autoClose={3000} hideProgressBar={false} />
+      <main className="main3">
+        <div className="user-table-container">
+          {activeComponent === "newProfiles" && (
+            <NewProfilesUpdated onClick={() => setActiveComponent(null)} />
+          )}
+          {activeComponent === "removedProfiles" && (
+            <RemovedProfiles onClick={() => setActiveComponent(null)} />
+          )}
+          {activeComponent === "updatedProfiles" && (
+            <NewProfilesUpdated2 onClick={() => setActiveComponent(null)} />
+          )}
 
-      <div className='Filter-Block'>
-        <div className="Filter-Block1"> 
-          <h2 className="title">User Management</h2>
-        </div>
-        <div className="Filter-Block2">
-        {/* <i class="fa-solid fa-magnifying-glass"></i> */}
-        <input
-          type="text"
-          placeholder="Filter by name/regCode"
-          value={filter}
-          onChange={handleFilterChange}
-          className="filter-input"
-        />
-        <i class="fa-solid fa-magnifying-glass search-icon"></i>
-        {/* <div>
-      <select
-        value={downloadFormat}
-        onChange={(e) => setDownloadFormat(e.target.value)}
-        className="download-format-dropdown"
-      >
-        <option value="" disabled>
-          Select Format
-        </option>
-        <option value="xlsx">Excel</option>
-        <option value="pdf">PDF</option>
-      </select>
-      <button onClick={handleDownload} className="Download-button" style={{cursor:'pointer'}}>  //This is only only specific data regarding userId[current displyaing data]
-        Download
-      </button>
-
-    </div> */}
-    <button onClick={handleUpdateAll} className="saveBtnForAllOne" >
-    Save
-  </button>
-  <button className="saveBtnForAllOne" onClick={()=>setNewUploadExcel(true)}>Upload</button>
-              {
-                newUploadExcel && (
-                  <NewUploadExcel userId={userId._id} onClose={()=>setNewUploadExcel(false)}/>
-                )
-              }
-
-  <div className="datasections">
-              <p> <button className="newprofiles indivisualbuttons" onClick={()=>setNewProfilesUpdate(true)}>New Profiles</button></p>
-              {
-                newProfilesUpdate && (
-                  <NewProfilesUpdated onClick={()=>setNewProfilesUpdate(false)}/>
-                )
-              }
-              <p><button className="removedprofiles indivisualbuttons" onClick={()=>setremovedProfilesUpdate(true)}>Removed Profiles</button></p>
-              {
-                removedProfilesUpdate && (
-                  <RemovedProfiles onClick={()=>setremovedProfilesUpdate(false)}/>
-                )
-              }
-              <p> <button className="updatedrofiles indivisualbuttons" onClick={()=>setUpdatedProfiles(true)}>Updated Profiles</button></p>
-              {
-                updatedProfiles && (
-                  <NewProfilesUpdated2 onClick={()=>setUpdatedProfiles(false)}/>
-                )
-              }
+          <div className="filter-block">
+            <div className="filter-block1">
+              <h2 className="title">User Management</h2>
             </div>
-        </div> 
-         {/* <button onClick={fetchAllAllData}>Download</button> This is for all data */}
-      </div>
-  
-    <div className="table-container2">
-      <table className="user-table">
-      <thead>
-          <tr>
-            <th className="user-table-head1">
-              S. No.
-            </th>
-            <th>Name</th>
-            <th>Organization</th>
-            <th>Address Line 1</th>
-            <th>Address Line 2</th>
-            <th>City</th>
-            <th>State</th>
-            <th>Country</th>
-            <th>Zipcode</th>
-            <th>Phone Number</th>
-            <th>Reg Code </th>
-            <th>Attorney</th>
-            <th>Date of Patent</th>
-            <th>Agent Licensed</th>
-            <th>Firm or Organization</th>
-            <th>Updated Phone Number</th>
-            <th>Email Address</th>
-            <th>Updated Organization/Law Firm Name</th>
-            <th>Firm/Organization URL</th>
-            <th>Updated Address</th>
-            <th>Updated City</th>
-            <th>Updated State</th>
-            <th>Updated Country</th>
-            <th>Updated Zipcode</th>
-            <th>LinkedIn Profile URL</th>
-            <th>Notes</th>
-            <th>Initials</th>
-            <th>Data Updated as on</th>
-            <th style={{whiteSpace: 'wrap', width:"70px", textAlign:"center"}}>
-             All{" "}
-              <input
-                style={{ width: "auto" }}
-                type="checkbox"
-                checked={selectAll}
-                onChange={handleSelectAll}
-              />
-            </th>
+            <div className="filter-block2">
+              <div className="filter-input-wrapper">
+                <input
+                  type="text"
+                  placeholder="Filter by any field"
+                  value={filter}
+                  onChange={handleFilterChange}
+                  className="filter-input"
+                />
+                <i className="fa-solid fa-magnifying-glass search-icon"></i>
+              </div>
+              <button onClick={handleUpdateAll} className="action-button save-button">
+                Save
+              </button>
+              <button
+                className="action-button upload-button"
+                onClick={() => setNewUploadExcel(true)}
+              >
+                Upload
+              </button>
+              <div className="dropdown-container">
+                <button
+                  className="action-button updates-button"
+                  onClick={toggleDropdown}
+                >
+                  Updates
+                </button>
+                {showDropdown && (
+                  <div className="dropdown-menu">
+                    <div
+                      className="dropdown-item"
+                      onClick={() => handleDropdownSelect("newProfiles")}
+                    >
+                      New Profiles
+                    </div>
+                    <div
+                      className="dropdown-item"
+                      onClick={() => handleDropdownSelect("removedProfiles")}
+                    >
+                      Removed Profiles
+                    </div>
+                    <div
+                      className="dropdown-item"
+                      onClick={() => handleDropdownSelect("updatedProfiles")}
+                    >
+                      Updated Profiles
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
 
-            <th>EditSaveDelete</th>
+          <div className="table-container">
+            <table className="user-table">
+              <thead>
+                <tr>
+                  <th className="user-table-head">S. No.</th>
+                  <th>Name</th>
+                  <th>Organization</th>
+                  <th>Address Line 1</th>
+                  <th>Address Line 2</th>
+                  <th>City</th>
+                  <th>State</th>
+                  <th>Country</th>
+                  <th>Zipcode</th>
+                  <th>Phone Number</th>
+                  <th>Reg Code</th>
+                  <th>Attorney</th>
+                  <th>Date of Patent</th>
+                  <th>Agent Licensed</th>
+                  <th>Firm or Organization</th>
+                  <th>Updated Phone Number</th>
+                  <th>Email Address</th>
+                  <th>Updated Organization/Law Firm Name</th>
+                  <th>Firm/Organization URL</th>
+                  <th>Updated Address</th>
+                  <th>Updated City</th>
+                  <th>Updated State</th>
+                  <th>Updated Country</th>
+                  <th>Updated Zipcode</th>
+                  <th>LinkedIn Profile URL</th>
+                  <th>Notes</th>
+                  <th>Initials</th>
+                  <th>Data Updated as on</th>
+                  <th className="checkbox-header">
+                    All <input type="checkbox" checked={selectAll} onChange={handleSelectAll} />
+                  </th>
+                  <th>Edit/Save/Delete</th>
+                </tr>
+              </thead>
+              <tbody>
+                {paginatedUsers.map((user, index) => (
+                  <tr key={index} className={index % 2 === 0 ? "row-even" : "row-odd"}>
+                    <td className="user-table-row-data">{startIndex + index + 1}</td>
+                    <td
+                      contentEditable
+                      suppressContentEditableWarning
+                      spellCheck={false}
+                      onBlur={(e) => handleEdit(user.regCode, "name", e.target.textContent)}
+                      onKeyDown={(e) => handleKeyDown(e, index, 1)}
+                      className="editable-cell"
+                    >
+                      {editedUsers[user.regCode]?.name || user.name}
+                    </td>
+                    <td
+                      contentEditable
+                      suppressContentEditableWarning
+                      spellCheck={false}
+                      onBlur={(e) => handleEdit(user.regCode, "organization", e.target.textContent)}
+                      onKeyDown={(e) => handleKeyDown(e, index, 2)}
+                      className="editable-cell"
+                    >
+                      {editedUsers[user.regCode]?.organization || user.organization}
+                    </td>
+                    <td
+                      contentEditable
+                      suppressContentEditableWarning
+                      spellCheck={false}
+                      onBlur={(e) => handleEdit(user.regCode, "addressLine1", e.target.textContent)}
+                      onKeyDown={(e) => handleKeyDown(e, index, 3)}
+                      className="editable-cell"
+                    >
+                      {editedUsers[user.regCode]?.addressLine1 || user.addressLine1}
+                    </td>
+                    <td
+                      contentEditable
+                      suppressContentEditableWarning
+                      spellCheck={false}
+                      onBlur={(e) => handleEdit(user.regCode, "addressLine2", e.target.textContent)}
+                      onKeyDown={(e) => handleKeyDown(e, index, 4)}
+                      className="editable-cell"
+                    >
+                      {editedUsers[user.regCode]?.addressLine2 || user.addressLine2}
+                    </td>
+                    <td
+                      contentEditable
+                      suppressContentEditableWarning
+                      spellCheck={false}
+                      onBlur={(e) => handleEdit(user.regCode, "city", e.target.textContent)}
+                      onKeyDown={(e) => handleKeyDown(e, index, 5)}
+                      className="editable-cell"
+                    >
+                      {editedUsers[user.regCode]?.city || user.city}
+                    </td>
+                    <td
+                      contentEditable
+                      suppressContentEditableWarning
+                      spellCheck={false}
+                      onBlur={(e) => handleEdit(user.regCode, "state", e.target.textContent)}
+                      onKeyDown={(e) => handleKeyDown(e, index, 6)}
+                      className="editable-cell"
+                    >
+                      {editedUsers[user.regCode]?.state || user.state}
+                    </td>
+                    <td
+                      contentEditable
+                      suppressContentEditableWarning
+                      spellCheck={false}
+                      onBlur={(e) => handleEdit(user.regCode, "country", e.target.textContent)}
+                      onKeyDown={(e) => handleKeyDown(e, index, 7)}
+                      className="editable-cell"
+                    >
+                      {editedUsers[user.regCode]?.country || user.country}
+                    </td>
+                    <td
+                      contentEditable
+                      suppressContentEditableWarning
+                      spellCheck={false}
+                      onBlur={(e) => handleEdit(user.regCode, "zipcode", e.target.textContent)}
+                      onKeyDown={(e) => handleKeyDown(e, index, 8)}
+                      className="editable-cell"
+                    >
+                      {editedUsers[user.regCode]?.zipcode || user.zipcode}
+                    </td>
+                    <td
+                      contentEditable
+                      suppressContentEditableWarning
+                      spellCheck={false}
+                      onBlur={(e) => handleEdit(user.regCode, "phoneNumber", e.target.textContent)}
+                      onKeyDown={(e) => handleKeyDown(e, index, 9)}
+                      className="editable-cell"
+                    >
+                      {editedUsers[user.regCode]?.phoneNumber || user.phoneNumber}
+                    </td>
+                    <td
+                      contentEditable
+                      suppressContentEditableWarning
+                      spellCheck={false}
+                      onBlur={(e) => handleEdit(user.regCode, "regCode", e.target.textContent)}
+                      onKeyDown={(e) => handleKeyDown(e, index, 10)}
+                      className="editable-cell"
+                    >
+                      {editedUsers[user.regCode]?.regCode || user.regCode}
+                    </td>
+                    <td
+                      contentEditable
+                      suppressContentEditableWarning
+                      spellCheck={false}
+                      onBlur={(e) => handleEdit(user.regCode, "agentAttorney", e.target.textContent)}
+                      onKeyDown={(e) => handleKeyDown(e, index, 11)}
+                      className="editable-cell"
+                    >
+                      {editedUsers[user.regCode]?.agentAttorney || user.agentAttorney}
+                    </td>
+                    <td
+                      contentEditable
+                      suppressContentEditableWarning
+                      spellCheck={false}
+                      onBlur={(e) => handleEdit(user.regCode, "dateOfPatent", e.target.textContent)}
+                      onKeyDown={(e) => handleKeyDown(e, index, 12)}
+                      className="editable-cell"
+                    >
+                      {editedUsers[user.regCode]?.dateOfPatent || user.dateOfPatent}
+                    </td>
+                    <td
+                      contentEditable
+                      suppressContentEditableWarning
+                      spellCheck={false}
+                      onBlur={(e) => handleEdit(user.regCode, "agentLicensed", e.target.textContent)}
+                      onKeyDown={(e) => handleKeyDown(e, index, 13)}
+                      className="editable-cell"
+                    >
+                      {editedUsers[user.regCode]?.agentLicensed || user.agentLicensed}
+                    </td>
+                    <td
+                      contentEditable
+                      suppressContentEditableWarning
+                      spellCheck={false}
+                      onBlur={(e) => handleEdit(user.regCode, "firmOrOrganization", e.target.textContent)}
+                      onKeyDown={(e) => handleKeyDown(e, index, 14)}
+                      className="editable-cell"
+                    >
+                      {editedUsers[user.regCode]?.firmOrOrganization || user.firmOrOrganization}
+                    </td>
+                    <td
+                      contentEditable
+                      suppressContentEditableWarning
+                      spellCheck={false}
+                      onBlur={(e) => handleEdit(user.regCode, "updatedPhoneNumber", e.target.textContent)}
+                      onKeyDown={(e) => handleKeyDown(e, index, 15)}
+                      className="editable-cell"
+                    >
+                      {editedUsers[user.regCode]?.updatedPhoneNumber || user.updatedPhoneNumber}
+                    </td>
+                    <td
+                      contentEditable
+                      suppressContentEditableWarning
+                      spellCheck={false}
+                      onBlur={(e) => handleEdit(user.regCode, "emailAddress", e.target.textContent)}
+                      onKeyDown={(e) => handleKeyDown(e, index, 16)}
+                      className="editable-cell"
+                    >
+                      {editedUsers[user.regCode]?.emailAddress || user.emailAddress}
+                    </td>
+                    <td
+                      contentEditable
+                      suppressContentEditableWarning
+                      spellCheck={false}
+                      onBlur={(e) => handleEdit(user.regCode, "updatedOrganization", e.target.textContent)}
+                      onKeyDown={(e) => handleKeyDown(e, index, 17)}
+                      className="editable-cell"
+                    >
+                      {editedUsers[user.regCode]?.updatedOrganization || user.updatedOrganization}
+                    </td>
+                    <td
+                      contentEditable
+                      suppressContentEditableWarning
+                      spellCheck={false}
+                      onBlur={(e) => handleEdit(user.regCode, "firmUrl", e.target.textContent)}
+                      onKeyDown={(e) => handleKeyDown(e, index, 18)}
+                      className="editable-cell"
+                    >
+                      {editedUsers[user.regCode]?.firmUrl || user.firmUrl}
+                    </td>
+                    <td
+                      contentEditable
+                      suppressContentEditableWarning
+                      spellCheck={false}
+                      onBlur={(e) => handleEdit(user.regCode, "updatedAddress", e.target.textContent)}
+                      onKeyDown={(e) => handleKeyDown(e, index, 19)}
+                      className="editable-cell"
+                    >
+                      {editedUsers[user.regCode]?.updatedAddress || user.updatedAddress}
+                    </td>
+                    <td
+                      contentEditable
+                      suppressContentEditableWarning
+                      spellCheck={false}
+                      onBlur={(e) => handleEdit(user.regCode, "updatedCity", e.target.textContent)}
+                      onKeyDown={(e) => handleKeyDown(e, index, 20)}
+                      className="editable-cell"
+                    >
+                      {editedUsers[user.regCode]?.updatedCity || user.updatedCity}
+                    </td>
+                    <td
+                      contentEditable
+                      suppressContentEditableWarning
+                      spellCheck={false}
+                      onBlur={(e) => handleEdit(user.regCode, "updatedState", e.target.textContent)}
+                      onKeyDown={(e) => handleKeyDown(e, index, 21)}
+                      className="editable-cell"
+                    >
+                      {editedUsers[user.regCode]?.updatedState || user.updatedState}
+                    </td>
+                    <td
+                      contentEditable
+                      suppressContentEditableWarning
+                      spellCheck={false}
+                      onBlur={(e) => handleEdit(user.regCode, "updatedCountry", e.target.textContent)}
+                      onKeyDown={(e) => handleKeyDown(e, index, 22)}
+                      className="editable-cell"
+                    >
+                      {editedUsers[user.regCode]?.updatedCountry || user.updatedCountry}
+                    </td>
+                    <td
+                      contentEditable
+                      suppressContentEditableWarning
+                      spellCheck={false}
+                      onBlur={(e) => handleEdit(user.regCode, "updatedZipcode", e.target.textContent)}
+                      onKeyDown={(e) => handleKeyDown(e, index, 23)}
+                      className="editable-cell"
+                    >
+                      {editedUsers[user.regCode]?.updatedZipcode || user.updatedZipcode}
+                    </td>
+                    <td
+                      contentEditable
+                      suppressContentEditableWarning
+                      spellCheck={false}
+                      onBlur={(e) => handleEdit(user.regCode, "linkedInProfile", e.target.textContent)}
+                      onKeyDown={(e) => handleKeyDown(e, index, 24)}
+                      className="editable-cell"
+                    >
+                      {editedUsers[user.regCode]?.linkedInProfile || user.linkedInProfile}
+                    </td>
+                    <td
+                      contentEditable
+                      suppressContentEditableWarning
+                      spellCheck={false}
+                      onBlur={(e) => handleEdit(user.regCode, "notes", e.target.textContent)}
+                      onKeyDown={(e) => handleKeyDown(e, index, 25)}
+                      className="editable-cell"
+                    >
+                      {editedUsers[user.regCode]?.notes || user.notes}
+                    </td>
+                    <td
+                      contentEditable
+                      suppressContentEditableWarning
+                      spellCheck={false}
+                      onBlur={(e) => handleEdit(user.regCode, "initials", e.target.textContent)}
+                      onKeyDown={(e) => handleKeyDown(e, index, 26)}
+                      className="editable-cell"
+                    >
+                      {editedUsers[user.regCode]?.initials || user.initials}
+                    </td>
+                    <td
+                      contentEditable
+                      suppressContentEditableWarning
+                      spellCheck={false}
+                      onBlur={(e) => handleEdit(user.regCode, "dataUpdatedAsOn", e.target.textContent)}
+                      onKeyDown={(e) => handleKeyDown(e, index, 27)}
+                      className="editable-cell"
+                    >
+                      {editedUsers[user.regCode]?.dataUpdatedAsOn || user.dataUpdatedAsOn}
+                    </td>
+                    <td className="checkbox-cell">
+                      <input
+                        type="checkbox"
+                        checked={user.isChecked || false}
+                        onChange={(e) => handleCheckboxChange(user.regCode, e.target.checked)}
+                      />
+                    </td>
+                    <td className="action-cell">
+                      <button className="action-button edit-button" onClick={updating}>
+                        {loading ? "Edited" : "Edit"}
+                      </button>
+                      <button className="action-button save-button" onClick={handleUpdateAll}>
+                        Save
+                      </button>
+                      <button
+                        className="action-button delete-button"
+                        onClick={showNMessage}
+                      >
+                        Delete
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
 
-          </tr>
-        </thead>
-        <tbody>
-          {users
-            // .filter((user) => user.name.toLowerCase().includes(filter.toLowerCase()))
-            // .filter((user) => user && (user.name || user.regCode).toLowerCase().includes((filter).toLowerCase()))
-            .filter((user) => {
-              if (!user) return false; // Skip undefined or null users
-              const { name = "", regCode = "" } = user; // Destructure with default values to avoid undefined
-              return (
-                name.toLowerCase().includes(filter.toLowerCase()) ||
-                regCode.toLowerCase().includes(filter.toLowerCase())
-              );
-            })
-            .map((user, index) => (
-              <tr key={index}>
-                {/* <td>{user.slNo}</td> */}
-                <td className="user-table-row-data-SlNo">
-                    {index+1}
-                </td>
-                
-                <td
-                  contentEditable
-                  suppressContentEditableWarning
-                  spellCheck={false}
-                  onBlur={(e) => handleEdit(user.slNo, "name", e.target.textContent)}
-                  className="editable-input"
-                >
-                  {user ? (editedUsers[user.slNo]?.name || user.name) : ""}
-                </td>
-                <td
-                  contentEditable
-                  suppressContentEditableWarning
-                  spellCheck={false}
-                  onBlur={(e) => handleEdit(user.slNo, "organization", e.target.textContent)}
-                  className="editable-input"
-                >
-                  {user ? (editedUsers[user.slNo]?.organization || user.organization) : ""}
-                </td>
-                <td
-                  contentEditable
-                  suppressContentEditableWarning
-                  spellCheck={false}
-                  onBlur={(e) => handleEdit(user.slNo, "addressLine1", e.target.textContent)}
-                  className="editable-input"
-                >
-                  {user ? (editedUsers[user.slNo]?.addressLine1 || user.addressLine1) : ""}
-                </td>
-                <td
-                  contentEditable
-                  suppressContentEditableWarning
-                  spellCheck={false}
-                  onBlur={(e) => handleEdit(user.slNo, "addressLine2", e.target.textContent)}
-                  className="editable-input"
-                >
-                  {user ? (editedUsers[user.slNo]?.addressLine2 || user.addressLine2) : ""}
-                </td>
-                <td
-                  contentEditable
-                  suppressContentEditableWarning
-                  spellCheck={false}
-                  onBlur={(e) => handleEdit(user.slNo, "city", e.target.textContent)}
-                  className="editable-input"
-                >
-                  {user ? (editedUsers[user.slNo]?.city || user.city) : ""}
-                </td>
-                <td
-                  contentEditable
-                  suppressContentEditableWarning
-                  spellCheck={false}
-                  onBlur={(e) => handleEdit(user.slNo, "state", e.target.textContent)}
-                  className="editable-input"
-                >
-                  {user ? (editedUsers[user.slNo]?.state || user.state) : ""}
-                </td>
-                <td
-                  contentEditable
-                  suppressContentEditableWarning
-                  spellCheck={false}
-                  onBlur={(e) => handleEdit(user.slNo, "country", e.target.textContent)}
-                  className="editable-input"
-                >
-                  {user ? (editedUsers[user.slNo]?.country || user.country) : ""}
-                </td>
-                <td
-                  contentEditable
-                  suppressContentEditableWarning
-                  spellCheck={false}
-                  onBlur={(e) => handleEdit(user.slNo, "zipcode", e.target.textContent)}
-                  className="editable-input"
-                >
-                  {user ? (editedUsers[user.slNo]?.zipcode || user.zipcode) : ""}
-                </td>
-                <td
-                  contentEditable
-                  suppressContentEditableWarning
-                  spellCheck={false}
-                  onBlur={(e) => handleEdit(user.slNo, "phoneNumber", e.target.textContent)}
-                  className="editable-input"
-                >
-                  {user ? (editedUsers[user.slNo]?.phoneNumber || user.phoneNumber) : ""}
-                </td>
-                <td
-                  contentEditable
-                  suppressContentEditableWarning
-                  spellCheck={false}
-                  onBlur={(e) => handleEdit(user.slNo, "regCode", e.target.textContent)}
-                  className="editable-input"
-                >
-                  {user ? (editedUsers[user.slNo]?.regCode || user.regCode) : ""}
-                </td>
-                <td
-                  contentEditable
-                  suppressContentEditableWarning
-                  spellCheck={false}
-                  onBlur={(e) => handleEdit(user.slNo, "agentAttorney", e.target.textContent)}
-                  className="editable-input"
-                >
-                  {user ? (editedUsers[user.slNo]?.agentAttorney || user.agentAttorney) : ""}
-                </td>
-                <td
-                  contentEditable
-                  suppressContentEditableWarning
-                  spellCheck={false}
-                  onBlur={(e) => handleEdit(user.slNo, "dateOfPatent", e.target.textContent)}
-                  className="editable-input"
-                >
-                  {user ? (editedUsers[user.slNo]?.dateOfPatent || user.dateOfPatent) : ""}
-                </td>
-                <td
-                  contentEditable
-                  suppressContentEditableWarning
-                  spellCheck={false}
-                  onBlur={(e) => handleEdit(user.slNo, "agentLicensed", e.target.textContent)}
-                  className="editable-input"
-                >
-                  {user ? (editedUsers[user.slNo]?.agentLicensed || user.agentLicensed) : ""}
-                </td>
-                <td
-                  contentEditable
-                  suppressContentEditableWarning
-                  spellCheck={false}
-                  onBlur={(e) => handleEdit(user.slNo, "firmOrOrganization", e.target.textContent)}
-                  className="editable-input"
-                >
-                  {user ? (editedUsers[user.slNo]?.firmOrOrganization || user.firmOrOrganization) : ""}
-                </td>
-                <td
-                  contentEditable
-                  suppressContentEditableWarning
-                  spellCheck={false}
-                  onBlur={(e) => handleEdit(user.slNo, "updatedPhoneNumber", e.target.textContent)}
-                  className="editable-input"
-                >
-                  {user ? (editedUsers[user.slNo]?.updatedPhoneNumber || user.updatedPhoneNumber) : ""}
-                </td>
-                <td
-                  contentEditable
-                  suppressContentEditableWarning
-                  spellCheck={false}
-                  onBlur={(e) => handleEdit(user.slNo, "emailAddress", e.target.textContent)}
-                  className="editable-input"
-                >
-                  {user ? (editedUsers[user.slNo]?.emailAddress || user.emailAddress) : ""}
-                </td>
-                <td
-                  contentEditable
-                  suppressContentEditableWarning
-                  spellCheck={false}
-                  onBlur={(e) => handleEdit(user.slNo, "updatedOrganization", e.target.textContent)}
-                  className="editable-input"
-                >
-                  {user ? (editedUsers[user.slNo]?.updatedOrganization || user.updatedOrganization) : ""}
-                </td>
-                <td
-                  contentEditable
-                  suppressContentEditableWarning
-                  spellCheck={false}
-                  onBlur={(e) => handleEdit(user.slNo, "firmUrl", e.target.textContent)}
-                  className="editable-input"
-                >
-                  {user ? (editedUsers[user.slNo]?.firmUrl || user.firmUrl) : ""}
-                </td>
-                <td
-                  contentEditable
-                  suppressContentEditableWarning
-                  spellCheck={false}
-                  onBlur={(e) => handleEdit(user.slNo, "updatedAddress", e.target.textContent)}
-                  className="editable-input"
-                >
-                  {user ? (editedUsers[user.slNo]?.updatedAddress || user.updatedAddress) : ""}
-                </td>
-                <td
-                  contentEditable
-                  suppressContentEditableWarning
-                  spellCheck={false}
-                  onBlur={(e) => handleEdit(user.slNo, "updatedCity", e.target.textContent)}
-                  className="editable-input"
-                >
-                  {user ? (editedUsers[user.slNo]?.updatedCity || user.updatedCity) : ""}
-                </td>
-                <td
-                  contentEditable
-                  suppressContentEditableWarning
-                  spellCheck={false}
-                  onBlur={(e) => handleEdit(user.slNo, "updatedState", e.target.textContent)}
-                  className="editable-input"
-                >
-                  {user ? (editedUsers[user.slNo]?.updatedState || user.updatedState) : ""}
-                </td>
-                <td
-                  contentEditable
-                  suppressContentEditableWarning
-                  spellCheck={false}
-                  onBlur={(e) => handleEdit(user.slNo, "updatedCountry", e.target.textContent)}
-                  className="editable-input"
-                >
-                  {user ? (editedUsers[user.slNo]?.updatedCountry || user.updatedCountry) : ""}
-                </td>
-                <td
-                  contentEditable
-                  suppressContentEditableWarning
-                  spellCheck={false}
-                  onBlur={(e) => handleEdit(user.slNo, "updatedZipcode", e.target.textContent)}
-                  className="editable-input"
-                >
-                  {user ? (editedUsers[user.slNo]?.updatedZipcode || user.updatedZipcode) : ""}
-                </td>
-                <td
-                  contentEditable
-                  suppressContentEditableWarning
-                  spellCheck={false}
-                  onBlur={(e) => handleEdit(user.slNo, "linkedInProfile", e.target.textContent)}
-                  className="editable-input"
-                >
-                  {user ? (editedUsers[user.slNo]?.linkedInProfile || user.linkedInProfile) : ""}
-                </td>
-                <td
-                  contentEditable
-                  suppressContentEditableWarning
-                  spellCheck={false}
-                  onBlur={(e) => handleEdit(user.slNo, "notes", e.target.textContent)}
-                  className="editable-input"
-                >
-                  {user ? (editedUsers[user.slNo]?.notes || user.notes) : ""}
-                </td>
-                <td
-                  contentEditable
-                  suppressContentEditableWarning
-                  spellCheck={false}
-                  onBlur={(e) => handleEdit(user.slNo, "initials", e.target.textContent)}
-                  className="editable-input"
-                >
-                  {user ? (editedUsers[user.slNo]?.initials || user.initials) : ""}
-                </td>
-                <td
-                  contentEditable
-                  suppressContentEditableWarning
-                  spellCheck={false}
-                  onBlur={(e) => handleEdit(user.slNo, "dataUpdatedAsOn", e.target.textContent)}
-                  className="editable-input"
-                >
-                  {user ? (editedUsers[user.slNo]?.dataUpdatedAsOn || user.dataUpdatedAsOn) : ""}
-                </td>
-                <td style={{width:"auto", textAlign:"center"}}>
-                  <input
-                    type="checkbox"
-                    checked={user.isChecked || false} 
-                    onChange={(e) => handleCheckboxChange(user.slNo, e.target.checked)}
-                    style={{width:"auto"}}
-                  />
-                </td>
-
-                <td style={{width:'auto'}}>
-                  <button className="editsavedeletebtnforempdashboard" onClick={updating}>{loading ? 'edited?' : 'edit'}</button>
-                  <button className="editsavedeletebtnforempdashboard"  onClick={handleUpdateAll}>save</button>
-                  <button className="deletebtnforempdashboard" onClick={showNMessage}                  
-                  onMouseEnter={() => setIsHovered(true)}
-                  onMouseLeave={() => setIsHovered(false)}
-                  >delete</button>
-                </td>
-
-              </tr>
-            ))}
-        </tbody>
-      </table>
-    </div>
-    <h4 style={{color:'white'}}>Total data's of {userId} : {users.length}</h4>
-    <h3 className="add-user-form-h3" style={{color:'white'}}>Add New User</h3>
-      <div className="add-user-form">
-        
-        <table className='user-table2'>
-        <tr>
-          <td
-            contentEditable
-            suppressContentEditableWarning
-            spellCheck={false}
-            onBlur={(e) => handleNewUserChange("slNo", e.target.textContent)}
-            className="editable-cell"
-            data-placeholder="S. No."
-          ></td>
-          <td
-            contentEditable
-            suppressContentEditableWarning
-            spellCheck={false}
-            onBlur={(e) => handleNewUserChange("name", e.target.textContent)}
-            className="add-user-input editable-cell"
-            data-placeholder="Name"
-          ></td>
-          <td
-            contentEditable
-            suppressContentEditableWarning
-            spellCheck={false}
-            onBlur={(e) => handleNewUserChange("organization", e.target.textContent)}
-            className="add-user-input editable-cell"
-            data-placeholder="Organization"
-          ></td>
-          <td
-            contentEditable
-            suppressContentEditableWarning
-            spellCheck={false}
-            onBlur={(e) => handleNewUserChange("addressLine1", e.target.textContent)}
-            className="add-user-input editable-cell"
-            data-placeholder="Address Line 1"
-          ></td>
-          <td
-            contentEditable
-            suppressContentEditableWarning
-            spellCheck={false}
-            onBlur={(e) => handleNewUserChange("addressLine2", e.target.textContent)}
-            className="add-user-input editable-cell"
-            data-placeholder="Address Line 2"
-          ></td>
-          <td
-            contentEditable
-            suppressContentEditableWarning
-            spellCheck={false}
-            onBlur={(e) => handleNewUserChange("city", e.target.textContent)}
-            className="add-user-input editable-cell"
-            data-placeholder="City"
-          ></td>
-          <td
-            contentEditable
-            suppressContentEditableWarning
-            spellCheck={false}
-            onBlur={(e) => handleNewUserChange("state", e.target.textContent)}
-            className="add-user-input editable-cell"
-            data-placeholder="State"
-          ></td>
-          <td
-            contentEditable
-            suppressContentEditableWarning
-            spellCheck={false}
-            onBlur={(e) => handleNewUserChange("country", e.target.textContent)}
-            className="add-user-input editable-cell"
-            data-placeholder="Country"
-          ></td>
-          <td
-            contentEditable
-            suppressContentEditableWarning
-            spellCheck={false}
-            onBlur={(e) => handleNewUserChange("zipcode", e.target.textContent)}
-            className="add-user-input editable-cell"
-            data-placeholder="Zipcode"
-          ></td>
-          <td
-            contentEditable
-            suppressContentEditableWarning
-            spellCheck={false}
-            onBlur={(e) => handleNewUserChange("phoneNumber", e.target.textContent)}
-            className="add-user-input editable-cell"
-            data-placeholder="Phone Number"
-          ></td>
-          <td
-            contentEditable
-            suppressContentEditableWarning
-            spellCheck={false}
-            onBlur={(e) => handleNewUserChange("regCode", e.target.textContent)}
-            className="add-user-input editable-cell"
-            data-placeholder="Reg Code"
-          ></td>
-          <td
-            contentEditable
-            suppressContentEditableWarning
-            spellCheck={false}
-            onBlur={(e) => handleNewUserChange("agentAttorney", e.target.textContent)}
-            className="add-user-input editable-cell"
-            data-placeholder="Agent/Attorney"
-          ></td>
-          <td
-            contentEditable
-            suppressContentEditableWarning
-            spellCheck={false}
-            onBlur={(e) => handleNewUserChange("dateOfPatent", e.target.textContent)}
-            className="add-user-input editable-cell"
-            data-placeholder="Date of Patent"
-          ></td>
-          <td
-            contentEditable
-            suppressContentEditableWarning
-            spellCheck={false}
-            onBlur={(e) => handleNewUserChange("agentLicensed", e.target.textContent)}
-            className="add-user-input editable-cell"
-            data-placeholder="Agent Licensed"
-          ></td>
-          <td
-            contentEditable
-            suppressContentEditableWarning
-            spellCheck={false}
-            onBlur={(e) => handleNewUserChange("firmOrOrganization", e.target.textContent)}
-            className="add-user-input editable-cell"
-            data-placeholder="Firm or Organization"
-          ></td>
-          <td
-            contentEditable
-            suppressContentEditableWarning
-            spellCheck={false}
-            onBlur={(e) => handleNewUserChange("updatedPhoneNumber", e.target.textContent)}
-            className="add-user-input editable-cell"
-            data-placeholder="Updated Phone Number"
-          ></td>
-          <td
-            contentEditable
-            suppressContentEditableWarning
-            spellCheck={false}
-            onBlur={(e) => handleNewUserChange("emailAddress", e.target.textContent)}
-            className="add-user-input editable-cell"
-            data-placeholder="Email Address"
-          ></td>
-          <td
-            contentEditable
-            suppressContentEditableWarning
-            spellCheck={false}
-            onBlur={(e) => handleNewUserChange("updatedOrganization", e.target.textContent)}
-            className="add-user-input editable-cell"
-            data-placeholder="Updated Organization"
-          ></td>
-          <td
-            contentEditable
-            suppressContentEditableWarning
-            spellCheck={false}
-            onBlur={(e) => handleNewUserChange("firmUrl", e.target.textContent)}
-            className="add-user-input editable-cell"
-            data-placeholder="Firm/Organization URL"
-          ></td>
-          <td
-            contentEditable
-            suppressContentEditableWarning
-            spellCheck={false}
-            onBlur={(e) => handleNewUserChange("updatedAddress", e.target.textContent)}
-            className="add-user-input editable-cell"
-            data-placeholder="Updated Address"
-          ></td>
-          <td
-            contentEditable
-            suppressContentEditableWarning
-            spellCheck={false}
-            onBlur={(e) => handleNewUserChange("updatedCity", e.target.textContent)}
-            className="add-user-input editable-cell"
-            data-placeholder="Updated City"
-          ></td>
-          <td
-            contentEditable
-            suppressContentEditableWarning
-            spellCheck={false}
-            onBlur={(e) => handleNewUserChange("updatedState", e.target.textContent)}
-            className="add-user-input editable-cell"
-            data-placeholder="Updated State"
-          ></td>
-          <td
-            contentEditable
-            suppressContentEditableWarning
-            spellCheck={false}
-            onBlur={(e) => handleNewUserChange("updatedCountry", e.target.textContent)}
-            className="add-user-input editable-cell"
-            data-placeholder="Updated Country"
-          ></td>
-          <td
-            contentEditable
-            suppressContentEditableWarning
-            spellCheck={false}
-            onBlur={(e) => handleNewUserChange("updatedZipcode", e.target.textContent)}
-            className="add-user-input editable-cell"
-            data-placeholder="Updated Zipcode"
-          ></td>
-          <td
-            contentEditable
-            suppressContentEditableWarning
-            spellCheck={false}
-            onBlur={(e) => handleNewUserChange("linkedInProfile", e.target.textContent)}
-            className="add-user-input editable-cell"
-            data-placeholder="LinkedIn Profile"
-          ></td>
-          <td
-            contentEditable
-            suppressContentEditableWarning
-            spellCheck={false}
-            onBlur={(e) => handleNewUserChange("notes", e.target.textContent)}
-            className="add-user-input editable-cell"
-            data-placeholder="Notes"
-          ></td>
-          <td
-            contentEditable
-            suppressContentEditableWarning
-            spellCheck={false}
-            onBlur={(e) => handleNewUserChange("initials", e.target.textContent)}
-            className="add-user-input editable-cell"
-            data-placeholder="Initials"
-          ></td>
-          <td
-            contentEditable
-            suppressContentEditableWarning
-            spellCheck={false}
-            onBlur={(e) => handleNewUserChange("dataUpdatedAsOn", e.target.textContent)}
-            className="add-user-input editable-cell"
-            data-placeholder="Data Updated As On"
-          ></td>
-          
-          <td className="AddSave12">
-          <button
-              onClick={handleAddUser}
-              className="add-user-button add-user-button-Add"
-            >
-              Add User
-            </button>
+          <div className="pagination">
             <button
-              onClick={handleUpdateAll}
-              className="Save-button add-user-button-Save"
+              onClick={handlePreviousPage}
+              disabled={currentPage === 1}
+              className="pagination-button"
             >
-              Save
+              Previous
             </button>
-          </td>
-        </tr>
+            <span className="pagination-info">
+              Page{" "}
+              <input
+                type="number"
+                value={pageInput}
+                onChange={handlePageInputChange}
+                onKeyPress={handlePageInputKeyPress}
+                onBlur={handlePageJump}
+                className="page-input"
+                placeholder={currentPage}
+                min="1"
+                max={totalPages}
+              />{" "}
+              of {totalPages}
+            </span>
+            <button
+              onClick={handleNextPage}
+              disabled={currentPage === totalPages}
+              className="pagination-button"
+            >
+              Next
+            </button>
+          </div>
 
-        </table>
+          <h4 className="total-data">
+            Total data's of {userId} : {users.length}
+          </h4>
 
-      </div>
-
-
+          {newUploadExcel && (
+            <NewUploadExcel userId={userId._id} onClose={() => setNewUploadExcel(false)} />
+          )}
+        </div>
+      </main>
     </div>
-     </main>
-    </div>
-
-
   );
 };
 
