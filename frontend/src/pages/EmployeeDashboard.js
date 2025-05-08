@@ -48,7 +48,8 @@ const UserTable = () => {
     console.log("UserId being sent to backend:", userId);
 
     axios
-      .get(`http://localhost:3001/api/fetch-users?userId=${userId}`)
+          .get(`${API_URL}/api/fetch-users?userId=${userId}`)
+      // .get(`http://localhost:3001/api/fetch-users?userId=${userId}`)
       .then((response) => {
         console.log("Response from backend:", response.data);
         setUsers(response.data.data);
@@ -98,7 +99,8 @@ const UserTable = () => {
 
     try {
       for (const batch of batches) {
-        await axios.put("http://localhost:3001/api/update-users", batch);
+        await axios.put(`${API_URL}/api/update-users`,batch)
+        // await axios.put("http://localhost:3001/api/update-users", batch);
         console.log(`Batch of ${batch.length} users updated successfully`);
       }
       fetchUsers();
@@ -306,6 +308,7 @@ const UserTable = () => {
                   </div>
                 )}
               </div>
+              {/* <div className="action-button upload-button">Add</div> */}
             </div>
           </div>
 
@@ -581,16 +584,45 @@ const UserTable = () => {
                     >
                       {editedUsers[user.regCode]?.updatedZipcode || user.updatedZipcode}
                     </td>
+
                     <td
                       contentEditable
                       suppressContentEditableWarning
                       spellCheck={false}
                       onBlur={(e) => handleEdit(user.regCode, "linkedInProfile", e.target.textContent)}
-                      onKeyDown={(e) => handleKeyDown(e, index, 24)}
+                      onKeyDown={(e) => {
+                        handleKeyDown(e, index, 24);
+                        // Handle Ctrl+Enter to open the link
+                        if (e.ctrlKey && e.key === "Enter") {
+                          const url = editedUsers[user.regCode]?.linkedInProfile || user.linkedInProfile;
+                          if (url) {
+                            window.open(url, "_blank", "noopener,noreferrer");
+                          }
+                        }
+                      }}
                       className="editable-cell"
                     >
-                      {editedUsers[user.regCode]?.linkedInProfile || user.linkedInProfile}
+                      <a
+                        href={editedUsers[user.regCode]?.linkedInProfile || user.linkedInProfile}
+                        title="Double click to follow this link" // Tooltip on hover
+                        onClick={(e) => {
+                          e.preventDefault(); // Prevent default single-click link behavior
+                          e.stopPropagation(); // Prevent triggering cell edit
+                        }}
+                        onDoubleClick={(e) => {
+                          e.preventDefault(); // Prevent default link behavior
+                          e.stopPropagation(); // Prevent triggering cell edit
+                          const url = editedUsers[user.regCode]?.linkedInProfile || user.linkedInProfile;
+                          if (url) {
+                            window.open(url, "_blank", "noopener,noreferrer"); // Open link on double-click
+                          }
+                        }}
+                        style={{ cursor: "pointer", textDecoration: "underline" }} // Visual cue for link
+                      >
+                        {editedUsers[user.regCode]?.linkedInProfile || user.linkedInProfile || "No LinkedIn Profile"}
+                      </a>
                     </td>
+                    
                     <td
                       contentEditable
                       suppressContentEditableWarning

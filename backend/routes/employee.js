@@ -26,10 +26,11 @@ const transporter = nodemailer.createTransport({
   service: 'gmail',
   auth: {
     user: 'darshan@sigvitas.com',
-    pass: 'nkpt ixhc gsgo yzyh', // App password generated for Gmail
+    pass: 'aqhf klky wpct uuuu', // App password generated for Gmail
   },
 });
-
+// aqhf klky wpct uuuu
+// pass: 'nkpt ixhc gsgo yzyh',
 
 // Function to generate and store API key
 const generateAndStoreApiKey = async () => {
@@ -281,7 +282,7 @@ router.put("/update-userss", async (req, res) => {
 });
 
 router.put("/update-users", async (req, res) => {
-  console.log("Inside update-users route");
+  console.log("Received update request with body:", JSON.stringify(req.body, null, 2));
   const users = req.body;
 
   try {
@@ -291,19 +292,22 @@ router.put("/update-users", async (req, res) => {
         console.error("Missing regCode for user:", user);
         throw new Error("regCode is required");
       }
-      console.log(`Updating user with regCode: ${regCode}`);
+      console.log(`Attempting to update user with regCode: ${regCode}`);
       const updatedUser = await UserModel.findOneAndUpdate(
         { regCode },
-        { ...user },
+        { $set: { ...user } }, // Use $set to explicitly update fields
         { new: true }
       );
       if (!updatedUser) {
         console.warn(`No user found with regCode: ${regCode}`);
+      } else {
+        console.log(`Updated user:`, updatedUser);
       }
       return updatedUser;
     });
 
     const updatedUsers = await Promise.all(updatePromises);
+    console.log("Update operation completed. Updated users:", updatedUsers);
     res.status(200).json({
       message: "All users updated successfully.",
       data: updatedUsers,
@@ -835,7 +839,7 @@ router.post("/upload-excel-dynamic", upload.single("excelFile"), async (req, res
 
     const mailOptions = {
       from: 'darshan@sigvitas.com',
-      to: `darshan@sigvitas.com`,
+      to: `dverma@sigvitas.com`,
       subject: 'Re: Daily Data Uploading',
       // text: `Hello Sir, /n/n${userId2} uploaded the data successfully on ${formattedDate} at ${formattedTime}. Total number of users: ${total}/n/nBest Regards,/nDarshan`,
       text: `Hello Sir,\n\n${userId2} uploaded the data successfully on ${formattedDate} at ${formattedTime}. \nTotal number of users: ${total}\n\nBest Regards,\nDarshan`,
@@ -843,12 +847,11 @@ router.post("/upload-excel-dynamic", upload.single("excelFile"), async (req, res
   
     transporter.sendMail(mailOptions, (error, info) => {
       if (error) {
-        return res.status(500).json({ message: '❌ Failed to send OTP email.' });
+        console.error("Failed to send email:", error);
+      }else {
+        console.log("Mail sent to the Admin");
       }
-      res.status(200).json({ message: '✅ OTP sent to your email.' });
     });
-
-    console.log("Mail sent to the Admin");
     
   } catch (err) {
     console.error(err);
