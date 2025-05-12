@@ -7,6 +7,7 @@ const path = require('path');
 
 const loginRoutes = require('./routes/login');
 const employeeRoutes = require('./routes/employee');
+const notesRoutes = require('./routes/notes');
 
 const app = express();
 
@@ -36,6 +37,7 @@ console.log('inside server');
 // Routes
 app.use('/api', loginRoutes);
 app.use('/api', employeeRoutes);
+app.use('/api', notesRoutes);
 
 // Serve static files
 app.use(express.static(path.join(__dirname, 'public')));

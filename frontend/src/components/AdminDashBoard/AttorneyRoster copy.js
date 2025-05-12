@@ -3,6 +3,9 @@ import axios from "axios";
 import { FaFilter, FaSearch, FaTimes } from "react-icons/fa";
 import { Tooltip } from "react-tooltip";
 import "../../style/Components/AdminDashboard/AttorneyRoster.css";
+import NewProfilesUpdated from "./IndivisualComponents/newProfiles";
+import RemovedProfiles from "./IndivisualComponents/removedProfiles";
+import NewProfilesUpdated2 from "./IndivisualComponents/updatedProfiles";
 
 const AttorneyRoster = () => {
   const [allData, setAllData] = useState([]);
@@ -14,6 +17,10 @@ const AttorneyRoster = () => {
   const [filters, setFilters] = useState({});
   const [globalSearch, setGlobalSearch] = useState("");
   const [activeFilters, setActiveFilters] = useState({});
+  const [newProfilesUpdate, setNewProfilesUpdate] = useState(false);
+  const [removedProfilesUpdate, setremovedProfilesUpdate] = useState(false);
+  const [updatedProfiles, setUpdatedProfiles] = useState(false)
+
 
   /** 🔹 Header-to-Key Mapping for Filters */
   const headerMap = {
@@ -144,21 +151,35 @@ const handleFilterChange = (columnHeader) => {
 
   const fetchAllData = async (pageNumber, limit, letter = "") => {
     try {
-      // const response = await axios.get(`${API_URL}/api/all-users-data`, { 
-
+      // const response = await axios.get(`${API_URL}/api/all-users-data`, {
       const response = await axios.get("http://localhost:3001/api/all-users-data", {
         params: { page: pageNumber, limit, letter },
       });
+      // const updatedResponse = await axios.get(`${API_URL}/api/updatedprofilescomparisons`);
+      const updatedResponse = await axios.get("http://localhost:3001/api/updatedprofilescomparisons");
   
-      if (response.status === 200) {
+      console.log("🔍 Updated Profiles API Response:", updatedResponse.data); // Log the response
+  
+      if (response.status === 200 && updatedResponse.status === 200) {
+        const updatedProfiles = new Set(
+          updatedResponse.data.map((item) => item.regCode?.trim()?.toLowerCase())
+        );
+  
+        console.log("✅ Updated Profiles Set:", updatedProfiles);
+  
         setTotalRecords(response.data.totalUsers);
   
         setAllData((prevData) => {
-          // ✅ Ensure uniqueness using a Set (based on _id or regCode)
           const existingIds = new Set(prevData.map((item) => item._id || item.regCode));
           const newData = response.data.data.filter((item) => !existingIds.has(item._id || item.regCode));
   
-          return [...prevData, ...newData];
+          const updatedAllData = [...prevData, ...newData].map((item) => {
+            const isUpdated = updatedProfiles.has(item.regCode?.trim()?.toLowerCase());
+            const changes = updatedResponse.data.find((changeItem) => changeItem.regCode === item.regCode)?.changes || {};
+            return { ...item, isUpdated, changes };
+          });
+  
+          return updatedAllData;
         });
   
         if (response.data.data.length < limit) {
@@ -168,10 +189,12 @@ const handleFilterChange = (columnHeader) => {
         }
       }
     } catch (err) {
-      console.error("Error fetching data:", err);
+      console.error("❌ Error fetching data:", err);
       setHasMoreData(false);
     }
   };
+  
+  
   
   /** 🔹 Fetch initial records on mount */
   useEffect(() => {
@@ -238,7 +261,7 @@ const handleFilterChange = (columnHeader) => {
            
             <FaSearch 
               data-tooltip-id="search-tooltip" 
-              className="search-icon" 
+              className="search-iconn" 
             />
             <Tooltip id="search-tooltip" place="top" content="Search the Data" />
             
@@ -248,6 +271,26 @@ const handleFilterChange = (columnHeader) => {
                   value={globalSearch}
                   onChange={(e) => setGlobalSearch(e.target.value)}
                 />
+            </div>
+            <div className="datasections13">
+              <p> <button className="newprofiles13" onClick={()=>setNewProfilesUpdate(true)}>New Profiles</button></p>
+              {
+                newProfilesUpdate && (
+                  <NewProfilesUpdated onClick={()=>setNewProfilesUpdate(false)}/>
+                )
+              }
+              <p><button className="removedprofiles13" onClick={()=>setremovedProfilesUpdate(true)}>Removed Profiles</button></p>
+              {
+                removedProfilesUpdate && (
+                  <RemovedProfiles onClick={()=>setremovedProfilesUpdate(false)}/>
+                )
+              }
+              <p> <button className="updatedrofiles13" onClick={()=>setUpdatedProfiles(true)}>Updated Profiles</button></p>
+              {
+                updatedProfiles && (
+                  <NewProfilesUpdated2 onClick={()=>setUpdatedProfiles(false)}/>
+                )
+              }
             </div>
         </div>
 
@@ -295,41 +338,53 @@ const handleFilterChange = (columnHeader) => {
         </thead>
         <Tooltip id="filter-tooltip" place="right" effect="solid" style={{zIndex:"1000", }}/>
         <tbody>
-            {visibleData.map((data, index) => (
-              <tr key={index} >
+          {visibleData.map((data, index) => (
+            <tr 
+              key={index} 
+              className={data.isUpdated ? "highlight-updated" : ""}
+              onClick={() => console.log("Row Clicked - regCode:", data.regCode, "isUpdated:", data.isUpdated)}
+            >
+              <td>{(currentPage - 1) * rowsPerPage + index + 1}</td>
 
-                <td>{(currentPage - 1) * rowsPerPage + index + 1}</td>
-
-                {Object.values(headerMap).slice(1).map((key, colIndex) => (
-                  <td 
-                    key={colIndex}
-                    data-tooltip-id="data-tooltip"
-                    data-tooltip-content={`Name: ${data.name} \n Reg Code: ${data.regCode} \n Organization: ${data.organization}`}
-                    style={{cursor:'pointer'}}
-                  >
-                      {highlightMatch(data[key], globalSearch)}
-                  </td>
-                ))}
-              </tr>
-            ))}
+              {Object.values(headerMap).slice(1).map((key, colIndex) => (
+                <td 
+                  key={colIndex}
+                  data-tooltip-id="data-tooltip"
+                  data-tooltip-content={
+                    data.isUpdated ? 
+                    `Name: ${data.name} \n Reg Code: ${data.regCode} \n` +
+                    Object.keys(data.changes).map((field) => {
+                      const change = data.changes[field];
+                      return `${field}:\n Old: ${change.oldValue}, New: ${change.newValue}`;
+                    }).join("\n") : 
+                    
+                    `Name: ${data.name} \n Reg Code: ${data.regCode} \n ${headerMap[key] || key}: ${data[key]}`
+                  }
+                  style={{cursor: 'pointer'}}
+                >
+                  {highlightMatch(data[key], globalSearch)}
+                </td>
+              ))}
+            </tr>
+          ))}
           </tbody>
-          <Tooltip 
-            id="data-tooltip" 
-            place="left" 
-            effect="solid" 
-            style={{ 
-              zIndex: "1000", 
-              backgroundColor: "black", /* Solid blue */
-              color: "yellow", 
-              border: "1px solid blue",
-              padding: "8px",
-              fontWeight: "bold",
-              fontSize: "18px",
-              textAlign: "left",
-              whiteSpace: "pre-line", /* Ensures line breaks */
-            }} 
-          />
 
+<Tooltip 
+  id="data-tooltip" 
+  place="left" 
+  effect="solid" 
+  style={{ 
+    zIndex: "1000", 
+    backgroundColor: "black", 
+    color: "yellow", 
+    border: "1px solid blue",
+    padding: "8px",
+    fontWeight: "bold",
+    fontSize: "18px",
+    textAlign: "left",
+    whiteSpace: "pre-line", // Ensures line breaks
+  }} 
+/>
 
         </table>
       </div>

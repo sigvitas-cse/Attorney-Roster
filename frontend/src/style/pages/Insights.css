@@ -1,0 +1,224 @@
+/* General container */
+.insights-container {
+  min-height: 100vh;
+  background-color: #f4f4f4;
+  padding: 20px;
+}
+
+/* Main content area */
+.insights-main {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+/* Title */
+.insights-title {
+  font-size: 24px;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 20px;
+}
+
+/* Content layout */
+.insights-content {
+  display: flex;
+  gap: 20px;
+}
+
+/* Sidebar for notes list */
+.notes-sidebar {
+  width: 30%;
+  background-color: #fff;
+  padding: 15px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.notes-sidebar-title {
+  font-size: 18px;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 10px;
+}
+
+.notes-empty {
+  color: #666;
+  font-size: 14px;
+}
+
+.notes-list {
+  list-style: decimal;
+  padding-left: 20px;
+  margin: 0;
+}
+
+.notes-item {
+  padding: 10px;
+  border-bottom: 1px solid #eee;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.notes-item:hover {
+  background-color: #f9f9f9;
+}
+
+.notes-item-selected {
+  background-color: #e6f0ff;
+}
+
+.notes-item-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.notes-item-title {
+  font-size: 14px;
+  font-weight: 500;
+  color: #333;
+}
+
+.notes-item-date {
+  font-size: 12px;
+  color: #888;
+  margin-top: 5px;
+}
+
+.notes-item-delete {
+  font-size: 12px;
+  color: #d9534f;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 2px 8px;
+}
+
+.notes-item-delete:hover {
+  color: #c9302c;
+}
+
+/* Editor section */
+.notes-editor {
+  width: 70%;
+  background-color: #fff;
+  padding: 20px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.notes-title-input {
+  width: 100%;
+  padding: 8px;
+  margin-bottom: 15px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 14px;
+  color: #333;
+  outline: none;
+}
+
+.notes-title-input:focus {
+  border-color: #007bff;
+  box-shadow: 0 0 5px rgba(0, 123, 255, 0.3);
+}
+
+/* Quill editor styles */
+.notes-quill-editor {
+  margin-bottom: 20px;
+}
+
+.quill {
+  background-color: #fff;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.ql-container {
+  min-height: 300px;
+  border: 1px solid #ccc;
+  border-radius: 0 0 4px 4px;
+  color: #333;
+  font-family: Arial, sans-serif;
+}
+
+.ql-editor {
+  color: #333;
+  background-color: #fff;
+  text-align: left;
+}
+
+.ql-editor p {
+  color: #333;
+  text-align: left;
+}
+
+/* Table styles */
+.ql-editor table {
+  border-collapse: collapse;
+  width: 100%;
+  margin: 10px 0;
+}
+
+.ql-editor td,
+.ql-editor th {
+  border: 1px solid #ccc;
+  padding: 8px;
+  text-align: left;
+}
+
+.ql-editor th {
+  background-color: #f8f8f8;
+  font-weight: bold;
+}
+
+.ql-toolbar {
+  border: 1px solid #ccc;
+  border-bottom: none;
+  border-radius: 4px 4px 0 0;
+  background-color: #f8f8f8;
+}
+
+/* Action buttons */
+.notes-actions {
+  display: flex;
+  gap: 10px;
+}
+
+.action-button {
+  padding: 8px 16px;
+  font-size: 14px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.save-button {
+  background-color: #28a745;
+  color: #fff;
+}
+
+.save-button:hover {
+  background-color: #218838;
+}
+
+.new-note-button {
+  background-color: #007bff;
+  color: #fff;
+}
+
+.new-note-button:hover {
+  background-color: #0056b3;
+}
+
+.back-button {
+  background-color: #6c757d;
+  color: #fff;
+}
+
+.back-button:hover {
+  background-color: #5a6268;
+}

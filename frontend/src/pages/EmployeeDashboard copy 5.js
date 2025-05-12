@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import "jspdf-autotable";
 import axios from "axios";
 import "../style/pages/EmployeeDashboard.css";
-import { useLocation, useNavigate } from "react-router-dom"; // Added useNavigate
+import { useLocation } from "react-router-dom";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import NewProfilesUpdated from "../components/AdminDashBoard/IndivisualComponents/newProfiles";
@@ -16,7 +16,6 @@ const UserTable = () => {
   const [pageInput, setPageInput] = useState("");
   const rowsPerPage = 500;
   const location = useLocation();
-  const navigate = useNavigate(); // Added navigate hook
   const userId = location.state?.userId;
   const admin = users.length > 0 ? users[0].admin : false;
   const [filter, setFilter] = useState("");
@@ -49,7 +48,7 @@ const UserTable = () => {
     console.log("UserId being sent to backend:", userId);
 
     axios
-    .get(`${API_URL}/api/fetch-users?userId=${userId}`)
+          .get(`${API_URL}/api/fetch-users?userId=${userId}`)
       // .get(`http://localhost:3001/api/fetch-users?userId=${userId}`)
       .then((response) => {
         console.log("Response from backend:", response.data);
@@ -100,7 +99,7 @@ const UserTable = () => {
 
     try {
       for (const batch of batches) {
-        await axios.put(`${API_URL}/api/update-users`, batch);
+        await axios.put(`${API_URL}/api/update-users`,batch)
         // await axios.put("http://localhost:3001/api/update-users", batch);
         console.log(`Batch of ${batch.length} users updated successfully`);
       }
@@ -240,11 +239,6 @@ const UserTable = () => {
     }
   };
 
-  // Navigate to Insights page
-  const handleInsightsClick = () => {
-    navigate("/insights", { state: { userId } });
-  };
-
   return (
     <div>
       <ToastContainer position="top-right" autoClose={3000} hideProgressBar={false} />
@@ -312,11 +306,12 @@ const UserTable = () => {
                       Updated Profiles
                     </div>
                   </div>
+                  
                 )}
               </div>
+              {/* <div className="action-button upload-button">Add</div> */}
               <button
                 className="action-button upload-button"
-                onClick={handleInsightsClick} // Updated to navigate to Insights
               >
                 Insights
               </button>
@@ -595,6 +590,7 @@ const UserTable = () => {
                     >
                       {editedUsers[user.regCode]?.updatedZipcode || user.updatedZipcode}
                     </td>
+
                     <td
                       contentEditable
                       suppressContentEditableWarning
@@ -602,6 +598,7 @@ const UserTable = () => {
                       onBlur={(e) => handleEdit(user.regCode, "linkedInProfile", e.target.textContent)}
                       onKeyDown={(e) => {
                         handleKeyDown(e, index, 24);
+                        // Handle Ctrl+Enter to open the link
                         if (e.ctrlKey && e.key === "Enter") {
                           const url = editedUsers[user.regCode]?.linkedInProfile || user.linkedInProfile;
                           if (url) {
@@ -613,24 +610,25 @@ const UserTable = () => {
                     >
                       <a
                         href={editedUsers[user.regCode]?.linkedInProfile || user.linkedInProfile}
-                        title="Double click to follow this link"
+                        title="Double click to follow this link" // Tooltip on hover
                         onClick={(e) => {
-                          e.preventDefault();
-                          e.stopPropagation();
+                          e.preventDefault(); // Prevent default single-click link behavior
+                          e.stopPropagation(); // Prevent triggering cell edit
                         }}
                         onDoubleClick={(e) => {
-                          e.preventDefault();
-                          e.stopPropagation();
+                          e.preventDefault(); // Prevent default link behavior
+                          e.stopPropagation(); // Prevent triggering cell edit
                           const url = editedUsers[user.regCode]?.linkedInProfile || user.linkedInProfile;
                           if (url) {
-                            window.open(url, "_blank", "noopener,noreferrer");
+                            window.open(url, "_blank", "noopener,noreferrer"); // Open link on double-click
                           }
                         }}
-                        style={{ cursor: "pointer", textDecoration: "underline" }}
+                        style={{ cursor: "pointer", textDecoration: "underline" }} // Visual cue for link
                       >
                         {editedUsers[user.regCode]?.linkedInProfile || user.linkedInProfile || "No LinkedIn Profile"}
                       </a>
                     </td>
+                    
                     <td
                       contentEditable
                       suppressContentEditableWarning
@@ -690,7 +688,6 @@ const UserTable = () => {
 
           <div className="pagination">
             <button
-              onayana5
               onClick={handlePreviousPage}
               disabled={currentPage === 1}
               className="pagination-button"

@@ -41,7 +41,7 @@ function NewProfilesUpdated({ onClick }) {
     <div className="newprofileUpdated">
       <div className="comecentre">
         <button className="close-btn" onClick={onClick}>X</button>
-        <h2>Removed Profiles [{result.length}]</h2>
+        <h2>New Profiles [{result.length}]</h2>
         <div className="profile-table-container">
           <table className="profile-table">
             <thead>

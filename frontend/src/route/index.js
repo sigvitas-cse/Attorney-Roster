@@ -9,6 +9,7 @@ import EmpLoginPage from "../pages/employeeLogin";
 import UserTable from "../pages/EmployeeDashboard";
 import ForgotPassword from "../pages/ForgotPassword";
 import AnalysisCopy from "../pages/AnalysisCopy";
+import Insights from "../pages/Insights";
 
 const router = createBrowserRouter([
     {
@@ -51,6 +52,10 @@ const router = createBrowserRouter([
             {
                 path : "ForgotPassword",
                 element : <ForgotPassword/>
+            },
+            {
+                path : "insights",
+                element : <Insights/>
             },
             
         ]
