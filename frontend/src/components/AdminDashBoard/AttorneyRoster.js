@@ -6,9 +6,13 @@ import "../../style/Components/AdminDashboard/AttorneyRoster.css";
 import NewProfilesUpdated from "./IndivisualComponents/newProfiles";
 import RemovedProfiles from "./IndivisualComponents/removedProfiles";
 import NewProfilesUpdated2 from "./IndivisualComponents/updatedProfiles";
+import { useLocation, useNavigate } from "react-router-dom"; // Added useNavigate
+
 
 const AttorneyRoster = () => {
   const [allData, setAllData] = useState([]);
+  const location = useLocation();
+  const navigate = useNavigate(); // Added navigate hook
   const [totalRecords, setTotalRecords] = useState(0);
   const [apiPage, setApiPage] = useState(1);
   const [hasMoreData, setHasMoreData] = useState(true);
@@ -219,6 +223,11 @@ const AttorneyRoster = () => {
     );
   };
 
+   // Navigate to Insights page
+  const handleInsightsClick = () => {
+    navigate("/AdminInsights");
+  };
+
   return (
     <section className="patentDataSection">
       <div className="header-container">
@@ -279,6 +288,12 @@ const AttorneyRoster = () => {
           {updatedProfiles && (
             <NewProfilesUpdated2 onClick={() => setUpdatedProfiles(false)} />
           )}
+          <p>
+            <button className="newprofiles13" onClick={() => handleInsightsClick()}>
+              Know Insights
+            </button>
+          </p>
+          
         </div>
       </div>
 

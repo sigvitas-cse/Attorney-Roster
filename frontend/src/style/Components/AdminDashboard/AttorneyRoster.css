@@ -1,5 +1,5 @@
 .patentDataSection {
-    padding: 0px 20px 20px 20px;
+    padding: 0 20px 20px 20px;
     font-family: Arial, sans-serif;
     background-color: #f4f4f4;
 }
@@ -14,9 +14,8 @@
     background: #0073e6 !important;
     padding: 0 !important;
     border-radius: 8px !important;
-    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1) !important;
-    min-height: 400px !important; /* Changed for better flexibility */
-    white-space: nowrap !important;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1) !important;
+    min-height: 400px !important;
     scroll-behavior: smooth;
     scrollbar-width: thin;
     scrollbar-color: #888 #f1f1f1;
@@ -42,11 +41,12 @@
     background: #555;
 }
 
-/* Auto-width table */
+/* Auto-width table with fixed layout for consistent column sizes */
 .user-table2 {
     width: auto !important;
     border-collapse: collapse !important;
-    table-layout: auto !important;
+    table-layout: fixed !important; /* Fixed layout for consistent column widths */
+    max-width: 100% !important;
 }
 
 /* Sticky header */
@@ -58,21 +58,76 @@
     z-index: 2 !important;
 }
 
-/* Table cells */
-.user-table2 th,
+/* Header cells with non-wrapping text */
+.user-table2 th {
+    padding: 12px !important;
+    border: 1px solid #ddd !important;
+    text-align: left !important;
+    font-size: 14px !important;
+    white-space: nowrap !important; /* Prevent header text from wrapping */
+    max-width: 250px !important; /* Default max-width for headers */
+    min-width: 80px !important; /* Prevent headers from collapsing */
+    overflow: hidden !important; /* Hide overflow */
+    text-overflow: ellipsis !important; /* Show ellipsis for long headers */
+    background-color: #0073e6 !important;
+    color: #ffffff !important;
+}
+
+/* Body cells with wrapping text */
 .user-table2 td {
     padding: 12px !important;
     border: 1px solid #ddd !important;
     text-align: left !important;
     font-size: 14px !important;
-    white-space: nowrap;
+    white-space: normal !important; /* Allow body text to wrap */
+    max-width: 250px !important; /* Default max-width for body cells */
+    min-width: 80px !important; /* Prevent cells from collapsing */
+    overflow-wrap: break-word !important; /* Break long words */
+    vertical-align: top !important; /* Align text to top */
 }
 
-/* Sticky headers */
-.user-table2 th {
-    background-color: #0073e6 !important;
-    color: #ffffff !important;
-    /* Removed fixed width for flexibility */
+/* Column-specific sizes */
+.column-notes {
+    max-width: 350px !important; /* Wider for Notes */
+    min-width: 120px !important;
+}
+
+.column-linkedInProfile {
+    max-width: 200px !important; /* Tighter for URLs */
+    min-width: 100px !important;
+    word-break: break-all !important; /* Break long URLs */
+}
+
+.column-regCode {
+    max-width: 120px !important; /* Narrower for Reg Code */
+    min-width: 60px !important;
+}
+
+.column-addressLine1,
+.column-addressLine2 {
+    max-width: 300px !important; /* Wider for addresses */
+    min-width: 100px !important;
+}
+
+.column-name,
+.column-organization {
+    max-width: 250px !important; /* Standard for Name and Organization */
+    min-width: 100px !important;
+}
+
+.column-city,
+.column-state,
+.column-country,
+.column-zipcode {
+    max-width: 150px !important; /* Narrower for shorter fields */
+    min-width: 80px !important;
+}
+
+.column-phoneNumber,
+.column-updatedPhoneNumber,
+.column-emailAddress {
+    max-width: 200px !important; /* For contact info */
+    min-width: 100px !important;
 }
 
 /* Alternating row colors */
@@ -138,7 +193,7 @@
 .paginationInputBox:focus {
     border-color: #004a99;
     outline: none;
-    box-shadow: 0px 0px 5px rgba(0, 115, 230, 0.5);
+    box-shadow: 0 0 5px rgba(0, 115, 230, 0.5);
 }
 
 /* A-Z Filter Container */
@@ -251,7 +306,7 @@
 
 .search-iconn {
     position: absolute;
-    right: 10px; /* Adjusted for better alignment */
+    right: 10px;
     top: 50%;
     transform: translateY(-50%);
     color: #666;
@@ -369,7 +424,7 @@
         gap: 8px;
     }
     .alphabet-filter {
-        gap: 0px !important;
+        gap: 0 !important;
     }
     .header-container1 h2 {
         font-size: 32px;
@@ -389,7 +444,7 @@
     }
     .letter-btn {
         font-size: 16px;
-        padding: 6px 42px;
+        padding: 6px 42px !important;
     }
     .pagination button {
         padding: 8px 16px !important;
@@ -404,13 +459,57 @@
         font-size: 16px !important;
         right: 10px !important;
     }
+    .user-table2 th,
+    .user-table2 td {
+        font-size: 13px;
+        padding: 10px !important;
+        max-width: 200px !important;
+        min-width: 70px !important;
+    }
+    .column-notes {
+        max-width: 300px !important;
+        min-width: 100px !important;
+    }
+    .column-linkedInProfile {
+        max-width: 180px !important;
+        min-width: 90px !important;
+    }
+    .column-regCode {
+        max-width: 100px !important;
+        min-width: 50px !important;
+    }
+    .column-addressLine1,
+    .column-addressLine2 {
+        max-width: 250px !important;
+        min-width: 90px !important;
+    }
+    .column-name,
+    .column-organization {
+        max-width: 200px !important;
+        min-width: 90px !important;
+    }
+    .column-city,
+    .column-state,
+    .column-country,
+    .column-zipcode {
+        max-width: 120px !important;
+        min-width: 70px !important;
+    }
+    .column-phoneNumber,
+    .column-updatedPhoneNumber,
+    .column-emailAddress {
+        max-width: 180px !important;
+        min-width: 90px !important;
+    }
 }
 
 @media screen and (max-width: 1024px) {
     .user-table2 th,
     .user-table2 td {
         font-size: 13px;
-        padding: 9px;
+        padding: 9px !important;
+        max-width: 180px !important;
+        min-width: 60px !important;
     }
     .header-container {
         flex-direction: column;
@@ -435,7 +534,7 @@
         max-width: 600px;
     }
     .alphabet-filter {
-        gap: 0px !important;
+        gap: 0 !important;
     }
     .header-container1 h2 {
         font-size: 25px;
@@ -455,7 +554,7 @@
     }
     .letter-btn {
         font-size: 12px;
-        padding: 5px 29px;
+        padding: 5px 29px !important;
     }
     .pagination button {
         padding: 7px 14px !important;
@@ -474,13 +573,50 @@
         height: auto;
         overflow-x: scroll;
     }
+    .column-notes {
+        max-width: 250px !important;
+        min-width: 90px !important;
+    }
+    .column-linkedInProfile {
+        max-width: 150px !important;
+        min-width: 80px !important;
+    }
+    .column-regCode {
+        max-width: 90px !important;
+        min-width: 50px !important;
+    }
+    .column-addressLine1,
+    .column-addressLine2 {
+        max-width: 200px !important;
+        min-width: 80px !important;
+    }
+    .column-name,
+    .column-organization {
+        max-width: 180px !important;
+        min-width: 80px !important;
+    }
+    .column-city,
+    .column-state,
+    .column-country,
+    .column-zipcode {
+        max-width: 100px !important;
+        min-width: 60px !important;
+    }
+    .column-phoneNumber,
+    .column-updatedPhoneNumber,
+    .column-emailAddress {
+        max-width: 150px !important;
+        min-width: 80px !important;
+    }
 }
 
 @media screen and (max-width: 768px) {
     .user-table2 th,
     .user-table2 td {
         font-size: 12px;
-        padding: 8px;
+        padding: 8px !important;
+        max-width: 150px !important;
+        min-width: 50px !important;
     }
     .header-container {
         flex-direction: column;
@@ -504,7 +640,7 @@
         max-width: 300px;
     }
     .alphabet-filter {
-        gap: 0px !important;
+        gap: 0 !important;
     }
     .header-container1 h2 {
         font-size: 20px;
@@ -526,7 +662,7 @@
     }
     .letter-btn {
         font-size: 10px;
-        padding: 4px 20px;
+        padding: 4px 20px !important;
     }
     .pagination button {
         padding: 6px 12px !important;
@@ -544,6 +680,41 @@
     .table-container {
         height: auto;
         overflow-x: scroll;
+    }
+    .column-notes {
+        max-width: 200px !important;
+        min-width: 80px !important;
+    }
+    .column-linkedInProfile {
+        max-width: 120px !important;
+        min-width: 70px !important;
+    }
+    .column-regCode {
+        max-width: 80px !important;
+        min-width: 40px !important;
+    }
+    .column-addressLine1,
+    .column-addressLine2 {
+        max-width: 180px !important;
+        min-width: 70px !important;
+    }
+    .column-name,
+    .column-organization {
+        max-width: 150px !important;
+        min-width: 70px !important;
+    }
+    .column-city,
+    .column-state,
+    .column-country,
+    .column-zipcode {
+        max-width: 90px !important;
+        min-width: 50px !important;
+    }
+    .column-phoneNumber,
+    .column-updatedPhoneNumber,
+    .column-emailAddress {
+        max-width: 120px !important;
+        min-width: 70px !important;
     }
 }
 
@@ -569,7 +740,7 @@
         max-width: 200px;
     }
     .alphabet-filter {
-        gap: 0px !important;
+        gap: 0 !important;
     }
     .header-container1 h2 {
         font-size: 16px;
@@ -591,7 +762,7 @@
     }
     .letter-btn {
         font-size: 10px;
-        padding: 4px 11px;
+        padding: 4px 11px !important;
     }
     .pagination button {
         padding: 5px 10px !important;
@@ -609,6 +780,48 @@
     .table-container {
         height: auto;
         overflow-x: scroll;
+    }
+    .user-table2 th,
+    .user-table2 td {
+        font-size: 11px;
+        padding: 6px !important;
+        max-width: 120px !important;
+        min-width: 40px !important;
+    }
+    .column-notes {
+        max-width: 180px !important;
+        min-width: 70px !important;
+    }
+    .column-linkedInProfile {
+        max-width: 100px !important;
+        min-width: 60px !important;
+    }
+    .column-regCode {
+        max-width: 70px !important;
+        min-width: 30px !important;
+    }
+    .column-addressLine1,
+    .column-addressLine2 {
+        max-width: 150px !important;
+        min-width: 60px !important;
+    }
+    .column-name,
+    .column-organization {
+        max-width: 120px !important;
+        min-width: 60px !important;
+    }
+    .column-city,
+    .column-state,
+    .column-country,
+    .column-zipcode {
+        max-width: 80px !important;
+        min-width: 40px !important;
+    }
+    .column-phoneNumber,
+    .column-updatedPhoneNumber,
+    .column-emailAddress {
+        max-width: 100px !important;
+        min-width: 60px !important;
     }
 }
 
@@ -634,7 +847,7 @@
         max-width: 160px;
     }
     .alphabet-filter {
-        gap: 0px !important;
+        gap: 0 !important;
     }
     .header-container1 h2 {
         font-size: 14px;
@@ -656,7 +869,7 @@
     }
     .letter-btn {
         font-size: 10px;
-        padding: 3px 8px;
+        padding: 3px 8px !important;
     }
     .pagination button {
         padding: 0 8px !important;
@@ -674,5 +887,47 @@
     .table-container {
         height: auto;
         overflow-x: scroll;
+    }
+    .user-table2 th,
+    .user-table2 td {
+        font-size: 10px;
+        padding: 5px !important;
+        max-width: 100px !important;
+        min-width: 30px !important;
+    }
+    .column-notes {
+        max-width: 150px !important;
+        min-width: 60px !important;
+    }
+    .column-linkedInProfile {
+        max-width: 80px !important;
+        min-width: 50px !important;
+    }
+    .column-regCode {
+        max-width: 60px !important;
+        min-width: 30px !important;
+    }
+    .column-addressLine1,
+    .column-addressLine2 {
+        max-width: 120px !important;
+        min-width: 50px !important;
+    }
+    .column-name,
+    .column-organization {
+        max-width: 100px !important;
+        min-width: 50px !important;
+    }
+    .column-city,
+    .column-state,
+    .column-country,
+    .column-zipcode {
+        max-width: 70px !important;
+        min-width: 30px !important;
+    }
+    .column-phoneNumber,
+    .column-updatedPhoneNumber,
+    .column-emailAddress {
+        max-width: 80px !important;
+        min-width: 50px !important;
     }
 }

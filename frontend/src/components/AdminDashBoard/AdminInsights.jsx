@@ -5,30 +5,31 @@ import "react-quill/dist/quill.snow.css";
 import axios from "axios";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import "../style/pages/Insights.css";
+import "../../style/Components/AdminDashboard/Insights.css";
 
-const Insights = () => {
+const AdminInsights = () => {
   const location = useLocation();
   const navigate = useNavigate();
-  const userId = location.state?.userId;
+  const adminUserId = location.state?.userId;
   const [notes, setNotes] = useState([]);
   const [currentNote, setCurrentNote] = useState("");
   const [selectedNoteId, setSelectedNoteId] = useState(null);
   const [noteTitle, setNoteTitle] = useState("");
+  const [noteUserId, setNoteUserId] = useState(adminUserId); // Default to admin's userId
 
-    const API_URL = process.env.REACT_APP_API_URL;
-
+      const API_URL = process.env.REACT_APP_API_URL;
 
   useEffect(() => {
-    document.title = "Insights - Patent Analyst Dashboard";
-    const lastNoteId = localStorage.getItem(`lastNoteId_${userId}`);
+    document.title = "Admin Insights - Patent Analyst Dashboard";
+    const lastNoteId = localStorage.getItem(`lastAdminNoteId_${adminUserId}`);
     fetchNotes(lastNoteId);
   }, []);
 
   const fetchNotes = async (noteIdToSelect = null) => {
     try {
-      const response = await axios.get(`${API_URL}/api/notes?userId=${userId}`);
-      // const response = await axios.get(`http://localhost:3001/api/notes?userId=${userId}`);
+      const response = await axios.get(`${API_URL}/api/all-notes`);
+      // const response = await axios.get("http://localhost:3001/api/all-notes");
+
       setNotes(response.data.data);
       if (noteIdToSelect) {
         const noteToSelect = response.data.data.find((note) => note._id === noteIdToSelect);
@@ -36,6 +37,7 @@ const Insights = () => {
           setSelectedNoteId(noteToSelect._id);
           setNoteTitle(noteToSelect.title);
           setCurrentNote(noteToSelect.content);
+          setNoteUserId(noteToSelect.userId);
         }
       }
     } catch (error) {
@@ -45,13 +47,13 @@ const Insights = () => {
   };
 
   const handleSaveNote = async () => {
-    if (!noteTitle.trim() || !currentNote.trim()) {
-      toast.error("Title and content are required");
+    if (!noteTitle.trim() || !currentNote.trim() || !noteUserId) {
+      toast.error("Title, content, and user ID are required");
       return;
     }
 
     const noteData = {
-      userId,
+      userId: noteUserId,
       title: noteTitle,
       content: currentNote,
       createdAt: new Date().toISOString(),
@@ -66,7 +68,8 @@ const Insights = () => {
       setSelectedNoteId(newNote._id);
       setNoteTitle(newNote.title);
       setCurrentNote(newNote.content);
-      localStorage.setItem(`lastNoteId_${userId}`, newNote._id);
+      setNoteUserId(newNote.userId);
+      localStorage.setItem(`lastAdminNoteId_${adminUserId}`, newNote._id);
       fetchNotes(newNote._id);
     } catch (error) {
       console.error("Error saving note:", error);
@@ -90,7 +93,8 @@ const Insights = () => {
       toast.success("Note updated successfully");
       setNoteTitle(updatedNote.title);
       setCurrentNote(updatedNote.content);
-      localStorage.setItem(`lastNoteId_${userId}`, selectedNoteId);
+      setNoteUserId(updatedNote.userId);
+      localStorage.setItem(`lastAdminNoteId_${adminUserId}`, selectedNoteId);
       fetchNotes(selectedNoteId);
     } catch (error) {
       console.error("Error updating note:", error);
@@ -104,13 +108,14 @@ const Insights = () => {
     try {
       await axios.delete(`${API_URL}/api/notes/${noteId}`);
       // await axios.delete(`http://localhost:3001/api/notes/${noteId}`);
-    
+
       toast.success("Note deleted successfully");
       if (selectedNoteId === noteId) {
         setNoteTitle("");
         setCurrentNote("");
         setSelectedNoteId(null);
-        localStorage.removeItem(`lastNoteId_${userId}`);
+        setNoteUserId(adminUserId);
+        localStorage.removeItem(`lastAdminNoteId_${adminUserId}`);
       }
       fetchNotes();
     } catch (error) {
@@ -123,14 +128,16 @@ const Insights = () => {
     setSelectedNoteId(note._id);
     setNoteTitle(note.title);
     setCurrentNote(note.content);
-    localStorage.setItem(`lastNoteId_${userId}`, note._id);
+    setNoteUserId(note.userId);
+    localStorage.setItem(`lastAdminNoteId_${adminUserId}`, note._id);
   };
 
   const handleNewNote = () => {
     setNoteTitle("");
     setCurrentNote("");
     setSelectedNoteId(null);
-    localStorage.removeItem(`lastNoteId_${userId}`);
+    setNoteUserId(adminUserId);
+    localStorage.removeItem(`lastAdminNoteId_${adminUserId}`);
   };
 
   const quillModules = {
@@ -138,7 +145,7 @@ const Insights = () => {
       [{ header: [1, 2, 3, false] }],
       ["bold", "italic", "underline", "strike"],
       [{ list: "ordered" }, { list: "bullet" }],
-      [{ align: [] }], // Add alignment options (left, center, right, justify)
+      [{ align: [] }],
       ["link"],
       ["clean"],
     ],
@@ -154,7 +161,7 @@ const Insights = () => {
     "strike",
     "list",
     "bullet",
-    "align", // Include align format
+    "align",
     "link",
   ];
 
@@ -162,10 +169,10 @@ const Insights = () => {
     <div className="insights-container">
       <ToastContainer position="top-right" autoClose={3000} hideProgressBar={false} />
       <div className="insights-main">
-        <h1 className="insights-title">Insights</h1>
+        <h1 className="insights-title">Admin Insights</h1>
         <div className="insights-content">
           <div className="notes-sidebar">
-            <h2 className="notes-sidebar-title">Notes</h2>
+            <h2 className="notes-sidebar-title">All Notes</h2>
             {notes.length === 0 ? (
               <p className="notes-empty">No notes yet.</p>
             ) : (
@@ -177,8 +184,8 @@ const Insights = () => {
                     onClick={() => handleSelectNote(note)}
                   >
                     <div className="notes-item-content">
-                      <span className="notes-item-title">{note.title}</span>
-                      {/* <button
+                      <span className="notes-item-title">{note.title} (User: {note.userId})</span>
+                      <button
                         className="notes-item-delete"
                         onClick={(e) => {
                           e.stopPropagation();
@@ -186,7 +193,7 @@ const Insights = () => {
                         }}
                       >
                         Delete
-                      </button> */}
+                      </button>
                     </div>
                     <p className="notes-item-date">
                       {new Date(note.createdAt).toLocaleString()}
@@ -203,6 +210,13 @@ const Insights = () => {
               placeholder="Note Title"
               value={noteTitle}
               onChange={(e) => setNoteTitle(e.target.value)}
+            />
+            <input
+              type="text"
+              className="notes-userid-input"
+              placeholder="User ID"
+              value={noteUserId}
+              onChange={(e) => setNoteUserId(e.target.value)}
             />
             <ReactQuill
               theme="snow"
@@ -240,4 +254,4 @@ const Insights = () => {
   );
 };
 
-export default Insights;
+export default AdminInsights;

@@ -17,6 +17,9 @@ const Note = mongoose.model("Note", noteSchema);
 router.get("/notes", async (req, res) => {
   try {
     const { userId } = req.query;
+    if (!userId) {
+      return res.status(400).json({ error: "userId is required" });
+    }
     const notes = await Note.find({ userId }).sort({ createdAt: -1 });
     res.json({ data: notes });
   } catch (error) {
@@ -24,9 +27,23 @@ router.get("/notes", async (req, res) => {
   }
 });
 
+// Get all notes (for admin)
+router.get("/all-notes", async (req, res) => {
+  try {
+    const notes = await Note.find().sort({ createdAt: -1 });
+    res.json({ data: notes });
+  } catch (error) {
+    res.status(500).json({ error: "Failed to fetch all notes" });
+  }
+});
+
 // Create a new note
 router.post("/notes", async (req, res) => {
   try {
+    const { userId, title, content } = req.body;
+    if (!userId || !title || !content) {
+      return res.status(400).json({ error: "userId, title, and content are required" });
+    }
     const note = new Note(req.body);
     await note.save();
     res.status(201).json({ data: note });
