@@ -1,4 +1,6 @@
 const express = require('express');
+const swaggerUi = require('swagger-ui-express');
+const swaggerDocument = require('./config/swagger.json');
 const mongoose = require('mongoose');
 const cors = require('cors');
 const helmet = require('helmet');
@@ -14,6 +16,7 @@ const app = express();
 // Middleware
 app.use(helmet()); // Security headers
 app.use(express.json()); // Parse JSON requests
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 // CORS setup
 const corsOptions = {
