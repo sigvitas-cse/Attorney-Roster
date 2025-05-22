@@ -7,6 +7,7 @@ import NewProfilesUpdated from "./IndivisualComponents/newProfiles";
 import RemovedProfiles from "./IndivisualComponents/removedProfiles";
 import NewProfilesUpdated2 from "./IndivisualComponents/updatedProfiles";
 import AdminInsights from "./IndivisualComponents/AdminInsights";
+import InsightsData from "./IndivisualComponents/insightdata";
 
 import { useLocation, useNavigate } from "react-router-dom";
 import * as XLSX from "xlsx"; // For Excel download
@@ -29,6 +30,7 @@ const AttorneyRoster = () => {
   const [removedProfilesUpdate, setremovedProfilesUpdate] = useState(false);
   const [updatedProfiles, setUpdatedProfiles] = useState(false);
   const [adminInsights, setAdminInsights] = useState(false);
+  const [insightsData, setInsightsData] = useState(false);
 
   const [searchField, setSearchField] = useState("name");
   // New states for checkbox functionality
@@ -406,11 +408,19 @@ const AttorneyRoster = () => {
           )}
           <p>
             <button className="newprofiles13" onClick={() => setAdminInsights(true)}>
-              Know Insights
+              Insights Notes
             </button>
           </p>
           {adminInsights && (
             <AdminInsights onClick={() => setAdminInsights(false)} />
+          )}
+          <p>
+            <button className="newprofiles13" onClick={() => setInsightsData(true)}>
+              Know Insights
+            </button>
+          </p>
+          {insightsData && (
+            <InsightsData onClick={() => setInsightsData(false)} />
           )}
         </div>
       </div>

@@ -949,5 +949,100 @@ router.post('/reset-password', async (req, res) => {
   res.status(200).json({ message: '✅ Password reset successful.' });
 });
 
+router.get('/insights', async (req, res) => {
+  try {
+    // Query 1: Organization changes
+    const orgChanges = await UpdatedProfilesComparison.aggregate([
+      { $match: { "changes.Organization/Law Firm Name": { $exists: true } } },
+      { $group: { _id: null, count: { $sum: 1 } } }
+    ]);
+    const orgChangeCount = orgChanges.length > 0 ? orgChanges[0].count : 0;
 
+    // Query 2: Who went from where (including name changes)
+    const orgMovers = await UpdatedProfilesComparison.find(
+      {
+        $or: [
+          { "changes.Organization/Law Firm Name": { $exists: true } },
+          { "changes.Name": { $exists: true } }
+        ]
+      },
+      {
+        name: 1,
+        regCode: 1,
+        "changes.Organization/Law Firm Name": 1,
+        "changes.Name": 1,
+        _id: 0
+      }
+    ).lean();
+
+    // Query 3: Agent to Attorney
+    const agentToAttorney = await UpdatedProfilesComparison.aggregate([
+      {
+        $match: {
+          "changes.Agent/Attorney.oldValue": { $regex: "^AGENT$", $options: "i" },
+          "changes.Agent/Attorney.newValue": { $regex: "^ATTORNEY$", $options: "i" }
+        }
+      },
+      { $group: { _id: null, count: { $sum: 1 } } }
+    ]);
+    const agentToAttorneyCount = agentToAttorney.length > 0 ? agentToAttorney[0].count : 0;
+
+    // Query 4: Company leavers
+    const companyLeavers = await UpdatedProfilesComparison.aggregate([
+      { $match: { "changes.Organization/Law Firm Name": { $exists: true } } },
+      {
+        $group: {
+          _id: "$changes.Organization/Law Firm Name.oldValue",
+          people: {
+            $push: {
+              name: "$name",
+              regCode: "$regCode",
+              newOrganization: "$changes.Organization/Law Firm Name.newValue",
+              nameChanged: { $cond: { if: { $gt: ["$changes.Name", null] }, then: "$changes.Name", else: null } }
+            }
+          },
+          count: { $sum: 1 }
+        }
+      },
+      { $project: { company: "$_id", count: 1, people: 1, _id: 0 } }
+    ]);
+
+    // Query 5: Address changes
+    const addressChanges = await UpdatedProfilesComparison.aggregate([
+      {
+        $match: {
+          $or: [
+            { "changes.Address Line 1": { $exists: true } },
+            { "changes.Address Line 2": { $exists: true } },
+            { "changes.City": { $exists: true } },
+            { "changes.State": { $exists: true } },
+            { "changes.Country": { $exists: true } },
+            { "changes.Zipcode": { $exists: true } }
+          ]
+        }
+      },
+      { $group: { _id: null, count: { $sum: 1 } } }
+    ]);
+    const addressChangeCount = addressChanges.length > 0 ? addressChanges[0].count : 0;
+
+    // Query 6: Name changes
+    const nameChanges = await UpdatedProfilesComparison.aggregate([
+      { $match: { "changes.Name": { $exists: true } } },
+      { $group: { _id: null, count: { $sum: 1 } } }
+    ]);
+    const nameChangeCount = nameChanges.length > 0 ? nameChanges[0].count : 0;
+
+    res.json({
+      organizationChanges: orgChangeCount,
+      organizationMovers: orgMovers,
+      agentToAttorneyCount: agentToAttorneyCount,
+      companyLeavers: companyLeavers,
+      addressChanges: addressChangeCount,
+      nameChanges: nameChangeCount
+    });
+  } catch (error) {
+    console.error("❌ Error fetching insights:", error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
 module.exports = router;
