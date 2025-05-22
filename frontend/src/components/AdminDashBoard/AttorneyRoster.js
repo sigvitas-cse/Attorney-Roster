@@ -6,6 +6,8 @@ import "../../style/Components/AdminDashboard/AttorneyRoster.css";
 import NewProfilesUpdated from "./IndivisualComponents/newProfiles";
 import RemovedProfiles from "./IndivisualComponents/removedProfiles";
 import NewProfilesUpdated2 from "./IndivisualComponents/updatedProfiles";
+import AdminInsights from "./IndivisualComponents/AdminInsights";
+
 import { useLocation, useNavigate } from "react-router-dom";
 import * as XLSX from "xlsx"; // For Excel download
 import jsPDF from "jspdf"; // For PDF download
@@ -26,6 +28,8 @@ const AttorneyRoster = () => {
   const [newProfilesUpdate, setNewProfilesUpdate] = useState(false);
   const [removedProfilesUpdate, setremovedProfilesUpdate] = useState(false);
   const [updatedProfiles, setUpdatedProfiles] = useState(false);
+  const [adminInsights, setAdminInsights] = useState(false);
+
   const [searchField, setSearchField] = useState("name");
   // New states for checkbox functionality
   const [selectedRows, setSelectedRows] = useState([]);
@@ -335,10 +339,7 @@ const AttorneyRoster = () => {
     setShowFormatModal(true);
   };
 
-  /** 🔹 Navigate to Insights page */
-  const handleInsightsClick = () => {
-    navigate("/AdminInsights");
-  };
+  
 
   // 🔹 Define the keys to exclude from the preview table
   const excludedKeys = ["download", "slNo"];
@@ -404,10 +405,13 @@ const AttorneyRoster = () => {
             <NewProfilesUpdated2 onClick={() => setUpdatedProfiles(false)} />
           )}
           <p>
-            <button className="newprofiles13" onClick={() => handleInsightsClick()}>
+            <button className="newprofiles13" onClick={() => setAdminInsights(true)}>
               Know Insights
             </button>
           </p>
+          {adminInsights && (
+            <AdminInsights onClick={() => setAdminInsights(false)} />
+          )}
         </div>
       </div>
 

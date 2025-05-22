@@ -1,29 +1,25 @@
 import React, { useState, useEffect } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
 import axios from "axios";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import "../../style/Components/AdminDashboard/Insights.css";
+import "../../../style/Components/AdminDashboard/IndivisualComponents/Insights.css";
 
-const AdminInsights = () => {
-  const location = useLocation();
-  const navigate = useNavigate();
-  const adminUserId = location.state?.userId;
+const AdminInsights = ({ onClick, userId }) => {
   const [notes, setNotes] = useState([]);
   const [currentNote, setCurrentNote] = useState("");
   const [selectedNoteId, setSelectedNoteId] = useState(null);
   const [noteTitle, setNoteTitle] = useState("");
-  const [noteUserId, setNoteUserId] = useState(adminUserId); // Default to admin's userId
+  const [noteUserId, setNoteUserId] = useState(userId); // Use userId from props
 
-      const API_URL = process.env.REACT_APP_API_URL;
+  const API_URL = process.env.REACT_APP_API_URL;
 
   useEffect(() => {
     document.title = "Admin Insights - Patent Analyst Dashboard";
-    const lastNoteId = localStorage.getItem(`lastAdminNoteId_${adminUserId}`);
+    const lastNoteId = localStorage.getItem(`lastAdminNoteId_${userId}`);
     fetchNotes(lastNoteId);
-  }, []);
+  }, [userId]);
 
   const fetchNotes = async (noteIdToSelect = null) => {
     try {
@@ -69,7 +65,7 @@ const AdminInsights = () => {
       setNoteTitle(newNote.title);
       setCurrentNote(newNote.content);
       setNoteUserId(newNote.userId);
-      localStorage.setItem(`lastAdminNoteId_${adminUserId}`, newNote._id);
+      localStorage.setItem(`lastAdminNoteId_${userId}`, newNote._id);
       fetchNotes(newNote._id);
     } catch (error) {
       console.error("Error saving note:", error);
@@ -86,6 +82,7 @@ const AdminInsights = () => {
     try {
       const response = await axios.put(`${API_URL}/api/notes/${selectedNoteId}`, {
       // const response = await axios.put(`http://localhost:3001/api/notes/${selectedNoteId}`, {
+        
         title: noteTitle,
         content: currentNote,
       });
@@ -94,7 +91,7 @@ const AdminInsights = () => {
       setNoteTitle(updatedNote.title);
       setCurrentNote(updatedNote.content);
       setNoteUserId(updatedNote.userId);
-      localStorage.setItem(`lastAdminNoteId_${adminUserId}`, selectedNoteId);
+      localStorage.setItem(`lastAdminNoteId_${userId}`, selectedNoteId);
       fetchNotes(selectedNoteId);
     } catch (error) {
       console.error("Error updating note:", error);
@@ -114,8 +111,8 @@ const AdminInsights = () => {
         setNoteTitle("");
         setCurrentNote("");
         setSelectedNoteId(null);
-        setNoteUserId(adminUserId);
-        localStorage.removeItem(`lastAdminNoteId_${adminUserId}`);
+        setNoteUserId(userId);
+        localStorage.removeItem(`lastAdminNoteId_${userId}`);
       }
       fetchNotes();
     } catch (error) {
@@ -129,15 +126,15 @@ const AdminInsights = () => {
     setNoteTitle(note.title);
     setCurrentNote(note.content);
     setNoteUserId(note.userId);
-    localStorage.setItem(`lastAdminNoteId_${adminUserId}`, note._id);
+    localStorage.setItem(`lastAdminNoteId_${userId}`, note._id);
   };
 
   const handleNewNote = () => {
     setNoteTitle("");
     setCurrentNote("");
     setSelectedNoteId(null);
-    setNoteUserId(adminUserId);
-    localStorage.removeItem(`lastAdminNoteId_${adminUserId}`);
+    setNoteUserId(userId);
+    localStorage.removeItem(`lastAdminNoteId_${userId}`);
   };
 
   const quillModules = {
@@ -166,90 +163,87 @@ const AdminInsights = () => {
   ];
 
   return (
-    <div className="insights-container">
-      <ToastContainer position="top-right" autoClose={3000} hideProgressBar={false} />
-      <div className="insights-main">
-        <h1 className="insights-title">Admin Insights</h1>
-        <div className="insights-content">
-          <div className="notes-sidebar">
-            <h2 className="notes-sidebar-title">All Notes</h2>
-            {notes.length === 0 ? (
-              <p className="notes-empty">No notes yet.</p>
-            ) : (
-              <ol className="notes-list">
-                {notes.map((note) => (
-                  <li
-                    key={note._id}
-                    className={`notes-item ${selectedNoteId === note._id ? "notes-item-selected" : ""}`}
-                    onClick={() => handleSelectNote(note)}
-                  >
-                    <div className="notes-item-content">
-                      <span className="notes-item-title">{note.title} (User: {note.userId})</span>
-                      <button
-                        className="notes-item-delete"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handleDeleteNote(note._id);
-                        }}
-                      >
-                        Delete
-                      </button>
-                    </div>
-                    <p className="notes-item-date">
-                      {new Date(note.createdAt).toLocaleString()}
-                    </p>
-                  </li>
-                ))}
-              </ol>
-            )}
-          </div>
-          <div className="notes-editor">
-            <input
-              type="text"
-              className="notes-title-input"
-              placeholder="Note Title"
-              value={noteTitle}
-              onChange={(e) => setNoteTitle(e.target.value)}
-            />
-            <input
-              type="text"
-              className="notes-userid-input"
-              placeholder="User ID"
-              value={noteUserId}
-              onChange={(e) => setNoteUserId(e.target.value)}
-            />
-            <ReactQuill
-              theme="snow"
-              value={currentNote}
-              onChange={setCurrentNote}
-              modules={quillModules}
-              formats={quillFormats}
-              className="notes-quill-editor"
-              placeholder="Start typing your note here..."
-            />
-            <div className="notes-actions">
-              <button
-                className="action-button save-button"
-                onClick={selectedNoteId ? handleUpdateNote : handleSaveNote}
-              >
-                {selectedNoteId ? "Update" : "Save"}
-              </button>
-              <button
-                className="action-button new-note-button"
-                onClick={handleNewNote}
-              >
-                New Note
-              </button>
-              <button
-                className="action-button back-button"
-                onClick={() => navigate(-1)}
-              >
-                Back
-              </button>
+    <div className="insights-modal">
+      <div className="insights-center">
+        <button className="close-btn" onClick={onClick}>X</button>
+        <h2>Admin Insights [{notes.length}]</h2>
+        <div className="insights-content-container">
+          <div className="insights-content">
+            <div className="notes-sidebar">
+              <h2 className="notes-sidebar-title">All Notes</h2>
+              {notes.length === 0 ? (
+                <p className="notes-empty">No notes yet.</p>
+              ) : (
+                <ol className="notes-list">
+                  {notes.map((note) => (
+                    <li
+                      key={note._id}
+                      className={`notes-item ${selectedNoteId === note._id ? "notes-item-selected" : ""}`}
+                      onClick={() => handleSelectNote(note)}
+                    >
+                      <div className="notes-item-content">
+                        <span className="notes-item-title">{note.title} (User: {note.userId})</span>
+                        <button
+                          className="notes-item-delete"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleDeleteNote(note._id);
+                          }}
+                        >
+                          Delete
+                        </button>
+                      </div>
+                      <p className="notes-item-date">
+                        {new Date(note.createdAt).toLocaleString()}
+                      </p>
+                    </li>
+                  ))}
+                </ol>
+              )}
+            </div>
+            <div className="notes-editor">
+              <input
+                type="text"
+                className="notes-title-input"
+                placeholder="Note Title"
+                value={noteTitle}
+                onChange={(e) => setNoteTitle(e.target.value)}
+              />
+              <input
+                type="text"
+                className="notes-userid-input"
+                placeholder="User ID"
+                value={noteUserId}
+                onChange={(e) => setNoteUserId(e.target.value)}
+              />
+              <ReactQuill
+                theme="snow"
+                value={currentNote}
+                onChange={setCurrentNote}
+                modules={quillModules}
+                formats={quillFormats}
+                className="notes-quill-editor"
+                placeholder="Start typing your note here..."
+              />
+              <div className="notes-actions">
+                <button
+                  className="action-button save-button"
+                  onClick={selectedNoteId ? handleUpdateNote : handleSaveNote}
+                >
+                  {selectedNoteId ? "Update" : "Save"}
+                </button>
+                <button
+                  className="action-button new-note-button"
+                  onClick={handleNewNote}
+                >
+                  New Note
+                </button>
+              </div>
             </div>
           </div>
         </div>
       </div>
+      <ToastContainer position="top-right" autoClose={3000} hideProgressBar={false} />
     </div>
   );
 };

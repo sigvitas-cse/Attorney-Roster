@@ -1,0 +1,333 @@
+/* Modal overlay */
+.insights-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.9);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    z-index: 1000;
+    scroll-behavior: smooth;
+}
+
+/* Centered container */
+.insights-center {
+    background: white;
+    padding: 20px;
+    color: black;
+    border-radius: 10px;
+    width: 95%;
+    max-height: 85vh;
+    overflow-y: auto;
+    position: relative;
+    box-shadow: 0px 0px 10px rgba(255, 255, 255, 0.2);
+    scroll-behavior: smooth;
+}
+
+/* Title */
+.insights-center h2 {
+    color: black;
+    text-align: center;
+    margin-bottom: 15px;
+}
+
+/* Close button */
+.close-btn {
+    width: 40px !important;
+    height: 40px !important;
+    position: absolute;
+    top: 15px;
+    right: 20px;
+    background: #ff4d4f !important; /* Softer red */
+    color: white;
+    border: none;
+    border-radius: 50%; /* Circular button */
+    padding: 0; /* Remove padding to center content */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 18px; /* Slightly larger for better visibility */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    transition: background-color 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.close-btn:hover {
+    background: #d9363e !important; /* Darker red on hover */
+    transform: scale(1.1); /* Slight scale-up effect */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+}
+
+/* Scrollable content container */
+.insights-content-container {
+    overflow-x: auto;
+    overflow-y: auto;
+    max-height: 60vh;
+    margin-top: 10px;
+    scroll-behavior: smooth;
+    scrollbar-width: thin; /* For Firefox */
+    scrollbar-color: #888 #f1f1f1; /* For Firefox */
+}
+
+.insights-content-container::-webkit-scrollbar {
+    width: 10px; /* For WebKit browsers */
+}
+
+.insights-content-container::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 5px;
+}
+
+.insights-content-container::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 5px;
+}
+
+.insights-content-container::-webkit-scrollbar-thumb:hover {
+    background: #555;
+}
+
+/* Content layout */
+.insights-content {
+    display: flex;
+    gap: 20px;
+    padding: 10px;
+}
+
+/* Sidebar for notes list */
+.notes-sidebar {
+    width: 30%;
+    background-color: #fff;
+    padding: 15px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.notes-sidebar-title {
+    font-size: 18px;
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 10px;
+}
+
+.notes-empty {
+    color: #666;
+    font-size: 14px;
+}
+
+.notes-list {
+    list-style: decimal;
+    padding-left: 20px;
+    margin: 0;
+}
+
+.notes-item {
+    padding: 10px;
+    border-bottom: 1px solid #eee;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.notes-item:hover {
+    background-color: #f9f9f9;
+}
+
+.notes-item-selected {
+    background-color: #e6f0ff;
+}
+
+.notes-item-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.notes-item-title {
+    font-size: 14px;
+    font-weight: 500;
+    color: #333;
+}
+
+.notes-item-date {
+    font-size: 12px;
+    color: #888;
+    margin-top: 5px;
+}
+
+.notes-item-delete {
+    font-size: 12px;
+    color: #d9534f;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 2px 8px;
+}
+
+.notes-item-delete:hover {
+    color: #c9302c;
+}
+
+/* Editor section */
+.notes-editor {
+    width: 70%;
+    background-color: #fff;
+    padding: 20px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.notes-title-input,
+.notes-userid-input {
+    width: 100%;
+    padding: 8px;
+    margin-bottom: 15px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 14px;
+    color: #333;
+    outline: none;
+}
+
+.notes-title-input:focus,
+.notes-userid-input:focus {
+    border-color: #007bff;
+    box-shadow: 0 0 5px rgba(0, 123, 255, 0.3);
+}
+
+/* Quill editor styles */
+.notes-quill-editor {
+    margin-bottom: 20px;
+}
+
+.quill {
+    background-color: #fff;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+.ql-container {
+    min-height: 300px;
+    border: 1px solid #ccc;
+    border-radius: 0 0 4px 4px;
+    color: #333;
+    font-family: Arial, sans-serif;
+}
+
+.ql-editor {
+    color: #333;
+    background-color: #fff;
+    text-align: left;
+}
+
+.ql-editor p {
+    color: #333;
+    text-align: left;
+}
+
+/* Toolbar styles */
+.ql-toolbar {
+    border: 1px solid #ccc;
+    border-bottom: none;
+    border-radius: 4px 4px 0 0;
+    background-color: #f8f8f8;
+}
+
+/* Action buttons */
+.notes-actions {
+    display: flex;
+    gap: 10px;
+}
+
+.action-button {
+    padding: 8px 16px;
+    font-size: 14px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.save-button {
+    background-color: #28a745;
+    color: #fff;
+}
+
+.save-button:hover {
+    background-color: #218838;
+}
+
+.new-note-button {
+    background-color: #007bff;
+    color: #fff;
+}
+
+.new-note-button:hover {
+    background-color: #0056b3;
+}
+
+/* Responsive adjustments */
+@media screen and (max-width: 768px) {
+    .insights-center {
+        width: 98%;
+        max-height: 90vh;
+        padding: 15px;
+    }
+
+    .close-btn {
+        width: 32px !important;
+        height: 32px !important;
+        top: 10px;
+        right: 15px;
+        font-size: 16px;
+    }
+
+    .insights-content {
+        flex-direction: column;
+        gap: 15px;
+    }
+
+    .notes-sidebar,
+    .notes-editor {
+        width: 100%;
+    }
+
+    .insights-content-container {
+        max-height: 50vh;
+    }
+
+    .notes-sidebar-title {
+        font-size: 16px;
+    }
+
+    .notes-item-title {
+        font-size: 13px;
+    }
+
+    .notes-item-date {
+        font-size: 11px;
+    }
+
+    .notes-item-delete {
+        font-size: 11px;
+    }
+
+    .notes-title-input,
+    .notes-userid-input {
+        font-size: 13px;
+    }
+
+    .action-button {
+        font-size: 13px;
+        padding: 6px 12px;
+    }
+
+    .ql-container {
+        min-height: 200px;
+    }
+}

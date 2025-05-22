@@ -10,7 +10,6 @@ import UserTable from "../pages/EmployeeDashboard";
 import ForgotPassword from "../pages/ForgotPassword";
 import AnalysisCopy from "../pages/AnalysisCopy";
 import Insights from "../pages/Insights";
-import AdminInsights from "../components/AdminDashBoard/AdminInsights";
 
 const router = createBrowserRouter([
     {
@@ -58,10 +57,7 @@ const router = createBrowserRouter([
                 path : "insights",
                 element : <Insights/>
             },
-            {
-                path : "AdminInsights",
-                element : <AdminInsights/>
-            },
+            
             
         ]
     }
