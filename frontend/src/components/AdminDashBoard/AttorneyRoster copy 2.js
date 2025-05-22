@@ -6,15 +6,13 @@ import "../../style/Components/AdminDashboard/AttorneyRoster.css";
 import NewProfilesUpdated from "./IndivisualComponents/newProfiles";
 import RemovedProfiles from "./IndivisualComponents/removedProfiles";
 import NewProfilesUpdated2 from "./IndivisualComponents/updatedProfiles";
-import { useLocation, useNavigate } from "react-router-dom";
-import * as XLSX from "xlsx"; // For Excel download
-import jsPDF from "jspdf"; // For PDF download
-import "jspdf-autotable"; // For table formatting in PDF
+import { useLocation, useNavigate } from "react-router-dom"; // Added useNavigate
+
 
 const AttorneyRoster = () => {
   const [allData, setAllData] = useState([]);
   const location = useLocation();
-  const navigate = useNavigate();
+  const navigate = useNavigate(); // Added navigate hook
   const [totalRecords, setTotalRecords] = useState(0);
   const [apiPage, setApiPage] = useState(1);
   const [hasMoreData, setHasMoreData] = useState(true);
@@ -26,14 +24,7 @@ const AttorneyRoster = () => {
   const [newProfilesUpdate, setNewProfilesUpdate] = useState(false);
   const [removedProfilesUpdate, setremovedProfilesUpdate] = useState(false);
   const [updatedProfiles, setUpdatedProfiles] = useState(false);
-  const [searchField, setSearchField] = useState("name");
-  // New states for checkbox functionality
-  const [selectedRows, setSelectedRows] = useState([]);
-  const [showOptions, setShowOptions] = useState(false);
-  const [showPreview, setShowPreview] = useState(false);
-  const [showFormatModal, setShowFormatModal] = useState(false);
-  const [downloadFormat, setDownloadFormat] = useState(null);
-  const [showLimitWarning, setShowLimitWarning] = useState(false);
+  const [searchField, setSearchField] = useState("name"); // New state for selected search field
 
   /** 🔹 Header-to-Key Mapping for Filters */
   const headerMap = {
@@ -65,7 +56,6 @@ const AttorneyRoster = () => {
     "Notes": "notes",
     "Initials": "initials",
     "Data Updated as on": "dataUpdatedAsOn",
-    "Download": "download", // New column for checkboxes
   };
 
   /** 🔹 Searchable Fields */
@@ -79,7 +69,7 @@ const AttorneyRoster = () => {
   /** 🔹 Handle Filter Change */
   const handleFilterChange = (columnHeader) => {
     const columnKey = headerMap[columnHeader];
-    if (!columnKey || columnKey === "download") return;
+    if (!columnKey) return;
 
     if (filters[columnKey]) {
       setFilters((prevFilters) => {
@@ -129,7 +119,6 @@ const AttorneyRoster = () => {
   const initialLimit = 5000;
   const batchLimit = 1000;
   const rowsPerPage = 500;
-  const downloadLimit = 5; // Enforce a strict limit of 5 rows for download
 
   const API_URL = process.env.REACT_APP_API_URL || "https://roster1.sigvitas.com";
 
@@ -138,18 +127,21 @@ const AttorneyRoster = () => {
   /** 🔹 Fetch Data from Backend */
   const fetchAllData = async (pageNumber, limit, letter = "") => {
     try {
-      const response = await axios.get(`${API_URL}/api/all-users-data`, {
-      // const response = await axios.get("http://localhost:3001/api/all-users-data", {
+      // const response = await axios.get(`${API_URL}/api/all-users-data`, {
+      const response = await axios.get("http://localhost:3001/api/all-users-data", {
         params: { page: pageNumber, limit, letter },
       });
+      // const updatedResponse = await axios.get(`${API_URL}/api/updatedprofilescomparisons`);
+      const updatedResponse = await axios.get("http://localhost:3001/api/updatedprofilescomparisons");
 
-      const updatedResponse = await axios.get(`${API_URL}/api/updatedprofilescomparisons`);
-      // const updatedResponse = await axios.get("http://localhost:3001/api/updatedprofilescomparisons");
+      console.log("🔍 Updated Profiles API Response:", updatedResponse.data);
 
       if (response.status === 200 && updatedResponse.status === 200) {
         const updatedProfiles = new Set(
           updatedResponse.data.map((item) => item.regCode?.trim()?.toLowerCase())
         );
+
+        console.log("✅ Updated Profiles Set:", updatedProfiles);
 
         setTotalRecords(response.data.totalUsers);
 
@@ -203,8 +195,7 @@ const AttorneyRoster = () => {
     setAllData([]);
     setFilters({});
     setHasMoreData(true);
-    setSelectedRows([]); // Reset selected rows
-    setShowOptions(false); // Hide options
+
     fetchAllData(1, selected === "" ? 5000 : initialLimit, selected);
   };
 
@@ -232,116 +223,10 @@ const AttorneyRoster = () => {
     );
   };
 
-  /** 🔹 Handle Checkbox Change */
-  const handleCheckboxChange = (regCode) => {
-    setSelectedRows((prev) => {
-      if (prev.includes(regCode)) {
-        const newSelection = prev.filter((id) => id !== regCode);
-        setShowOptions(newSelection.length > 0);
-        return newSelection;
-      } else {
-        const newSelection = [...prev, regCode];
-        setShowOptions(true);
-        return newSelection;
-      }
-    });
-  };
-
-  /** 🔹 Handle Select All Checkbox */
-  const handleSelectAll = () => {
-    if (selectedRows.length === visibleData.length) {
-      setSelectedRows([]);
-      setShowOptions(false);
-    } else {
-      const allRegCodes = visibleData.map((data) => data.regCode);
-      setSelectedRows(allRegCodes);
-      setShowOptions(true);
-    }
-  };
-
-  /** 🔹 Handle Preview */
-  const handlePreview = () => {
-    setShowPreview(true);
-  };
-
-  /** 🔹 Handle Download */
-  const handleDownload = () => {
-    // Always check if selectedRows exceed the download limit
-    if (selectedRows.length > downloadLimit) {
-      setShowLimitWarning(true);
-    } else {
-      setShowFormatModal(true);
-    }
-  };
-
-  /** 🔹 Download Excel */
-  const downloadExcel = (dataToDownload) => {
-    const worksheet = XLSX.utils.json_to_sheet(
-      dataToDownload.map((row) =>
-        Object.keys(headerMap)
-          .filter((key) => key !== "download" && key !== "S. No.")
-          .reduce((obj, key) => {
-            obj[key] = row[headerMap[key]] || "";
-            return obj;
-          }, {})
-      )
-    );
-    const workbook = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(workbook, worksheet, "AttorneyRoster");
-    XLSX.writeFile(workbook, "AttorneyRoster.xlsx");
-  };
-
-  /** 🔹 Download PDF */
-  const downloadPDF = (dataToDownload) => {
-    const doc = new jsPDF();
-    const tableColumn = Object.keys(headerMap).filter((key) => key !== "download" && key !== "S. No.");
-    const tableRows = dataToDownload.map((row) =>
-      Object.keys(headerMap)
-        .filter((key) => key !== "download" && key !== "S. No.")
-        .map((key) => row[headerMap[key]] || "")
-    );
-
-    doc.autoTable({
-      head: [tableColumn],
-      body: tableRows,
-      styles: { fontSize: 8 },
-      margin: { top: 10 },
-    });
-    doc.save("AttorneyRoster.pdf");
-  };
-
-  /** 🔹 Handle Format Selection */
-  const handleFormatSelection = (format) => {
-    setDownloadFormat(format);
-    setShowFormatModal(false);
-
-    // Always limit to the first 5 selected rows
-    const dataToDownload = visibleData
-      .filter((data) => selectedRows.includes(data.regCode))
-      .slice(0, downloadLimit);
-
-    if (format === "excel") {
-      downloadExcel(dataToDownload);
-    } else if (format === "pdf") {
-      downloadPDF(dataToDownload);
-    }
-
-    setShowLimitWarning(false);
-  };
-
-  /** 🔹 Handle Limit Warning Download */
-  const handleLimitDownload = () => {
-    setShowLimitWarning(false);
-    setShowFormatModal(true);
-  };
-
-  /** 🔹 Navigate to Insights page */
+   // Navigate to Insights page
   const handleInsightsClick = () => {
     navigate("/AdminInsights");
   };
-
-  // 🔹 Define the keys to exclude from the preview table
-  const excludedKeys = ["download", "slNo"];
 
   return (
     <section className="patentDataSection">
@@ -408,99 +293,9 @@ const AttorneyRoster = () => {
               Know Insights
             </button>
           </p>
+          
         </div>
       </div>
-
-      {/* 🔹 Download/Preview Options */}
-      {showOptions && (
-        <div className="download-options">
-          <p>
-            If you want to download more than 5 profiles data then you can contact at{" "}
-            <a href="mailto:support@triangleip.com">support@triangleip.com</a>
-          </p>
-          <button onClick={handlePreview}>Preview</button>
-          <button onClick={handleDownload}>Download</button>
-        </div>
-      )}
-
-      {/* 🔹 Preview Modal */}
-      {showPreview && (
-        <div className="modal">
-          <div className="modal-content">
-            <FaTimes
-              className="modal-close-icon"
-              onClick={() => setShowPreview(false)}
-              data-tooltip-id="close-tooltip"
-              data-tooltip-content="Close Preview"
-            />
-            <Tooltip id="close-tooltip" place="top" effect="solid" />
-            <h3>Preview Selected Data (Showing up to {downloadLimit} rows)</h3>
-            <div className="preview-table-container">
-              <table className="preview-table">
-                <thead>
-                  <tr>
-                    {Object.keys(headerMap)
-                      .filter((key) => !excludedKeys.includes(headerMap[key]))
-                      .map((header, index) => (
-                        <th key={index}>{header}</th>
-                      ))}
-                  </tr>
-                </thead>
-                <tbody>
-                  {visibleData
-                    .filter((data) => selectedRows.includes(data.regCode))
-                    .slice(0, downloadLimit) // Limit to first 5 rows in preview
-                    .map((data, index) => (
-                      <tr key={index}>
-                        {Object.keys(headerMap)
-                          .filter((key) => !excludedKeys.includes(headerMap[key]))
-                          .map((key, colIndex) => (
-                            <td key={colIndex}>
-                              {headerMap[key] === "linkedInProfile" && data[headerMap[key]] ? (
-                                <a href={data[headerMap[key]]} target="_blank" rel="noopener noreferrer">
-                                  {data[headerMap[key]]}
-                                </a>
-                              ) : (
-                                data[headerMap[key]] || ""
-                              )}
-                            </td>
-                          ))}
-                      </tr>
-                    ))}
-                </tbody>
-              </table>
-            </div>
-            <button onClick={() => setShowPreview(false)}>Close</button>
-          </div>
-        </div>
-      )}
-
-      {/* 🔹 Format Selection Modal */}
-      {showFormatModal && (
-        <div className="modal">
-          <div className="modal-content">
-            <h3>Select Download Format</h3>
-            <button onClick={() => handleFormatSelection("excel")}>Excel</button>
-            <button onClick={() => handleFormatSelection("pdf")}>PDF</button>
-            <button onClick={() => setShowFormatModal(false)}>Cancel</button>
-          </div>
-        </div>
-      )}
-
-      {/* 🔹 Limit Warning Modal */}
-      {showLimitWarning && (
-        <div className="modal">
-          <div className="modal-content">
-            <h3>Download Limit Exceeded</h3>
-            <p>
-              You can download only {downloadLimit} rows at a time. If you need to download more, please contact{" "}
-              <a href="mailto:support@triangleip.com">support@triangleip.com</a>.
-            </p>
-            <button onClick={handleLimitDownload}>Download (First {downloadLimit} Rows)</button>
-            <button onClick={() => setShowLimitWarning(false)}>Cancel</button>
-          </div>
-        </div>
-      )}
 
       {/* 🔹 A-Z Filter */}
       <div className="alphabet-filter">
@@ -521,34 +316,24 @@ const AttorneyRoster = () => {
           <thead>
             <tr>
               {Object.keys(headerMap).map((header, index) => (
-                <th key={index} className={header === "Download" ? "column-download" : `column-${headerMap[header]}`}>
-                  {header === "Download" ? (
-                    <input
-                      type="checkbox"
-                      checked={selectedRows.length === visibleData.length && visibleData.length > 0}
-                      onChange={handleSelectAll}
-                    />
-                  ) : (
-                    <>
-                      {header}
-                      {index !== 0 && header !== "Download" && (
-                        activeFilters[headerMap[header]] ? (
-                          <FaTimes
-                            className="filter-icon active-filter"
-                            onClick={() => handleFilterChange(header)}
-                            data-tooltip-id="filter-tooltip"
-                            data-tooltip-content="Remove Filters"
-                          />
-                        ) : (
-                          <FaFilter
-                            className="filter-icon"
-                            onClick={() => handleFilterChange(header)}
-                            data-tooltip-id="filter-tooltip"
-                            data-tooltip-content="Apply Filters"
-                          />
-                        )
-                      )}
-                    </>
+                <th key={index}>
+                  {header}
+                  {index !== 0 && (
+                    activeFilters[headerMap[header]] ? (
+                      <FaTimes
+                        className="filter-icon active-filter"
+                        onClick={() => handleFilterChange(header)}
+                        data-tooltip-id="filter-tooltip"
+                        data-tooltip-content="Remove Filters"
+                      />
+                    ) : (
+                      <FaFilter
+                        className="filter-icon"
+                        onClick={() => handleFilterChange(header)}
+                        data-tooltip-id="filter-tooltip"
+                        data-tooltip-content="Apply Filters"
+                      />
+                    )
                   )}
                 </th>
               ))}
@@ -566,7 +351,6 @@ const AttorneyRoster = () => {
                 {Object.values(headerMap).slice(1).map((key, colIndex) => (
                   <td
                     key={colIndex}
-                    className={key === "download" ? "column-download" : `column-${key}`}
                     data-tooltip-id="data-tooltip"
                     data-tooltip-content={
                       data.isUpdated
@@ -581,14 +365,7 @@ const AttorneyRoster = () => {
                     }
                     style={{ cursor: "pointer" }}
                   >
-                    {key === "download" ? (
-                      <input
-                        type="checkbox"
-                        checked={selectedRows.includes(data.regCode)}
-                        onChange={() => handleCheckboxChange(data.regCode)}
-                        onClick={(e) => e.stopPropagation()} // Prevent row click
-                      />
-                    ) : key === "linkedInProfile" && data[key] ? (
+                    {key === "linkedInProfile" && data[key] ? (
                       <a
                         href={data[key]}
                         target="_blank"

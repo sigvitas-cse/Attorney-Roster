@@ -1,3 +1,4 @@
+/* Patent Data Section */
 .patentDataSection {
     padding: 0 20px 20px 20px;
     font-family: Arial, sans-serif;
@@ -21,7 +22,7 @@
     scrollbar-color: #888 #f1f1f1;
 }
 
-/* WebKit scrollbar styling */
+/* WebKit scrollbar styling for main table */
 .table-container::-webkit-scrollbar {
     width: 10px;
     height: 10px;
@@ -41,15 +42,14 @@
     background: #555;
 }
 
-/* Auto-width table with fixed layout for consistent column sizes */
+/* Main table with auto column widths */
 .user-table2 {
-    width: auto !important;
+    width: 100% !important; /* Ensure table takes full container width */
     border-collapse: collapse !important;
-    table-layout: fixed !important; /* Fixed layout for consistent column widths */
-    max-width: 100% !important;
+    table-layout: auto !important; /* Auto column widths based on content */
 }
 
-/* Sticky header */
+/* Sticky header for main table */
 .user-table2 thead {
     background-color: #0073e6 !important;
     color: white !important;
@@ -65,8 +65,6 @@
     text-align: left !important;
     font-size: 14px !important;
     white-space: nowrap !important; /* Prevent header text from wrapping */
-    max-width: 250px !important; /* Default max-width for headers */
-    min-width: 80px !important; /* Prevent headers from collapsing */
     overflow: hidden !important; /* Hide overflow */
     text-overflow: ellipsis !important; /* Show ellipsis for long headers */
     background-color: #0073e6 !important;
@@ -80,54 +78,47 @@
     text-align: left !important;
     font-size: 14px !important;
     white-space: normal !important; /* Allow body text to wrap */
-    max-width: 250px !important; /* Default max-width for body cells */
-    min-width: 80px !important; /* Prevent cells from collapsing */
     overflow-wrap: break-word !important; /* Break long words */
     vertical-align: top !important; /* Align text to top */
 }
 
-/* Column-specific sizes */
-.column-notes {
-    max-width: 350px !important; /* Wider for Notes */
-    min-width: 120px !important;
+/* Download checkbox column */
+.column-download {
+    width: 50px !important; /* Fixed width for checkboxes */
+    text-align: center !important; /* Center checkboxes */
 }
 
-.column-linkedInProfile {
-    max-width: 200px !important; /* Tighter for URLs */
-    min-width: 100px !important;
-    word-break: break-all !important; /* Break long URLs */
+.user-table2 th.column-download,
+.user-table2 td.column-download {
+    padding: 18px !important; /* Reduced padding for checkbox column */
 }
 
-.column-regCode {
-    max-width: 120px !important; /* Narrower for Reg Code */
-    min-width: 60px !important;
+/* Checkbox styling */
+.user-table2 input[type="checkbox"] {
+    cursor: pointer;
+    width: 16px;
+    height: 16px;
+    margin: 0 auto;
+    vertical-align: middle;
 }
 
+/* Column-specific sizes removed since table-layout: auto is used */
+/* Keeping these classes for potential future styling */
+.column-notes,
+.column-linkedInProfile,
+.column-regCode,
 .column-addressLine1,
-.column-addressLine2 {
-    max-width: 300px !important; /* Wider for addresses */
-    min-width: 100px !important;
-}
-
+.column-addressLine2,
 .column-name,
-.column-organization {
-    max-width: 250px !important; /* Standard for Name and Organization */
-    min-width: 100px !important;
-}
-
+.column-organization,
 .column-city,
 .column-state,
 .column-country,
-.column-zipcode {
-    max-width: 150px !important; /* Narrower for shorter fields */
-    min-width: 80px !important;
-}
-
+.column-zipcode,
 .column-phoneNumber,
 .column-updatedPhoneNumber,
 .column-emailAddress {
-    max-width: 200px !important; /* For contact info */
-    min-width: 100px !important;
+    /* No max-width or min-width; let table-layout: auto handle it */
 }
 
 /* Alternating row colors */
@@ -147,6 +138,239 @@
 
 .user-table2 a:hover {
     text-decoration: underline;
+}
+
+/* Highlight for updated rows */
+.highlight-updated {
+    background-color: #ffeb99 !important;
+    font-weight: bold;
+    color: #d9534f;
+}
+
+/* Highlight for search matches */
+.highlight {
+    background-color: yellow;
+    font-weight: bold;
+}
+
+/* Filter icon styling */
+.filter-icon {
+    color: white !important;
+    cursor: pointer !important;
+    margin-left: 5px !important;
+}
+
+.active-filter {
+    color: red !important;
+    cursor: pointer !important;
+    margin-left: 5px !important;
+}
+
+/* Download Options */
+.download-options {
+    margin: 10px 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    align-items: center;
+    justify-content: flex-end;
+}
+
+.download-options p {
+    margin: 0;
+    font-size: 14px;
+    color: #333;
+}
+
+.download-options .scrolling-text {
+    white-space: nowrap; /* Prevent text from wrapping */
+    overflow: hidden; /* Hide overflow to create a clean scrolling effect */
+    display: inline-block; /* Allow animation to work properly */
+    animation: scroll-left 15s linear infinite; /* Apply the scrolling animation */
+}
+
+.download-options .scrolling-text a {
+    color: #007bff; /* Match the link color with other links in the app */
+    text-decoration: none;
+}
+
+.download-options .scrolling-text a:hover {
+    text-decoration: underline;
+}
+
+.download-options button {
+    padding: 8px 16px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: all 0.3s ease;
+}
+
+.download-options button:hover {
+    background-color: #0056b3;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.15);
+}
+
+/* Keyframes for scrolling animation */
+@keyframes scroll-left {
+    0% {
+        transform: translateX(100%); /* Start from the right */
+    }
+    100% {
+        transform: translateX(-100%); /* Move to the left */
+    }
+}
+
+/* Responsive adjustments */
+@media screen and (max-width: 768px) {
+    .download-options .scrolling-text {
+        font-size: 12px; /* Smaller font size on mobile */
+        animation-duration: 12s; /* Faster animation on smaller screens */
+    }
+}
+
+@media screen and (max-width: 500px) {
+    .download-options .scrolling-text {
+        font-size: 11px;
+        animation-duration: 10s;
+    }
+}
+/* Modal Styles */
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 2000;
+}
+
+.modal-content {
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    max-width: 80%;
+    max-height: 80%;
+    overflow: hidden; /* Changed to hidden to handle inner scrolling */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    position: relative; /* For positioning close icon */
+}
+
+.modal-close-icon {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    font-size: 20px;
+    color: #333;
+    cursor: pointer;
+    transition: color 0.2s ease;
+    z-index: 3; /* Ensure close icon is above sticky header */
+}
+
+.modal-close-icon:hover {
+    color: #dc3545;
+}
+
+.modal-content h3 {
+    margin-top: 0;
+    font-size: 18px;
+    color: #333;
+}
+
+.modal-content p {
+    color: #333;
+}
+
+.modal-content button {
+    margin: 10px 5px;
+    padding: 8px 16px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.modal-content button:hover {
+    background-color: #0056b3;
+}
+
+/* Preview Table Container for scrolling and sticky header */
+.preview-table-container {
+    max-height: 60vh; /* Limit height to enable vertical scrolling */
+    min-width: 100%; /* Ensure container takes full width */
+    overflow-x: auto; /* Enable horizontal scrolling */
+    overflow-y: auto; /* Enable vertical scrolling */
+    display: block; /* Ensure block-level for scrolling */
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    margin-bottom: 20px;
+    scroll-behavior: smooth;
+    scrollbar-width: thin; /* Firefox scrollbar */
+    scrollbar-color: #888 #f1f1f1; /* Firefox scrollbar colors */
+}
+
+/* WebKit scrollbar styling for preview table */
+.preview-table-container::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+}
+
+.preview-table-container::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 5px;
+}
+
+.preview-table-container::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 5px;
+}
+
+.preview-table-container::-webkit-scrollbar-thumb:hover {
+    background: #555;
+}
+
+.preview-table {
+    width: 100%;
+    border-collapse: collapse;
+    table-layout: auto !important; /* Auto column widths based on content */
+}
+
+.preview-table thead {
+    background-color: #f2f2f2;
+    position: sticky;
+    top: 0;
+    z-index: 1; /* Ensure header stays above table content but below close icon */
+}
+
+.preview-table th,
+.preview-table td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: left;
+    font-size: 13px;
+}
+
+.preview-table th {
+    background-color: #f2f2f2;
+    font-weight: bold;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.preview-table td {
+    white-space: normal;
+    overflow-wrap: break-word;
 }
 
 /* Pagination styles */
@@ -381,29 +605,6 @@
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.15);
 }
 
-.highlight {
-    background-color: yellow;
-    font-weight: bold;
-}
-
-.filter-icon {
-    color: white !important;
-    cursor: pointer !important;
-    margin-left: 5px !important;
-}
-
-.active-filter {
-    color: red !important;
-    cursor: pointer !important;
-    margin-left: 5px !important;
-}
-
-.highlight-updated {
-    background-color: #ffeb99 !important;
-    font-weight: bold;
-    color: #d9534f;
-}
-
 /* Responsive Design Fixes */
 @media screen and (max-width: 1440px) {
     .header-container {
@@ -463,43 +664,18 @@
     .user-table2 td {
         font-size: 13px;
         padding: 10px !important;
-        max-width: 200px !important;
-        min-width: 70px !important;
     }
-    .column-notes {
-        max-width: 300px !important;
-        min-width: 100px !important;
+    .column-download {
+        width: 40px !important;
     }
-    .column-linkedInProfile {
-        max-width: 180px !important;
-        min-width: 90px !important;
+    .modal-content {
+        max-width: 85%;
+        padding: 15px;
     }
-    .column-regCode {
-        max-width: 100px !important;
-        min-width: 50px !important;
-    }
-    .column-addressLine1,
-    .column-addressLine2 {
-        max-width: 250px !important;
-        min-width: 90px !important;
-    }
-    .column-name,
-    .column-organization {
-        max-width: 200px !important;
-        min-width: 90px !important;
-    }
-    .column-city,
-    .column-state,
-    .column-country,
-    .column-zipcode {
-        max-width: 120px !important;
-        min-width: 70px !important;
-    }
-    .column-phoneNumber,
-    .column-updatedPhoneNumber,
-    .column-emailAddress {
-        max-width: 180px !important;
-        min-width: 90px !important;
+    .modal-close-icon {
+        font-size: 18px;
+        top: 8px;
+        right: 8px;
     }
 }
 
@@ -508,8 +684,9 @@
     .user-table2 td {
         font-size: 13px;
         padding: 9px !important;
-        max-width: 180px !important;
-        min-width: 60px !important;
+    }
+    .column-download {
+        width: 35px !important;
     }
     .header-container {
         flex-direction: column;
@@ -573,40 +750,14 @@
         height: auto;
         overflow-x: scroll;
     }
-    .column-notes {
-        max-width: 250px !important;
-        min-width: 90px !important;
+    .modal-content {
+        max-width: 90%;
+        padding: 12px;
     }
-    .column-linkedInProfile {
-        max-width: 150px !important;
-        min-width: 80px !important;
-    }
-    .column-regCode {
-        max-width: 90px !important;
-        min-width: 50px !important;
-    }
-    .column-addressLine1,
-    .column-addressLine2 {
-        max-width: 200px !important;
-        min-width: 80px !important;
-    }
-    .column-name,
-    .column-organization {
-        max-width: 180px !important;
-        min-width: 80px !important;
-    }
-    .column-city,
-    .column-state,
-    .column-country,
-    .column-zipcode {
-        max-width: 100px !important;
-        min-width: 60px !important;
-    }
-    .column-phoneNumber,
-    .column-updatedPhoneNumber,
-    .column-emailAddress {
-        max-width: 150px !important;
-        min-width: 80px !important;
+    .modal-close-icon {
+        font-size: 16px;
+        top: 6px;
+        right: 6px;
     }
 }
 
@@ -615,8 +766,9 @@
     .user-table2 td {
         font-size: 12px;
         padding: 8px !important;
-        max-width: 150px !important;
-        min-width: 50px !important;
+    }
+    .column-download {
+        width: 30px !important;
     }
     .header-container {
         flex-direction: column;
@@ -681,40 +833,14 @@
         height: auto;
         overflow-x: scroll;
     }
-    .column-notes {
-        max-width: 200px !important;
-        min-width: 80px !important;
+    .modal-content {
+        max-width: 95%;
+        padding: 10px;
     }
-    .column-linkedInProfile {
-        max-width: 120px !important;
-        min-width: 70px !important;
-    }
-    .column-regCode {
-        max-width: 80px !important;
-        min-width: 40px !important;
-    }
-    .column-addressLine1,
-    .column-addressLine2 {
-        max-width: 180px !important;
-        min-width: 70px !important;
-    }
-    .column-name,
-    .column-organization {
-        max-width: 150px !important;
-        min-width: 70px !important;
-    }
-    .column-city,
-    .column-state,
-    .column-country,
-    .column-zipcode {
-        max-width: 90px !important;
-        min-width: 50px !important;
-    }
-    .column-phoneNumber,
-    .column-updatedPhoneNumber,
-    .column-emailAddress {
-        max-width: 120px !important;
-        min-width: 70px !important;
+    .modal-close-icon {
+        font-size: 14px;
+        top: 5px;
+        right: 5px;
     }
 }
 
@@ -785,43 +911,18 @@
     .user-table2 td {
         font-size: 11px;
         padding: 6px !important;
-        max-width: 120px !important;
-        min-width: 40px !important;
     }
-    .column-notes {
-        max-width: 180px !important;
-        min-width: 70px !important;
+    .column-download {
+        width: 25px !important;
     }
-    .column-linkedInProfile {
-        max-width: 100px !important;
-        min-width: 60px !important;
+    .modal-content {
+        max-width: 98%;
+        padding: 8px;
     }
-    .column-regCode {
-        max-width: 70px !important;
-        min-width: 30px !important;
-    }
-    .column-addressLine1,
-    .column-addressLine2 {
-        max-width: 150px !important;
-        min-width: 60px !important;
-    }
-    .column-name,
-    .column-organization {
-        max-width: 120px !important;
-        min-width: 60px !important;
-    }
-    .column-city,
-    .column-state,
-    .column-country,
-    .column-zipcode {
-        max-width: 80px !important;
-        min-width: 40px !important;
-    }
-    .column-phoneNumber,
-    .column-updatedPhoneNumber,
-    .column-emailAddress {
-        max-width: 100px !important;
-        min-width: 60px !important;
+    .modal-close-icon {
+        font-size: 12px;
+        top: 4px;
+        right: 4px;
     }
 }
 
@@ -892,42 +993,17 @@
     .user-table2 td {
         font-size: 10px;
         padding: 5px !important;
-        max-width: 100px !important;
-        min-width: 30px !important;
     }
-    .column-notes {
-        max-width: 150px !important;
-        min-width: 60px !important;
+    .column-download {
+        width: 20px !important;
     }
-    .column-linkedInProfile {
-        max-width: 80px !important;
-        min-width: 50px !important;
+    .modal-content {
+        max-width: 98%;
+        padding: 6px;
     }
-    .column-regCode {
-        max-width: 60px !important;
-        min-width: 30px !important;
-    }
-    .column-addressLine1,
-    .column-addressLine2 {
-        max-width: 120px !important;
-        min-width: 50px !important;
-    }
-    .column-name,
-    .column-organization {
-        max-width: 100px !important;
-        min-width: 50px !important;
-    }
-    .column-city,
-    .column-state,
-    .column-country,
-    .column-zipcode {
-        max-width: 70px !important;
-        min-width: 30px !important;
-    }
-    .column-phoneNumber,
-    .column-updatedPhoneNumber,
-    .column-emailAddress {
-        max-width: 80px !important;
-        min-width: 50px !important;
+    .modal-close-icon {
+        font-size: 10px;
+        top: 3px;
+        right: 3px;
     }
 }
