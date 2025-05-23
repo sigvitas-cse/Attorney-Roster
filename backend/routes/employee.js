@@ -958,34 +958,64 @@ router.get('/insights', async (req, res) => {
     ]);
     const orgChangeCount = orgChanges.length > 0 ? orgChanges[0].count : 0;
 
-    // Query 2: Who went from where (including name changes)
+    // Query 2: All profiles with changes
     const orgMovers = await UpdatedProfilesComparison.find(
       {
         $or: [
+          { "changes.Name": { $exists: true } },
           { "changes.Organization/Law Firm Name": { $exists: true } },
-          { "changes.Name": { $exists: true } }
+          { "changes.Address Line 1": { $exists: true } },
+          { "changes.Address Line 2": { $exists: true } },
+          { "changes.City": { $exists: true } },
+          { "changes.State": { $exists: true } },
+          { "changes.Country": { $exists: true } },
+          { "changes.Zipcode": { $exists: true } },
+          { "changes.Phone Number": { $exists: true } },
+          { "changes.Status": { $exists: true } }
         ]
       },
       {
         name: 1,
         regCode: 1,
-        "changes.Organization/Law Firm Name": 1,
         "changes.Name": 1,
+        "changes.Organization/Law Firm Name": 1,
+        "changes.Address Line 1": 1,
+        "changes.Address Line 2": 1,
+        "changes.City": 1,
+        "changes.State": 1,
+        "changes.Country": 1,
+        "changes.Zipcode": 1,
+        "changes.Phone Number": 1,
+        "changes.Status": 1,
         _id: 0
       }
     ).lean();
 
-    // Query 3: Agent to Attorney
-    const agentToAttorney = await UpdatedProfilesComparison.aggregate([
+    // Query 3: Status changes (Agent to Attorney, Limited to Agent)
+    const statusChanges = await UpdatedProfilesComparison.find(
       {
-        $match: {
-          "changes.Agent/Attorney.oldValue": { $regex: "^AGENT$", $options: "i" },
-          "changes.Agent/Attorney.newValue": { $regex: "^ATTORNEY$", $options: "i" }
+        "changes.Status": {
+          $exists: true,
+          $in: [
+            { oldValue: { $regex: "^AGENT$", $options: "i" }, newValue: { $regex: "^ATTORNEY$", $options: "i" } },
+            { oldValue: { $regex: "^LIMITED RECOGNITION$", $options: "i" }, newValue: { $regex: "^AGENT$", $options: "i" } }
+          ]
         }
       },
-      { $group: { _id: null, count: { $sum: 1 } } }
-    ]);
-    const agentToAttorneyCount = agentToAttorney.length > 0 ? agentToAttorney[0].count : 0;
+      {
+        regCode: 1,
+        name: 1,
+        "changes.Status": 1,
+        _id: 0
+      }
+    ).lean();
+    const statusChangeCount = statusChanges.length;
+    const statusChangeDetails = statusChanges.map(doc => ({
+      regCode: doc.regCode,
+      name: doc.name,
+      oldValue: doc.changes.Status.oldValue,
+      newValue: doc.changes.Status.newValue
+    }));
 
     // Query 4: Company leavers
     const companyLeavers = await UpdatedProfilesComparison.aggregate([
@@ -1004,26 +1034,25 @@ router.get('/insights', async (req, res) => {
           count: { $sum: 1 }
         }
       },
-      { $project: { company: "$_id", count: 1, people: 1, _id: 0 } }
+      { $project: { company: "$_id", count: 1, people: 1, _id: 0 } },
+      { $sort: { count: -1 } }
     ]);
 
-    // Query 5: Address changes
-    const addressChanges = await UpdatedProfilesComparison.aggregate([
+    // Query 5: Address changes (count unique profiles)
+    const addressChanges = await UpdatedProfilesComparison.find(
       {
-        $match: {
-          $or: [
-            { "changes.Address Line 1": { $exists: true } },
-            { "changes.Address Line 2": { $exists: true } },
-            { "changes.City": { $exists: true } },
-            { "changes.State": { $exists: true } },
-            { "changes.Country": { $exists: true } },
-            { "changes.Zipcode": { $exists: true } }
-          ]
-        }
+        $or: [
+          { "changes.Address Line 1": { $exists: true } },
+          { "changes.Address Line 2": { $exists: true } },
+          { "changes.City": { $exists: true } },
+          { "changes.State": { $exists: true } },
+          { "changes.Country": { $exists: true } },
+          { "changes.Zipcode": { $exists: true } }
+        ]
       },
-      { $group: { _id: null, count: { $sum: 1 } } }
-    ]);
-    const addressChangeCount = addressChanges.length > 0 ? addressChanges[0].count : 0;
+      { regCode: 1, _id: 0 }
+    ).distinct('regCode');
+    const addressChangeCount = addressChanges.length;
 
     // Query 6: Name changes
     const nameChanges = await UpdatedProfilesComparison.aggregate([
@@ -1032,17 +1061,88 @@ router.get('/insights', async (req, res) => {
     ]);
     const nameChangeCount = nameChanges.length > 0 ? nameChanges[0].count : 0;
 
+    // Query 7: Phone Number changes
+    const phoneChanges = await UpdatedProfilesComparison.aggregate([
+      { $match: { "changes.Phone Number": { $exists: true } } },
+      { $group: { _id: null, count: { $sum: 1 } } }
+    ]);
+    const phoneChangeCount = phoneChanges.length > 0 ? phoneChanges[0].count : 0;
+
+    // Query 8: Changes by State (count all changes per state)
+    const changesByState = await UpdatedProfilesComparison.aggregate([
+      {
+        $match: {
+          $or: [
+            { "changes.Name": { $exists: true } },
+            { "changes.Organization/Law Firm Name": { $exists: true } },
+            { "changes.Address Line 1": { $exists: true } },
+            { "changes.Address Line 2": { $exists: true } },
+            { "changes.City": { $exists: true } },
+            { "changes.State": { $exists: true } },
+            { "changes.Country": { $exists: true } },
+            { "changes.Zipcode": { $exists: true } },
+            { "changes.Phone Number": { $exists: true } },
+            { "changes.Status": { $exists: true } }
+          ]
+        }
+      },
+      {
+        $group: {
+          _id: {
+            $cond: {
+              if: { $gt: ["$changes.State.newValue", null] },
+              then: "$changes.State.newValue",
+              else: { $ifNull: ["$State", "Unknown"] } // Handle missing State
+            }
+          },
+          count: { $sum: 1 }
+        }
+      },
+      { $project: { state: "$_id", count: 1, _id: 0 } },
+      { $sort: { state: 1 } }
+    ]);
+    const filteredChangesByState = changesByState.filter(item => item.state && item.state !== 'Unknown');
+
+    // Query 9: Top Organizations with Changes
+    const topOrganizations = await UpdatedProfilesComparison.aggregate([
+      {
+        $match: {
+          "changes.Organization/Law Firm Name": { $exists: true }
+        }
+      },
+      {
+        $group: {
+          _id: {
+            $cond: {
+              if: { $gt: ["$changes.Organization/Law Firm Name.newValue", null] },
+              then: "$changes.Organization/Law Firm Name.newValue",
+              else: "$changes.Organization/Law Firm Name.oldValue"
+            }
+          },
+          count: { $sum: 1 }
+        }
+      },
+      { $sort: { count: -1 } },
+      { $limit: 10 },
+      { $project: { organization: "$_id", count: 1, _id: 0 } }
+    ]);
+
     res.json({
       organizationChanges: orgChangeCount,
       organizationMovers: orgMovers,
-      agentToAttorneyCount: agentToAttorneyCount,
+      statusChanges: statusChangeCount,
+      statusChangeDetails: statusChangeDetails,
       companyLeavers: companyLeavers,
       addressChanges: addressChangeCount,
-      nameChanges: nameChangeCount
+      nameChanges: nameChangeCount,
+      phoneChanges: phoneChangeCount,
+      changesByState: filteredChangesByState,
+      topOrganizations: topOrganizations
     });
   } catch (error) {
     console.error("❌ Error fetching insights:", error);
     res.status(500).json({ error: 'Internal server error' });
   }
 });
+
 module.exports = router;

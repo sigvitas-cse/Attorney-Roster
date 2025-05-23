@@ -1,113 +1,207 @@
-/* src/Components/AdminDashboard/IndivisualComponents/insightdata.css */
-.insights-data-container {
-  background-color: #fff;
-  padding: 20px;
-  border-radius: 5px;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-  margin-top: 20px;
+/* Prevent body scrolling when modal is open */
+body.modal-open {
+  overflow: hidden !important;
+  height: 100vh !important;
+  position: fixed !important;
+  width: 100% !important;
 }
 
-.insights-data-title {
-  font-size: 24px;
-  font-weight: 600;
-  margin-bottom: 20px;
-  color: #333;
+/* Modal styling to ensure it takes full viewport and doesn't scroll */
+.insights-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden !important; /* Prevent page scroll */
+  z-index: 1000;
+  contain: strict; /* Isolate layout and paint */
+}
+
+/* Center container with max dimensions */
+.insights-center {
+  background: #fff;
+  width: 80%;
+  max-width: 1000px;
+  height: 90vh;
+  padding: 20px;
+  border-radius: 8px;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden !important; /* Prevent internal scroll */
+  box-sizing: border-box;
+}
+
+/* Content container to handle sidebar and editor */
+.insights-content-container {
+  flex: 1;
+  display: flex;
+  overflow: hidden !important;
+}
+
+/* Flex container for sidebar and editor */
+.insights-content {
+  display: flex;
+  flex: 1;
+  height: 100%;
+  overflow: hidden !important;
+}
+
+/* Sidebar styling with independent scrolling */
+.notes-sidebar {
+  width: 30%;
+  min-width: 200px;
+  border-right: 1px solid #ddd;
+  padding: 10px;
+  overflow-y: auto !important; /* Enable vertical scrolling */
+  overflow-x: hidden !important;
+  height: 100%;
+  overscroll-behavior-y: contain; /* Prevent scroll chaining */
+  contain: strict;
+  box-sizing: border-box;
+  touch-action: pan-y; /* Allow vertical touch scrolling only */
+}
+
+/* Force scrollbar for testing (remove after verifying) */
+.notes-list {
+  min-height: 2000px; /* Temporary to ensure scrollbar */
+}
+
+/* Notes list styling */
+.notes-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.notes-item {
+  padding: 10px;
+  cursor: pointer;
+}
+
+.notes-item-selected {
+  background-color: #e0e0e0;
+}
+
+/* Editor styling with independent scrolling */
+.notes-editor {
+  width: 70%;
+  padding: 10px;
+  overflow-y: auto !important; /* Enable vertical scrolling */
+  overflow-x: hidden !important;
+  height: 100%;
+  overscroll-behavior-y: contain; /* Prevent scroll chaining */
+  contain: strict;
+  box-sizing: border-box;
+  touch-action: pan-y; /* Allow vertical touch scrolling only */
+}
+
+/* Force scrollbar for testing (remove after verifying) */
+.insight-content-area {
+  min-height: 2000px; /* Temporary to ensure scrollbar */
+}
+
+/* Chart containers */
+.pie-chart-container {
+  max-width: 300px;
+  max-height: 300px;
+  margin: 0 auto;
+}
+
+.bar-chart-container {
+  max-width: 400px;
+  max-height: 300px;
+  margin: 0 auto;
+}
+
+/* Insight section styling */
+.insight-section {
+  padding: 20px;
   text-align: center;
 }
 
-.insight-section {
-  margin-bottom: 15px;
+/* Ensure visibility */
+.insight-title, .insight-text, .insight-content-area {
+  visibility: visible !important;
+  opacity: 1 !important;
 }
 
 .insight-title {
-  font-size: 20px;
-  font-weight: 600;
+  font-size: 1.5em;
   margin-bottom: 10px;
   color: #333;
 }
 
 .insight-text {
-  font-size: 16px;
-  color: #666;
-}
-
-.company-section {
-  margin-bottom: 20px;
-}
-
-.company-title {
-  font-size: 18px;
-  font-weight: 600;
-  margin-bottom: 10px;
+  font-size: 1em;
   color: #333;
+  margin: 10px 0;
+  line-height: 1.5;
 }
 
+/* Table styling */
 .insight-table {
   width: 100%;
   border-collapse: collapse;
-  border: 1px solid #ccc;
   margin-top: 10px;
 }
 
 .table-header {
-  background-color: #f7f7f7;
+  background-color: #f4f4f4;
+  font-weight: bold;
 }
 
-.table-header th {
-  border: 1px solid #ccc;
-  padding: 8px;
-  text-align: left;
-  font-weight: 600;
-  color: #333;
+.table-row:nth-child(even) {
+  background-color: #f9f9f9;
 }
 
 .table-row td {
-  border: 1px solid #ccc;
   padding: 8px;
-  color: #666;
+  border: 1px solid #ddd;
 }
 
-.table-row:hover {
-  background-color: #f0f0f0;
-}
-
-.navigation {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-top: 15px;
-}
-
-.nav-button {
-  background-color: #007bff;
-  color: #fff;
-  padding: 8px 16px;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  font-size: 14px;
-}
-
-.nav-button:hover {
-  background-color: #0056b3;
-}
-
-.nav-title {
-  font-size: 16px;
-  color: #333;
-}
-
-.status-text {
-  font-size: 18px;
+.table-row td:first-child {
+  width: 50px;
   text-align: center;
-  color: #333;
 }
 
-.error-text {
-  color: #dc3545;
+/* Close button */
+.close-btn {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: #ff4d4d;
+  color: #fff;
+  border: none;
+  border-radius: 50%;
+  width: 30px;
+  height: 30px;
+  cursor: pointer;
 }
 
-canvas {
-  max-width: 100%;
-  height: auto;
+/* Scrollbar styling for Firefox */
+.notes-sidebar, .notes-editor {
+  scrollbar-width: thin;
+  scrollbar-color: #ccc transparent;
+}
+
+/* Scrollbar styling for Chrome, Safari, Edge */
+.notes-sidebar::-webkit-scrollbar, .notes-editor::-webkit-scrollbar {
+  width: 8px;
+}
+
+.notes-sidebar::-webkit-scrollbar-track, .notes-editor::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.notes-sidebar::-webkit-scrollbar-thumb, .notes-editor::-webkit-scrollbar-thumb {
+  background-color: #ccc;
+  border-radius: 4px;
+  border: 2px solid transparent;
+  background-clip: content-box;
 }
