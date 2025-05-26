@@ -842,7 +842,7 @@ router.post("/upload-excel-dynamic", upload.single("excelFile"), async (req, res
       to: `dverma@sigvitas.com`,
       subject: 'Re: Daily Data Uploading',
       // text: `Hello Sir, /n/n${userId2} uploaded the data successfully on ${formattedDate} at ${formattedTime}. Total number of users: ${total}/n/nBest Regards,/nDarshan`,
-      text: `Hello Sir,\n\n${userId2} uploaded the data successfully on ${formattedDate} at ${formattedTime}. \nTotal number of users: ${total}\n\nBest Regards,\nDarshan`,
+      text: `Hello Sir,\n\n${userId2} uploaded the data successfully on ${formattedDate} at ${formattedTime}. \nTotal Attorneys in the Roster: ${total}\n\nBest Regards,\nDarshan`,
     };
   
     transporter.sendMail(mailOptions, (error, info) => {
