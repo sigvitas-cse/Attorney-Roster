@@ -19,6 +19,10 @@ const HeroSection = () => {
         navigate('/NewUserLoginPage');
         
       }
+      function goGuiestLoginPage(){
+        navigate('/guistlogin');
+        
+      }
 
       function loginSubmit(){
         console.log(label);
@@ -60,6 +64,9 @@ const HeroSection = () => {
         transition={{ duration: 2.5 }}
     >
         <div className="btnNames23">
+          <button onClick={goGuiestLoginPage} className="btnNames22">
+                <i className="fas fa-sign-in-alt"></i> Login
+            </button>
             <button onClick={goNewRigister} className="btnNames22">
                 <i className="fas fa-sign-in-alt"></i> Sign up
             </button>

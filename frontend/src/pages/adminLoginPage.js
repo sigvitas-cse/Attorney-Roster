@@ -43,8 +43,8 @@ function AdminLoginPage() {
 
       if (response.status === 200) {
         // Save token or user info to localStorage
-        localStorage.setItem('authToken', response.data.token); // Assuming a token is returned
-        console.log('User saved to localStorage:', response.data.user);
+        // localStorage.setItem('authToken', response.data.token); // Assuming a token is returned
+        // console.log('User saved to localStorage:', response.data.user);
 
         const user = JSON.parse(localStorage.getItem('user'));
         if (!user) {

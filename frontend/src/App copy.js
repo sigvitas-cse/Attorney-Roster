@@ -1,9 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Outlet, useLocation } from 'react-router-dom';
 import './App.css';
 import 'react-toastify/dist/ReactToastify.css';
 import Header from './components/Header.js';
 import Footer from './components/Footer.js';
+
+export const OutletContext = React.createContext();
 
 function App() {
   const location = useLocation();
@@ -15,15 +17,6 @@ function App() {
   const [showForm, setShowForm] = useState(false);
   const [loading, setLoading] = useState(false);
   const [email, setEmail] = useState('');
-
-  useEffect(() => {
-    console.log('App.js: Current path:', location.pathname);
-    if (location.pathname === '/guistlogin' || location.pathname === '/') {
-      console.log('App.js: Clearing token for', location.pathname);
-      localStorage.removeItem('token');
-      setEmail('');
-    }
-  }, [location.pathname]);
 
   const handleFilterChange = (event) => {
     setFilters({ ...filters, [event.target.name]: event.target.value });
@@ -46,30 +39,33 @@ function App() {
   };
 
   return (
-    <>
+    <OutletContext.Provider
+      value={{
+        users,
+        setUsers,
+        allData,
+        setAllData,
+        filteredData,
+        setFilteredData,
+        handleFilterChange,
+        filters,
+        handleDeleteAlert,
+        handleLogin,
+        handleCardClick,
+        activeCard,
+        showForm,
+        toggleForm,
+        loading,
+        email,
+        setEmail,
+      }}
+    >
       {location.pathname !== '/' && <Header />}
       <main>
-        <Outlet
-          context={{
-            users,
-            allData,
-            filteredData,
-            handleFilterChange,
-            filters,
-            handleDeleteAlert,
-            handleLogin,
-            handleCardClick,
-            activeCard,
-            showForm,
-            toggleForm,
-            loading,
-            email,
-            setEmail,
-          }}
-        />
+        <Outlet />
       </main>
-      {['/AdminLoginPage', '/EmployeeLoginPage', '/NewUserLoginPage', '/ForgotPassword'].includes(location.pathname) && <Footer />}
-    </>
+      {['/', '/AdminLoginPage', '/EmployeeLoginPage', '/NewUserLoginPage', '/ForgotPassword'].includes(location.pathname) && <Footer />}
+    </OutletContext.Provider>
   );
 }
 

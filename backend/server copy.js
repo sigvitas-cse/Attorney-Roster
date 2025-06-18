@@ -10,8 +10,7 @@ const path = require('path');
 const loginRoutes = require('./routes/login');
 const employeeRoutes = require('./routes/employee');
 const notesRoutes = require('./routes/notes');
-const authRoutes = require('./routes/api');
-
+const authRoutes = require('./routes/api')
 
 const app = express();
 
@@ -24,8 +23,7 @@ app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 const corsOptions = {
   origin: ['http://localhost:3000', 'http://roster1.sigvitas.com'], // Update for production
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization', "x-api-key", 'x-auth-token'],
-  credentials: true,
+  allowedHeaders: ['Content-Type', 'Authorization', "x-api-key"],
 };
 app.use(cors(corsOptions));
 app.options('*', cors(corsOptions));
@@ -45,6 +43,7 @@ app.use('/api', loginRoutes);
 app.use('/api', employeeRoutes);
 app.use('/api', notesRoutes);
 app.use('/api', authRoutes);
+// app.use('/api', dataRoutes);
 
 // Serve static files
 app.use(express.static(path.join(__dirname, 'public')));
@@ -67,7 +66,7 @@ app.use((err, req, res, next) => {
 // });
 
 const PORT = 3001;
-mongoose.connect(process.env.MONGO_URI)
+mongoose.connect(process.env.MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true })
   .then(() => {
     console.log('Connected to MongoDB')
     app.listen(PORT, () => {

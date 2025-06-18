@@ -1,0 +1,266 @@
+/* Modern font stack for better readability */
+:root {
+  --font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+/* Background with a subtle pattern */
+.login-page94 {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #dbeafe, #bfdbfe),
+              url('data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 40 40"%3E%3Cg fill="%23ffffff" fill-opacity="0.1"%3E%3Cpath d="M0 0h40v40H0z"/%3E%3Cpath d="M20 20l10 10H10z"/%3E%3C/g%3E%3C/svg%3E');
+  display: flex;
+  /* align-items: center; */
+  justify-content: center;
+  padding: 1rem;
+  font-family: var(--font-family);
+}
+
+/* Glassmorphism effect for the container */
+.login-container94 {
+  background: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(10px);
+  border-radius: 16px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+  padding: 2.5rem;
+  width: 100%;
+  max-width: 400px; /* Slightly wider for better spacing */
+  text-align: center;
+  animation: fadeIn 0.5s ease-out;
+  max-height: 50vh !important;
+}
+
+/* Fade-in animation for container */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.login-container94 h2 {
+  font-size: 1.75rem; /* Slightly larger for prominence */
+  color: #1e293b;
+  margin-bottom: 2rem;
+  font-weight: 700;
+  letter-spacing: -0.025em; /* Tighter letter spacing for a modern look */
+}
+
+.form-group94 {
+  margin-bottom: 1.5rem; /* Slightly more spacing */
+  text-align: left;
+  position: relative; /* For floating label effect */
+}
+
+.form-group94 label {
+  position: absolute;
+  top: 0.75rem;
+  left: 2.5rem; /* Align with input padding */
+  font-size: 0.95rem;
+  color: #4b5563; /* Slightly darker for contrast */
+  font-weight: 500;
+  transition: all 0.2s ease;
+  pointer-events: none; /* Prevent label from interfering with input */
+}
+
+/* Floating label effect */
+input:focus + label,
+input:not(:placeholder-shown) + label {
+  top: -0.5rem;
+  left: 1rem;
+  font-size: 0.75rem;
+  color: #3b82f6;
+  background: #ffffff;
+  padding: 0 0.25rem;
+}
+
+.input-wrapper94 {
+  position: relative;
+}
+
+.input-icon94 {
+  position: absolute;
+  left: 0.75rem;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 1.25rem;
+  height: 1.25rem;
+  color: #9ca3af;
+}
+
+input {
+  width: 100%;
+  padding: 0.75rem 0.75rem 0.75rem 2.5rem;
+  border: 1px solid #d1d5db;
+  border-radius: 8px; /* Softer corners */
+  font-size: 1rem;
+  color: #1e293b;
+  background: #f9fafb; /* Subtle background for input */
+  transition: all 0.2s ease;
+}
+
+/* Hover and focus states for inputs */
+input:hover:not(:disabled) {
+  border-color: #93c5fd;
+}
+
+input:focus {
+  outline: none;
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+  background: #ffffff;
+}
+
+.input-error94 {
+  border-color: #ef4444 !important;
+}
+
+.input-error94:focus {
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.2);
+}
+
+.show-password94 {
+  position: absolute;
+  right: 0.75rem;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  color: #9ca3af;
+  transition: color 0.2s ease, transform 0.2s ease;
+}
+
+.show-password94 svg {
+  width: 1.25rem;
+  height: 1.25rem;
+}
+
+.show-password94:hover {
+  color: #1e293b;
+  transform: translateY(-50%) scale(1.1); /* Subtle hover animation */
+}
+
+.error-alert94 {
+  background: #fef2f2;
+  border-left: 4px solid #f87171;
+  color: #dc2626;
+  padding: 0.75rem 1rem;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  margin-bottom: 1.5rem;
+  text-align: left;
+  animation: slideIn 0.3s ease-out;
+}
+
+/* Animation for error alert */
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateX(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.login-button94 {
+  width: 100%;
+  padding: 0.9rem;
+  background: linear-gradient(90deg, #1d4ed8, #2563eb); /* Gradient for premium look */
+  color: #ffffff;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 12px rgba(29, 78, 216, 0.2);
+}
+
+.login-button94:hover:not(:disabled) {
+  background: linear-gradient(90deg, #1e40af, #1d4ed8);
+  transform: translateY(-2px) scale(1.02); /* Subtle scale on hover */
+  box-shadow: 0 6px 16px rgba(29, 78, 216, 0.3);
+}
+
+.login-button94:disabled {
+  background: #d1d5db; /* More distinct disabled state */
+  cursor: not-allowed;
+  box-shadow: none;
+  opacity: 0.7;
+}
+
+.loading94 {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.spinner94 {
+  width: 1.125rem;
+  height: 1.125rem;
+  border: 2px solid #ffffff;
+  border-top: 2px solid transparent;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (max-width: 480px) {
+  .login-container94 {
+    padding: 2rem;
+    max-width: 95%; /* Slightly wider for small screens */
+  }
+
+  .login-container94 h2 {
+    font-size: 1.5rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .form-group94 {
+    margin-bottom: 1.25rem;
+  }
+
+  input {
+    font-size: 0.95rem;
+    padding: 0.65rem 0.75rem 0.65rem 2.25rem;
+  }
+
+  input:focus + label,
+  input:not(:placeholder-shown) + label {
+    top: -0.4rem;
+    left: 0.75rem;
+    font-size: 0.7rem;
+  }
+
+  .login-button94 {
+    font-size: 0.95rem;
+    padding: 0.8rem;
+  }
+
+  .input-icon94,
+  .show-password94 svg {
+    width: 1.125rem;
+    height: 1.125rem;
+  }
+
+  .error-alert94 {
+    font-size: 0.85rem;
+    padding: 0.5rem 0.75rem;
+  }
+}

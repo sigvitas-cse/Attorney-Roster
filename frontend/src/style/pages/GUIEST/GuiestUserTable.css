@@ -1,0 +1,243 @@
+.data-page73 {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #f0f4f8, #d9e2ec);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+}
+
+.data-container73 {
+  background: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.1);
+  padding: 1.5rem;
+  width: 100%;
+  max-width: 1200px;
+  text-align: center;
+  position: relative;
+}
+
+.header73 {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.header73 h2 {
+  font-size: 1.5rem;
+  color: #1e293b;
+  font-weight: 700;
+}
+
+.header73 button {
+  background: #dc2626;
+  color: #ffffff;
+  border: none;
+  padding: 0.4rem 0.8rem;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.1s;
+}
+
+.header73 button:hover {
+  background: #b91c1c;
+  transform: translateY(-1px);
+}
+
+.total-records73 {
+  font-size: 0.8rem;
+  color: #1e293b;
+  font-weight: 500;
+  margin-bottom: 0.5rem;
+  text-align: left;
+}
+
+.error73 {
+  background: #fef2f2;
+  border-left: 4px solid #f87171;
+  color: #dc2626;
+  padding: 0.5rem 0.75rem;
+  border-radius: 6px;
+  font-size: 0.75rem;
+  margin-bottom: 0.75rem;
+  text-align: left;
+}
+
+.table-wrapper73 {
+  overflow-x: auto;
+  margin-bottom: 1rem;
+  position: relative;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+.table-wrapper73.blurred73 {
+  filter: blur(5px);
+  transition: filter 0.3s ease;
+}
+
+.watermark73 {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 2000px;
+  height: 100%;
+  color: rgba(0, 0, 0, 0.1);
+  font-size: 1.5rem;
+  font-weight: bold;
+  text-align: center;
+  pointer-events: none;
+  background: repeating-linear-gradient(
+    45deg,
+    transparent,
+    transparent 50px,
+    rgba(0, 0, 0, 0.05) 50px,
+    rgba(0, 0, 0, 0.05) 100px
+  );
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 2000px;
+}
+
+thead {
+  background: #1e293b;
+  color: #ffffff;
+}
+
+th {
+  padding: 0.4rem 0.6rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-align: left;
+  white-space: nowrap;
+}
+
+th:nth-child(26) { /* Notes header */
+  width: 30px;
+  white-space: wrap;
+}
+
+tbody tr {
+  border-bottom: 1px solid #e5e7eb;
+  transition: background 0.2s;
+}
+
+tbody tr:hover {
+  background: #f9fafb;
+}
+
+td {
+  padding: 0.4rem 0.6rem;
+  font-size: 0.75rem;
+  color: #1e293b;
+  text-align: left;
+  white-space: nowrap;
+}
+
+th:nth-child(26) { /* Notes header */
+  width: 30px !important;
+  overflow: hidden;
+}
+
+td:nth-child(26) { /* Notes column */
+  width: 30px !important;
+  overflow: hidden;
+}
+
+td a {
+  color: #3b82f6;
+  text-decoration: none;
+}
+
+td a:hover {
+  text-decoration: underline;
+}
+
+.pagination73 {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 1rem;
+}
+
+.pagination73 button {
+  background: #3b82f6;
+  color: #ffffff;
+  border: none;
+  padding: 0.4rem 0.8rem;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.1s;
+}
+
+.pagination73 button:hover:not(:disabled) {
+  background: #1d4ed8;
+  transform: translateY(-1px);
+}
+
+.pagination73 button:disabled {
+  background: #93c5fd;
+  cursor: not-allowed;
+}
+
+.pagination73 span {
+  font-size: 0.85rem;
+  color: #1e293b;
+  font-weight: 500;
+}
+
+@media (max-width: 768px) {
+  .data-container73 {
+    padding: 1rem;
+    max-width: 100%;
+  }
+
+  .header73 h2 {
+    font-size: 1.25rem;
+  }
+
+  .header73 button {
+    font-size: 0.8rem;
+    padding: 0.3rem 0.6rem;
+  }
+
+  .total-records73 {
+    font-size: 0.75rem;
+    margin-bottom: 0.3rem;
+  }
+
+  .watermark73 {
+    font-size: 1rem;
+  }
+
+  th,
+  td {
+    font-size: 0.7rem;
+    padding: 0.3rem 0.5rem;
+  }
+
+  .pagination73 button {
+    font-size: 0.8rem;
+    padding: 0.3rem 0.6rem;
+  }
+
+  .pagination73 span {
+    font-size: 0.8rem;
+  }
+}
